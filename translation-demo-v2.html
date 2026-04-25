@@ -911,14 +911,6 @@ html,body{height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:v
         <button class="cact" id="actFav"    onclick="toggleContactFlag('favourite')">
           <span class="cact-ico">☆</span><span class="cact-lbl">Favourite</span>
         </button>
-        <button class="cact" id="actEmerg"  onclick="toggleContactFlag('emergency')">
-          <span class="cact-ico">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.62 3.38 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.83a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
-            </svg>
-          </span>
-          <span class="cact-lbl">Emergency</span>
-        </button>
         <button class="cact" id="actShare"  onclick="shareContact()">
           <span class="cact-ico">↑</span><span class="cact-lbl">Share</span>
         </button>
@@ -983,32 +975,65 @@ function detectSlang(text, direction){
   return dict.filter(s => s.pattern.test(text));
 }
 
-// ─── Unknown slang candidate logger ─────────────────────
-// When the AI returns a culturalWarning on a phrase our dictionary didn't catch,
-// we log it. If the same phrase surfaces 3+ times, it's a candidate for the dict.
-// The team reviews these manually and updates patterns when needed.
+// ─── Auto-learning dictionary ────────────────────────────
+// Phrases the AI flags but our hardcoded dict doesn't cover are logged.
+// Once a phrase is seen LEARN_THRESHOLD times, its full AI result is saved
+// to learned_dictionary and served directly on future matches — no API call needed.
+const LEARN_THRESHOLD = 5;
+
 function logUnknownSlangCandidate(result, text, direction){
   if(demoMode || !text || !result) return;
   const hasCulturalWarning = result.culturalWarnings && result.culturalWarnings.length > 0;
   if(!hasCulturalWarning) return;
   const knownMatches = detectSlang(text, direction);
-  if(knownMatches.length > 0) return; // already in our dict — no need to log
+  if(knownMatches.length > 0) return; // already in our dict
+  const key = text.trim().toLowerCase().slice(0, 80);
+  // Skip if already promoted to learned_dictionary
+  try{
+    const learned = JSON.parse(localStorage.getItem('learned_dictionary')||'{}');
+    if(learned[key]) return;
+  }catch(_){}
   try{
     const log = JSON.parse(localStorage.getItem('unknown_slang_log')||'[]');
-    // Normalize text to a simple key for counting
-    const key = text.trim().toLowerCase().slice(0, 80);
     const existing = log.find(e => e.key === key);
     if(existing){
       existing.count++;
       existing.lastSeen = Date.now();
+      existing.result = result; // keep freshest AI result
     } else {
       log.push({ key, text: text.slice(0, 120), direction, count: 1,
-                 firstSeen: Date.now(), lastSeen: Date.now() });
+                 firstSeen: Date.now(), lastSeen: Date.now(), result });
+    }
+    // Auto-promote to learned_dictionary when threshold is reached
+    const entry = log.find(e => e.key === key);
+    if(entry && entry.count >= LEARN_THRESHOLD){
+      try{
+        const learned = JSON.parse(localStorage.getItem('learned_dictionary')||'{}');
+        learned[key] = { text: entry.text, direction: entry.direction,
+                         result: entry.result, learnedAt: Date.now(), count: entry.count };
+        localStorage.setItem('learned_dictionary', JSON.stringify(learned));
+        // Remove from candidate log — it's graduated
+        const idx = log.findIndex(e => e.key === key);
+        if(idx >= 0) log.splice(idx, 1);
+      }catch(_){}
     }
     // Keep the most frequent 200 candidates — drop old low-count ones first
     if(log.length > 200) log.sort((a,b)=>b.count-a.count).splice(200);
     localStorage.setItem('unknown_slang_log', JSON.stringify(log));
   }catch(e){}
+}
+
+// Returns a cached AI result from learned_dictionary if the phrase was seen
+// LEARN_THRESHOLD times before. Direction must match. Returns null otherwise.
+function checkLearnedDictionary(text, direction){
+  if(!text) return null;
+  const key = text.trim().toLowerCase().slice(0, 80);
+  try{
+    const learned = JSON.parse(localStorage.getItem('learned_dictionary')||'{}');
+    const entry = learned[key];
+    if(entry && entry.direction === direction) return entry.result;
+  }catch(_){}
+  return null;
 }
 
 // ─── Preference learning ────────────────────────────────
@@ -1026,9 +1051,9 @@ function recordPickPreference(recommended, picked, rel, dir){
 
 // ─── Conversation context for history-aware translation ─
 // Only includes messages from the same continuous session.
-// A "session break" = gap of more than 4 hours between messages.
+// A "session break" = gap of more than 24 hours between messages.
 // Deleted messages and cross-session messages are excluded automatically.
-const SESSION_GAP_MS = 4 * 60 * 60 * 1000; // 4 hours
+const SESSION_GAP_MS = 24 * 60 * 60 * 1000; // 24 hours
 const MIN_HISTORY_FOR_BYPASS = 12; // need at least 12 session messages before auto-bypassing picker
 const CONTEXT_CONFIDENCE_THRESHOLD = 85; // AI must be this confident to skip the picker
 
@@ -1075,6 +1100,93 @@ function getConversationContext(msgs, maxMessages = 20){
     + lines
     + '\nUse this to understand the established relationship dynamic and calibrate contextConfidence (0–100). '
     + 'High confidence (85+) means the pattern clearly resolves the tone of the current message.';
+}
+
+// ─── Permanent per-contact profile ──────────────────────
+// Persists indefinitely in localStorage — never resets between sessions.
+// Stores aggregated tone metadata only (no message text) for privacy.
+
+function loadContactProfile(contactId){
+  try{ return JSON.parse(localStorage.getItem('cp_'+contactId)||'null'); }catch(_){ return null; }
+}
+
+function saveContactProfile(contactId, profile){
+  try{ localStorage.setItem('cp_'+contactId, JSON.stringify(profile)); }catch(_){}
+}
+
+function updateContactProfile(contactId, msgs){
+  if(!contactId || !msgs || msgs.length < 2) return;
+  const profile = loadContactProfile(contactId) || { totalMessages:0, emotionCounts:{}, avgMsgLength:0, lastUpdated:null };
+  const withEmotion = msgs.filter(m => m.emotion);
+  const emotionCounts = {};
+  withEmotion.forEach(m => {
+    const e = (m.emotion||'').toLowerCase();
+    emotionCounts[e] = (emotionCounts[e]||0) + 1;
+  });
+  profile.totalMessages = msgs.length;
+  profile.emotionCounts = emotionCounts;
+  profile.avgMsgLength = Math.round(msgs.reduce((s,m) => s+(m.original||m.text||'').length, 0) / msgs.length);
+  profile.lastUpdated = Date.now();
+  saveContactProfile(contactId, profile);
+}
+
+function detectToneConflict(contactId, recentMsgs){
+  // Returns a penalty (0-40) to subtract from AI confidence when recent tone
+  // diverges from the contact's established baseline pattern.
+  const profile = loadContactProfile(contactId);
+  if(!profile || profile.totalMessages < 10) return 0;
+
+  // Get the contact's dominant established tone
+  const topEmo = Object.entries(profile.emotionCounts)
+    .sort((a,b) => b[1]-a[1])[0];
+  if(!topEmo) return 0;
+  const dominantEmo = topEmo[0];
+  const dominantPct = topEmo[1] / profile.totalMessages;
+
+  // Look at the last 3 messages with emotions (excluding current)
+  const recentEmos = (recentMsgs||[])
+    .filter(m => m.emotion)
+    .slice(-3)
+    .map(m => (m.emotion||'').toLowerCase());
+  if(recentEmos.length < 2) return 0;
+
+  // Tense/negative tones that would conflict with a typically playful/warm baseline
+  const tenseTones = new Set(['irritated','angry','hurt','direct','sad','frustrated']);
+  const warmTones  = new Set(['playful','affectionate','warm']);
+
+  const recentIsTense = recentEmos.filter(e => tenseTones.has(e)).length >= 2;
+  const baselineIsWarm = warmTones.has(dominantEmo) && dominantPct > 0.4;
+
+  const recentIsWarm = recentEmos.filter(e => warmTones.has(e)).length >= 2;
+  const baselineIsTense = tenseTones.has(dominantEmo) && dominantPct > 0.4;
+
+  // Conflict: established warm pattern but recent messages are tense (or vice versa)
+  if((baselineIsWarm && recentIsTense) || (baselineIsTense && recentIsWarm)){
+    return 30; // strong penalty — force the picker
+  }
+  return 0;
+}
+
+function getToneConflictNote(contactId, recentMsgs){
+  const penalty = detectToneConflict(contactId, recentMsgs);
+  if(!penalty) return '';
+  return '\n\nTONE CONFLICT DETECTED: The recent conversation mood diverges significantly from this contact\'s established baseline pattern. '
+    + 'Do NOT rely on the learned preference for this message — the context has shifted. '
+    + 'Lower your contextConfidence score accordingly (aim below 70) and present multiple options so the user can choose.';
+}
+
+function getContactProfileNote(contactId){
+  const profile = loadContactProfile(contactId);
+  if(!profile || profile.totalMessages < 5) return '';
+  const topEmotions = Object.entries(profile.emotionCounts)
+    .sort((a,b) => b[1]-a[1]).slice(0,4)
+    .map(([e,n]) => `${e} (${Math.round(n/profile.totalMessages*100)}%)`).join(', ');
+  const avgLen = profile.avgMsgLength;
+  const style = avgLen < 30 ? 'very short/casual' : avgLen < 80 ? 'conversational' : 'longer/expressive';
+  return '\n\nPERMANENT CONTACT PROFILE (built from '+profile.totalMessages+' messages across all sessions — never resets):\n'
+    + 'Dominant tones overall: '+topEmotions+'.\n'
+    + 'Typical message style: '+style+' (~'+avgLen+' chars avg).\n'
+    + 'Use this as the baseline relationship dynamic even at the start of a brand new session.';
 }
 
 // ─── Pattern error logging ───────────────────────────────
@@ -1607,7 +1719,7 @@ const DEMO_SCENARIOS = [
       recommendationReason:{en:"The 🥺 emoji and phrasing make this unambiguously tender. The affectionate option mirrors that register exactly.",vi:"Emoji 🥺 và cách diễn đạt làm rõ đây là sự nhớ nhung dịu dàng. Lựa chọn 'tình cảm' phản chiếu chính xác cảm xúc đó."},
       contextConfidence: 0
     })
-  }
+  },
   {
     // "I'm obsessed with you" — affectionate in English, reads as stalker/creepy in Vietnamese
     match: t => /i'?m obsessed with (you|u)\b|obsessed with (you|u)\b/i.test(t),
@@ -2374,14 +2486,11 @@ function openModal(id){
 function _refreshActionGrid(c){
   const isVI = appDir === 'vi-en';
   const fav=document.getElementById('actFav');
-  const emg=document.getElementById('actEmerg');
   const blk=document.getElementById('actBlock');
   const shr=document.getElementById('actShare');
   fav.classList.toggle('active', !!c.favourite);
   fav.querySelector('.cact-ico').textContent = c.favourite ? '★' : '☆';
   fav.querySelector('.cact-lbl').textContent = isVI ? 'Yêu thích' : 'Favourite';
-  emg.classList.toggle('active', !!c.emergency);
-  emg.querySelector('.cact-lbl').textContent = isVI ? 'Khẩn cấp' : 'Emergency';
   if(shr) shr.querySelector('.cact-lbl').textContent = isVI ? 'Chia sẻ' : 'Share';
   blk.classList.toggle('active', !!c.blocked);
   blk.querySelector('.cact-lbl').textContent = c.blocked
@@ -3035,6 +3144,7 @@ async function sendOptimistic(text, direction){
     translating: true
   };
   c.msgs.push(msg);
+  updateContactProfile(c.id, c.msgs);
   // Clear input + render BEFORE the network call so the bubble appears instantly.
   const ta = document.getElementById('txtInput');
   ta.value = ''; ta.style.height = 'auto'; updBtns();
@@ -3050,7 +3160,7 @@ async function sendOptimistic(text, direction){
     // Remove the failed bubble, restore the draft so they can retry
     c.msgs.splice(c.msgs.indexOf(msg), 1);
     ta.value = text; ta.style.height = 'auto'; updBtns();
-    showRetryToast(text, direction, 'direct');
+    showRetryToast(text, direction, 'direct', err);
   }finally{
     msg.translating = false;
     renderMsgs(); renderSidebar();
@@ -3088,18 +3198,24 @@ async function onSendText(ev){
   showSkeletonSheet(text);
   let renderedCount = 0;
   try{
-    const result = await callOpenAI({
-      kind: 'text', text, direction,
-      onProgress: (full) => {
-        const parsed = extractCompleteOptions(full);
-        while(renderedCount < parsed.length && renderedCount < 4){
-          replaceSkeletonAt(renderedCount, parsed[renderedCount], text);
-          renderedCount++;
+    const _learned = checkLearnedDictionary(text, direction);
+    let result;
+    if(_learned){
+      result = _learned;
+    } else {
+      result = await callOpenAI({
+        kind: 'text', text, direction,
+        onProgress: (full) => {
+          const parsed = extractCompleteOptions(full);
+          while(renderedCount < parsed.length && renderedCount < 4){
+            replaceSkeletonAt(renderedCount, parsed[renderedCount], text);
+            renderedCount++;
+          }
         }
-      }
-    });
+      });
+      logUnknownSlangCandidate(result, text, direction);
+    }
     pending = { result, original: text, mode: 'text' };
-    logUnknownSlangCandidate(result, text, direction);
     finalizeStreamedSheet(result, text);
   }catch(err){
     // Fall back to demo results so the picker still works even if API is down
@@ -3111,7 +3227,7 @@ async function onSendText(ev){
     }catch(_){
       closeSheet();
       txtInput.value = text; txtInput.style.height = 'auto'; updBtns();
-      showRetryToast(text, direction, 'picker');
+      showRetryToast(text, direction, 'picker', _);
     }
   }finally{
     txtInput.disabled=false; sendBtn.disabled=false;
@@ -3142,13 +3258,18 @@ async function sendWithContextBypass(text, direction, c){
     ts: now.getTime(), translating: true
   };
   c.msgs.push(msg);
+  updateContactProfile(c.id, c.msgs);
   const ta = document.getElementById('txtInput');
   ta.value = ''; ta.style.height = 'auto'; updBtns();
   renderMsgs(); renderSidebar(); ta.focus();
 
   try{
-    const result = await callOpenAI({ kind: 'text', text, direction });
-    const confidence = typeof result.contextConfidence === 'number' ? result.contextConfidence : 0;
+    const _learnedBypass = checkLearnedDictionary(text, direction);
+    const result = _learnedBypass || await callOpenAI({ kind: 'text', text, direction });
+    if(!_learnedBypass) logUnknownSlangCandidate(result, text, direction);
+    const rawConfidence = typeof result.contextConfidence === 'number' ? result.contextConfidence : 0;
+    const conflictPenalty = detectToneConflict(c.id, c.msgs.slice(-4));
+    const confidence = Math.max(0, rawConfidence - conflictPenalty);
     const recEmo = (result.recommendedOption || '').toLowerCase();
     const recOpt = (result.options || []).find(o => (o.emotion||'').toLowerCase() === recEmo);
 
@@ -3174,7 +3295,6 @@ async function sendWithContextBypass(text, direction, c){
       renderMsgs(); renderSidebar();
       // Open picker with the result we already have (no second API call)
       pending = { result, original: text, mode: 'text' };
-      logUnknownSlangCandidate(result, text, direction);
       showSkeletonSheet(text);
       finalizeStreamedSheet(result, text);
     }
@@ -3185,7 +3305,7 @@ async function sendWithContextBypass(text, direction, c){
     const ta = document.getElementById('txtInput');
     ta.value = text; ta.style.height = 'auto'; updBtns();
     renderMsgs(); renderSidebar();
-    showRetryToast(text, direction, 'bypass');
+    showRetryToast(text, direction, 'bypass', err);
   }
 }
 
@@ -3635,24 +3755,48 @@ function showLearnedToast(picked, rel){
 // Shown when a send fails. Draft is already restored in the input.
 // "Retry" re-fires the exact same path that failed.
 let _retryTimer = null;
-function showRetryToast(text, direction, path){
+function classifyApiError(err){
+  const msg = (err && err.message || '').toLowerCase();
+  if(msg.includes('401') || msg.includes('invalid api key') || msg.includes('incorrect api key'))
+    return 'key';
+  if(msg.includes('429') || msg.includes('quota') || msg.includes('insufficient_quota') || msg.includes('rate limit'))
+    return 'quota';
+  return 'connection';
+}
+
+function showRetryToast(text, direction, path, err){
   const existing = document.getElementById('retryToast');
   if(existing) existing.remove();
   clearTimeout(_retryTimer);
 
+  const errorType = classifyApiError(err);
+  let message = '';
+  if(errorType === 'key'){
+    message = 'Invalid API key. Your key may have expired or been entered incorrectly. Go to platform.openai.com to check your key, then refresh and re-enter it.';
+  } else if(errorType === 'quota'){
+    message = 'Your OpenAI credit has run out. The translation could not be completed. Add credits at platform.openai.com/settings/billing to continue.';
+  } else {
+    message = 'Send failed. Check your connection and try again.';
+  }
+
+  const showRetry = errorType === 'connection';
+
   const t = document.createElement('div');
   t.id = 'retryToast';
-  t.innerHTML = `<span>Send failed — check connection</span><button id="retryBtn">Retry</button><button id="retryDismiss">✕</button>`;
+  t.innerHTML = `<span>${message}</span>${showRetry ? '<button id="retryBtn">Retry</button>' : ''}<button id="retryDismiss">Dismiss</button>`;
   document.body.appendChild(t);
 
   document.getElementById('retryDismiss').onclick = () => t.remove();
-  document.getElementById('retryBtn').onclick = async () => {
-    t.remove();
-    if(path === 'direct') await sendOptimistic(text, direction);
-    else await onSendText(null); // input already has the text restored
-  };
-  // Auto-dismiss after 12 seconds
-  _retryTimer = setTimeout(() => t.remove(), 12000);
+  if(showRetry){
+    document.getElementById('retryBtn').onclick = async () => {
+      t.remove();
+      if(path === 'direct') await sendOptimistic(text, direction);
+      else await onSendText(null);
+    };
+  }
+  // Key/quota errors stay longer since the user needs to read and act on them
+  const timeout = errorType === 'connection' ? 12000 : 20000;
+  _retryTimer = setTimeout(() => t.remove(), timeout);
 }
 
 // ═══════════════════════════════════════════════════════
@@ -3906,7 +4050,11 @@ async function callOpenAI(payload) {
       // Conversation history context (same-session messages only)
       if(isText){
         const c = activeCont();
-        if(c && c.msgs) systemPrompt += getConversationContext(c.msgs);
+        if(c && c.msgs){
+          systemPrompt += getContactProfileNote(c.id);
+          systemPrompt += getConversationContext(c.msgs);
+          systemPrompt += getToneConflictNote(c.id, c.msgs.slice(-4));
+        }
       }
 
       // Slang/wordplay injection — appended after base prompt
@@ -4463,17 +4611,27 @@ function renderStylePanel(){
     const errNote = errCount
       ? `<div class="style-note">The app has self-corrected its pattern read ${errCount} time${errCount!==1?'s':''} based on your choices.</div>`
       : '';
-    // Unknown slang candidates the AI caught but our dictionary missed
-    const unknownLog = JSON.parse(localStorage.getItem('unknown_slang_log')||'[]');
-    const hotCandidates = unknownLog.filter(e => e.count >= 3).sort((a,b)=>b.count-a.count).slice(0,5);
-    const unknownNote = hotCandidates.length
-      ? `<div class="style-note" style="margin-top:10px;border-left:3px solid var(--gold);padding-left:8px;">
-           <strong>🔍 Slang candidates for review (${hotCandidates.length})</strong><br>
-           These phrases were flagged by AI but aren't in the dictionary yet. Review to decide if they belong:<br>
-           ${hotCandidates.map(e=>`<code style="font-size:11px;background:var(--chip);padding:1px 5px;border-radius:4px;">${esc(e.text.slice(0,50))}</code> ×${e.count}`).join('<br>')}
+    // Auto-learned phrases (graduated from candidates after LEARN_THRESHOLD uses)
+    const learnedDict = JSON.parse(localStorage.getItem('learned_dictionary')||'{}');
+    const learnedEntries = Object.values(learnedDict).sort((a,b)=>b.count-a.count).slice(0,8);
+    const learnedNote = learnedEntries.length
+      ? `<div class="style-note" style="margin-top:10px;border-left:3px solid var(--green,#34c759);padding-left:8px;">
+           <strong>Learned phrases (${learnedEntries.length})</strong><br>
+           The app now answers these without calling the AI:<br>
+           ${learnedEntries.map(e=>`<code style="font-size:11px;background:var(--chip);padding:1px 5px;border-radius:4px;">${esc(e.text.slice(0,50))}</code> ×${e.count}`).join('<br>')}
          </div>`
       : '';
-    el.innerHTML = rows + errNote + unknownNote;
+    // Candidates still working toward the threshold
+    const unknownLog = JSON.parse(localStorage.getItem('unknown_slang_log')||'[]');
+    const hotCandidates = unknownLog.filter(e => e.count >= 2).sort((a,b)=>b.count-a.count).slice(0,5);
+    const unknownNote = hotCandidates.length
+      ? `<div class="style-note" style="margin-top:10px;border-left:3px solid var(--gold);padding-left:8px;">
+           <strong>Learning (${hotCandidates.length} phrase${hotCandidates.length!==1?'s':''})</strong><br>
+           Seen multiple times — will auto-learn after ${LEARN_THRESHOLD} uses:<br>
+           ${hotCandidates.map(e=>`<code style="font-size:11px;background:var(--chip);padding:1px 5px;border-radius:4px;">${esc(e.text.slice(0,50))}</code> ×${e.count}/${LEARN_THRESHOLD}`).join('<br>')}
+         </div>`
+      : '';
+    el.innerHTML = rows + errNote + learnedNote + unknownNote;
   }catch(_){
     el.innerHTML = '<div class="style-empty">Nothing recorded yet.</div>';
   }
