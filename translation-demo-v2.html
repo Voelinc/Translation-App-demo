@@ -215,6 +215,48 @@ html,body{height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:v
 .mday{align-self:center;background:rgba(255,255,255,.85);backdrop-filter:blur(8px);
   color:var(--muted);font-size:11.5px;font-weight:500;padding:4px 12px;border-radius:999px;
   margin:12px 0 8px;box-shadow:var(--shadow-sm);}
+
+/* ── Cultural Bridge Card ── */
+.bridge-card{margin:16px 14px 10px;background:linear-gradient(135deg,#fffbeb 0%,#fff8f0 100%);
+  border:1px solid rgba(245,158,11,.28);border-radius:16px;padding:14px 14px 12px;
+  animation:bridgeFadeIn .5s cubic-bezier(.4,0,.2,1);}
+@keyframes bridgeFadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.bridge-header{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:10px;}
+.bridge-icon{font-size:15px;line-height:1;}
+.bridge-title{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--gold);}
+.bridge-pair{display:flex;align-items:stretch;gap:8px;}
+.bridge-side{flex:1;background:#fff;border-radius:10px;padding:9px 11px;
+  border:1px solid rgba(245,158,11,.15);}
+.bridge-lang{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--muted-2);margin-bottom:3px;}
+.bridge-phrase{font-size:13px;font-weight:600;color:var(--ink);line-height:1.35;}
+.bridge-meaning{font-size:11px;color:var(--muted);margin-top:3px;font-style:italic;line-height:1.4;}
+.bridge-connector{display:flex;align-items:center;justify-content:center;
+  color:var(--muted-2);font-size:16px;flex-shrink:0;padding:0 2px;}
+.bridge-shared{text-align:center;font-size:11.5px;color:var(--muted);margin-top:9px;
+  line-height:1.45;font-style:italic;padding:0 4px;}
+
+/* ── Learn Chip — shown on received bubbles when slang is detected ── */
+.learn-chip{display:inline-flex;align-items:center;flex-wrap:wrap;gap:5px;
+  margin:3px 0 6px 6px;padding:5px 10px 5px 8px;
+  background:var(--panel);border:1px solid var(--line);border-radius:20px;
+  font-size:11.5px;max-width:78%;box-shadow:var(--shadow-sm);
+  animation:chipFadeIn .3s cubic-bezier(.4,0,.2,1);}
+@keyframes chipFadeIn{from{opacity:0;transform:translateY(3px);}to{opacity:1;transform:translateY(0);}}
+.lc-icon{font-size:12px;flex-shrink:0;}
+.lc-new-label{font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--muted-2);flex-shrink:0;padding:1px 5px;background:var(--panel-2);
+  border-radius:4px;white-space:nowrap;}
+.lc-phrase{font-weight:600;color:var(--ink);font-style:italic;}
+.lc-sep{color:var(--muted-2);}
+.lc-meaning{color:var(--muted);line-height:1.35;}
+.lc-gen{display:inline-block;padding:1px 7px;border-radius:999px;font-size:10px;
+  font-weight:700;letter-spacing:.05em;text-transform:uppercase;flex-shrink:0;white-space:nowrap;}
+.lc-gen.gen-z{background:#ede9fe;color:#6d28d9;}
+.lc-gen.gen-mill{background:#e0f2fe;color:#0369a1;}
+.lc-gen.gen-uni{background:#f0fdf4;color:#166534;}
+.lc-gen.gen-old{background:#fef3c7;color:#92400e;}
 .mrow{display:flex;margin-bottom:1px;}
 .mrow.me{justify-content:flex-end;}
 .mrow.them{justify-content:flex-start;}
@@ -242,11 +284,20 @@ html,body{height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:v
 .ticks svg{width:14px;height:14px;}
 .ticks.read{color:var(--read-tick);}
 .b-emo{display:none;} /* emotion label hidden on delivered bubbles per user preference */
-/* Original text — hidden by default; peek-on-demand via .btgl chevron */
+/* Original text — hidden by default; peek-on-demand via translated badge */
 .b-orig{display:none;font-size:12px;font-style:italic;margin-top:6px;padding-top:6px;
-  border-top:1px solid rgba(255,255,255,.18);opacity:.85;}
+  border-top:1px solid rgba(255,255,255,.18);opacity:.85;line-height:1.4;}
 .bubble.them .b-orig{border-top-color:var(--line);color:var(--muted);opacity:.85;}
 .bubble.showorig .b-orig{display:block;}
+/* Translated badge — replaces the invisible ⌄ chevron */
+.b-translated-badge{display:inline-flex;align-items:center;gap:3px;
+  font-size:10px;font-weight:600;letter-spacing:.02em;
+  color:var(--blue);opacity:.75;cursor:pointer;padding:1px 5px;
+  border-radius:999px;border:1px solid var(--blue);margin-left:4px;
+  transition:opacity .12s,background .12s;vertical-align:middle;line-height:1.6;}
+.b-translated-badge:hover{opacity:1;background:rgba(0,104,255,.07);}
+.bubble.me .b-translated-badge{color:#fff;border-color:rgba(255,255,255,.55);opacity:.7;}
+.bubble.me .b-translated-badge:hover{opacity:1;background:rgba(255,255,255,.15);}
 /* Alternatives panel — inline reveal under received bubble */
 .b-alts{display:none;margin-top:8px;padding-top:8px;border-top:1px solid var(--line);}
 .bubble.showalts .b-alts{display:block;}
@@ -262,13 +313,147 @@ html,body{height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:v
 .btgl:hover{opacity:.95;}
 .nomsg{text-align:center;color:var(--muted);font-size:14px;padding:40px 20px;}
 
+/* ── Media picker popover (Emoji · Stickers · GIF) ── */
+.media-pop{position:absolute;bottom:calc(100% + 6px);left:14px;
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  width:340px;max-height:360px;
+  display:flex;flex-direction:column;
+  box-shadow:var(--shadow-md);z-index:30;overflow:hidden;}
+.media-tabs{display:flex;gap:0;padding:8px 8px 0;border-bottom:1px solid var(--line);flex-shrink:0;}
+.media-tab-btn{flex:1;background:none;border:none;border-radius:8px 8px 0 0;
+  padding:7px 4px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;
+  letter-spacing:.01em;transition:color .1s;position:relative;}
+.media-tab-btn.active{color:var(--blue);}
+.media-tab-btn.active::after{content:'';position:absolute;bottom:-1px;left:4px;right:4px;height:2px;
+  background:var(--blue);border-radius:2px 2px 0 0;}
+.media-tab-btn:hover:not(.active){color:var(--ink);}
+.gif-tab-lbl{font-size:11px;font-weight:800;letter-spacing:-.3px;}
+.media-pane{flex:1;min-height:0;overflow-y:auto;padding:8px;}
+#mediaGifPane{display:flex;flex-direction:column;gap:6px;overflow:hidden;padding:8px;}
+#mediaGifPane .gif-grid-wrap{flex:1;min-height:0;overflow-y:auto;}
+#mediaStickersPane{display:flex;flex-direction:column;overflow:hidden;padding:8px;}
+/* Plus button */
+.plus-btn{font-size:22px;font-weight:300;color:var(--muted);}
+/* Sticker styles */
+.sticker-cat-pills{display:flex;gap:4px;overflow-x:auto;padding-bottom:8px;
+  margin-bottom:6px;border-bottom:1px solid var(--line);scrollbar-width:none;flex-shrink:0;}
+.sticker-cat-pills::-webkit-scrollbar{display:none;}
+.sticker-cat-pill{background:var(--panel-2);border:none;border-radius:20px;
+  padding:4px 10px;font-size:11.5px;font-weight:600;color:var(--muted);
+  cursor:pointer;white-space:nowrap;transition:background .12s,color .12s;flex-shrink:0;}
+.sticker-cat-pill.active{background:var(--blue);color:#fff;}
+.sticker-cat-pill:hover:not(.active){color:var(--ink);}
+.sticker-grid-wrap{flex:1;min-height:0;overflow-y:auto;}
+.sticker-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;}
+.sticker-item{border-radius:8px;overflow:hidden;cursor:pointer;aspect-ratio:1;
+  background:var(--panel-2);transition:transform .12s,box-shadow .12s;}
+.sticker-item:hover{transform:scale(1.06);box-shadow:0 3px 10px rgba(16,24,40,.1);}
+.sticker-item img{width:100%;height:100%;object-fit:contain;display:block;}
+.sticker-loading{text-align:center;padding:20px 0;color:var(--muted);font-size:12px;}
+/* GIF styles (inside media-pane) */
+.gif-search-wrap{display:flex;align-items:center;gap:6px;
+  background:var(--panel-2);border-radius:9px;padding:7px 10px;flex-shrink:0;}
+.gif-search-wrap::before{content:"";display:inline-block;width:14px;height:14px;flex-shrink:0;
+  background-repeat:no-repeat;background-position:center;opacity:.5;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round'><circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>");}
+.gif-search-inp{background:none;border:none;outline:none;font-size:13px;color:var(--ink);
+  width:100%;font-family:inherit;}
+.gif-search-inp::placeholder{color:var(--muted);}
+.gif-grid-wrap{overflow-y:auto;flex:1;}
+.gif-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:5px;}
+.gif-item{border-radius:8px;overflow:hidden;cursor:pointer;aspect-ratio:16/10;
+  background:var(--panel-2);transition:transform .12s,box-shadow .12s;}
+.gif-item:hover{transform:scale(1.03);box-shadow:0 3px 10px rgba(16,24,40,.12);}
+.gif-item img{width:100%;height:100%;object-fit:cover;display:block;}
+.gif-loading{text-align:center;padding:24px 0;color:var(--muted);font-size:13px;}
+.gif-attr{font-size:10px;color:var(--muted-2);text-align:right;padding:2px 2px 0;opacity:.7;flex-shrink:0;}
+/* GIF message bubble */
+.msg-gif{display:block;border-radius:12px;max-width:220px;width:100%;cursor:pointer;}
+.bubble.me .msg-gif{border-radius:12px 12px 4px 12px;}
+.bubble.them .msg-gif{border-radius:12px 12px 12px 4px;}
+.bubble.gif-bubble{padding:4px;background:transparent !important;box-shadow:none;}
+.bubble.gif-bubble .b-meta{background:rgba(0,0,0,.45);border-radius:6px;
+  padding:2px 6px;position:absolute;bottom:8px;right:8px;color:#fff !important;}
+.bubble.gif-bubble{position:relative;}
+
+/* ── Edited label ── */
+.b-edited{font-size:10px;opacity:.65;font-style:italic;margin-right:3px;}
+
+/* ── Context menu (right-click / long-press) ── */
+.edit-ctx-menu{position:fixed;z-index:9999;background:var(--panel);border:1px solid var(--line);
+  border-radius:12px;box-shadow:0 6px 20px rgba(16,24,40,.15);overflow:hidden;min-width:160px;}
+.edit-ctx-item{display:flex;align-items:center;gap:9px;padding:11px 16px;font-size:14px;
+  font-weight:500;cursor:pointer;color:var(--ink);transition:background .1s;}
+.edit-ctx-item:hover{background:var(--panel-2);}
+.edit-ctx-item.disabled{opacity:.38;cursor:not-allowed;pointer-events:none;}
+.edit-ctx-item.danger{color:#EF4444;}
+.edit-ctx-item.danger:hover{background:#FEF2F2;}
+.edit-ctx-icon{font-size:16px;line-height:1;flex-shrink:0;}
+.ctx-sep{height:1px;background:var(--line);margin:2px 0;}
+/* Reaction picker row inside context menu */
+.ctx-reactions{display:flex;align-items:center;justify-content:space-around;padding:10px 14px 6px;}
+.ctx-react-btn{background:none;border:none;font-size:22px;cursor:pointer;border-radius:8px;
+  padding:4px 6px;transition:transform .1s,background .1s;line-height:1;}
+.ctx-react-btn:hover{transform:scale(1.25);background:var(--panel-2);}
+.ctx-react-btn.active{transform:scale(1.15);}
+/* ── Reaction bubble badge ── */
+.msg-reactions{position:absolute;top:-12px;left:6px;display:flex;gap:2px;z-index:2;}
+.react-badge{background:var(--panel);border:1px solid var(--line);border-radius:999px;
+  padding:1px 5px;font-size:13px;line-height:1.5;box-shadow:0 1px 4px rgba(0,0,0,.1);
+  cursor:pointer;transition:transform .1s;}
+.react-badge:hover{transform:scale(1.15);}
+.mrow{position:relative;}
+/* ── Deleted message ── */
+.bubble.deleted-msg{background:var(--panel-2) !important;box-shadow:none;}
+.bubble.deleted-msg .del-text{font-size:13px;color:var(--muted);font-style:italic;padding:2px 0;}
+/* ── Reply bar above composer ── */
+.reply-bar{display:none;align-items:center;gap:10px;padding:7px 14px 4px;
+  border-top:1px solid var(--line);background:var(--panel);}
+.reply-bar-inner{flex:1;min-width:0;border-left:3px solid var(--blue);padding-left:8px;}
+.reply-bar-label{font-size:10.5px;font-weight:700;color:var(--blue);margin-bottom:1px;}
+.reply-bar-text{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.reply-bar-close{background:none;border:none;font-size:18px;color:var(--muted);cursor:pointer;
+  padding:2px 6px;line-height:1;flex-shrink:0;border-radius:50%;transition:background .1s;}
+.reply-bar-close:hover{background:var(--panel-2);color:var(--ink);}
+/* ── Reply reference inside a bubble ── */
+.reply-ref{border-left:3px solid rgba(255,255,255,.45);background:rgba(255,255,255,.12);
+  border-radius:4px;padding:5px 8px;margin-bottom:6px;font-size:11.5px;line-height:1.35;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;opacity:.85;}
+.bubble.them .reply-ref{border-left-color:var(--blue);background:rgba(0,104,255,.07);}
+
+/* ── Inline edit UI inside bubble ── */
+.bubble-edit-wrap{display:flex;flex-direction:column;gap:6px;min-width:160px;}
+.bubble-edit-ta{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.45);
+  border-radius:8px;padding:6px 8px;font-size:14px;line-height:1.4;color:#fff;
+  font-family:inherit;resize:none;outline:none;width:100%;min-height:36px;max-height:120px;}
+.bubble-edit-ta::placeholder{color:rgba(255,255,255,.5);}
+.bubble-edit-actions{display:flex;gap:6px;justify-content:flex-end;}
+.bubble-edit-save,.bubble-edit-cancel{border:none;border-radius:7px;padding:5px 12px;
+  font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;}
+.bubble-edit-save{background:#fff;color:var(--blue);}
+.bubble-edit-cancel{background:rgba(255,255,255,.18);color:#fff;}
+.bubble-edit-save:hover{background:#e8f0ff;}
+.bubble-edit-cancel:hover{background:rgba(255,255,255,.28);}
+.edit-timer{font-size:10px;opacity:.6;text-align:right;}
+
 /* Composer */
 .composer{background:var(--panel);border-top:1px solid var(--line);padding:10px 16px calc(14px + env(safe-area-inset-bottom));flex-shrink:0;position:relative;}
-/* Emoji popover */
-.emoji-pop{position:absolute;bottom:calc(100% - 0px);left:14px;
-  background:var(--panel);border:1px solid var(--line);border-radius:14px;
-  padding:8px;width:340px;max-height:280px;overflow-y:auto;
-  box-shadow:var(--shadow-md);z-index:30;}
+
+/* Grammar suggestion chip */
+.grammar-chip{display:flex;align-items:center;gap:8px;padding:6px 12px 8px 12px;
+  font-size:12.5px;color:var(--ink);animation:chipFadeIn .2s ease;}
+.grammar-chip.hidden{display:none;}
+.gc-icon{font-size:13px;flex-shrink:0;}
+.gc-label{color:var(--muted);flex-shrink:0;font-size:12px;}
+.gc-text{font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink);}
+.gc-use{background:var(--blue);color:#fff;border:none;border-radius:999px;
+  padding:3px 11px;font-size:11.5px;font-weight:600;cursor:pointer;flex-shrink:0;
+  font-family:inherit;transition:background .12s;}
+.gc-use:hover{background:var(--blue-dk);}
+.gc-dismiss{background:none;border:none;color:var(--muted-2);cursor:pointer;
+  font-size:15px;padding:2px 4px;flex-shrink:0;line-height:1;transition:color .12s;}
+.gc-dismiss:hover{color:var(--ink);}
+/* Emoji grid (inside .media-pane) */
 .emoji-cat{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
   color:var(--muted);padding:6px 6px 4px;}
 .emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;}
@@ -306,6 +491,11 @@ html,body{height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:v
 #txtInput:focus::-webkit-scrollbar-track{background:transparent;}
 #txtInput::placeholder{color:var(--muted);}
 #txtInput:disabled{opacity:.5;}
+/* Language direction badge — lives inside the input pill, right side */
+.lang-badge{font-size:10px;font-weight:700;letter-spacing:.04em;color:var(--muted);
+  opacity:.55;white-space:nowrap;user-select:none;flex-shrink:0;padding-right:6px;
+  transition:opacity .15s,color .15s;}
+.lang-badge.as-is{color:var(--blue);opacity:.8;}
 .c-iconbtn{width:36px;height:36px;border-radius:50%;background:transparent;border:none;cursor:pointer;
   display:flex;align-items:center;justify-content:center;color:var(--muted);transition:background .12s,color .12s;}
 .c-iconbtn:hover:not(:disabled){background:rgba(0,0,0,.04);color:var(--ink);}
@@ -331,39 +521,25 @@ html,body{height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:v
 /* Send button + hover-reveal Direct pill */
 .send-wrap{position:relative;display:flex;align-items:center;gap:6px;}
 
-/* Mobile: Direct always visible as a round icon button next to Send */
+/* Mobile: Direct as a compact icon-only round button */
 @media(max-width:680px){
-  .direct-pop{position:static;opacity:1;pointer-events:auto;
-    transform:none;padding:0;transition:none;}
   .direct-pop button{
-    width:40px;height:40px;border-radius:50%;
-    background:var(--panel-2);color:var(--ink);
-    border:1.5px solid var(--line);
-    padding:0;font-size:17px;box-shadow:none;
+    width:36px;height:36px;border-radius:50%;
+    padding:0;font-size:16px;
     display:flex;align-items:center;justify-content:center;gap:0;}
-  .direct-pop button::after{display:none;}
   #directLbl{display:none;}
   .cbtn-sub{display:none;}
 }
-/* Key UX fix: the pill's bottom touches the top of the send button and has an
-   invisible 10px bottom padding that bridges the gap to the pill visually. This
-   means the cursor can cross from send button → pill without ever leaving a
-   hoverable area, so the pill doesn't flicker-hide when you go to click it. */
-.direct-pop{position:absolute;bottom:100%;right:-4px;opacity:0;
-  padding:4px 6px 10px 6px;
-  pointer-events:none;transform:translateY(4px);
-  transition:opacity .18s, transform .18s;z-index:30;}
-.send-wrap:hover .direct-pop,
-.send-wrap:focus-within .direct-pop,
-.direct-pop:hover{opacity:1;pointer-events:auto;transform:translateY(0);}
-.direct-pop button{background:#1F2937;color:#fff;border:none;
-  padding:7px 13px;border-radius:999px;font-size:12px;font-weight:600;
-  cursor:pointer;white-space:nowrap;box-shadow:var(--shadow-md);
-  display:flex;align-items:center;gap:5px;position:relative;}
-.direct-pop button:hover{background:#111827;}
-.direct-pop button:disabled{opacity:.5;cursor:default;}
-.direct-pop button::after{content:"";position:absolute;bottom:-3px;right:14px;
-  width:8px;height:8px;background:#1F2937;transform:rotate(45deg);border-radius:1px;}
+/* Direct button — always visible as a small pill to the left of Send */
+.direct-pop{position:static;opacity:1;pointer-events:auto;
+  transform:none;padding:0;transition:none;display:flex;align-items:center;}
+.direct-pop button{background:transparent;color:var(--muted);border:1.5px solid var(--line);
+  padding:5px 10px;border-radius:999px;font-size:11px;font-weight:700;
+  cursor:pointer;white-space:nowrap;
+  display:flex;align-items:center;gap:4px;letter-spacing:.01em;
+  transition:background .12s,color .12s,border-color .12s;}
+.direct-pop button:hover{background:var(--panel-2);color:var(--ink);border-color:var(--muted);}
+.direct-pop button:disabled{opacity:.35;cursor:default;}
 .cmeta{display:flex;justify-content:space-between;padding:6px 14px 0;}
 .chint{font-size:11.5px;color:var(--muted-2);flex:1;text-align:center;}
 .ctimer{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;display:none;}
@@ -427,6 +603,23 @@ html,body{height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:v
   background:none;border:1px solid #BFDBFE;border-radius:20px;padding:3px 10px;cursor:pointer;
   opacity:.7;transition:opacity .15s;}
 .wp-dismiss-btn:hover{opacity:1;background:#EFF6FF;}
+
+/* Emotional vi-en equivalent banner — shown first time only, before the single option card */
+.eeb{margin:0 14px 12px;background:#FFF7ED;border:1px solid #FED7AA;border-radius:14px;padding:13px 14px;}
+.eeb-headline{font-size:13.5px;font-weight:600;color:#92400E;line-height:1.45;margin-bottom:5px;}
+.eeb-headline strong{color:#78350F;}
+.eeb-reason{font-size:12px;color:#B45309;line-height:1.45;margin-bottom:9px;}
+.eeb-dismiss-btn{display:inline-block;font-size:11.5px;color:#92400E;background:none;
+  border:1px solid #FED7AA;border-radius:20px;padding:4px 12px;cursor:pointer;opacity:.75;transition:opacity .15s;}
+.eeb-dismiss-btn:hover{opacity:1;background:#FFEDD5;}
+
+/* Receiver learning note — shown once when the contact hasn't seen this phrase yet */
+.rn{margin:4px 14px 10px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:12px;padding:10px 13px;display:flex;align-items:flex-start;gap:8px;animation:fadeIn .25s ease;}
+.rn-icon{font-size:13px;margin-top:1px;flex-shrink:0;}
+.rn-body{font-size:12px;color:#1E40AF;line-height:1.5;flex:1;}
+.rn-body strong{color:#1E3A8A;}
+.rn-close{background:none;border:none;font-size:13px;color:#93C5FD;cursor:pointer;padding:0;line-height:1;flex-shrink:0;margin-top:1px;}
+.rn-close:hover{color:#3B82F6;}
 
 /* Why-did-you-pick-this overlay */
 #whyOverlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;
@@ -630,6 +823,40 @@ html,body{height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:v
   padding:10px 16px;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;}
 .btndel:hover{background:#FEF2F2;}
 
+/* === Friend Request Notification === */
+.freq-overlay{position:fixed;top:16px;left:50%;transform:translateX(-50%);
+  z-index:900;display:none;flex-direction:column;gap:10px;
+  width:min(420px,calc(100vw - 32px));pointer-events:none;}
+.freq-overlay.show{display:flex;}
+.freq-card{background:var(--panel);border-radius:16px;
+  box-shadow:0 8px 32px rgba(0,0,0,.18);pointer-events:all;overflow:hidden;
+  animation:freq-in .25s cubic-bezier(.34,1.56,.64,1);}
+@keyframes freq-in{from{opacity:0;transform:translateY(-18px) scale(.96)}to{opacity:1;transform:none}}
+.freq-top{display:flex;align-items:center;gap:12px;padding:16px 18px 12px;}
+.freq-av{width:44px;height:44px;border-radius:50%;background:#dbeafe;
+  display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;
+  color:#1d4ed8;flex-shrink:0;}
+.freq-info{flex:1;min-width:0;}
+.freq-name{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.freq-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.freq-actions{display:flex;gap:8px;padding:0 18px 16px;}
+.freq-accept{flex:1;padding:10px;border:none;border-radius:10px;
+  background:#16a34a;color:#fff;font-size:14px;font-weight:600;cursor:pointer;}
+.freq-accept:hover{background:#15803d;}
+.freq-deny{flex:1;padding:10px;border:1px solid var(--line);border-radius:10px;
+  background:var(--panel-2);color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;}
+.freq-deny:hover{background:#fee2e2;border-color:#fca5a5;color:#dc2626;}
+
+/* Bell badge in sidebar */
+.req-bell{position:relative;background:none;border:none;cursor:pointer;
+  width:32px;height:32px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;color:var(--muted);}
+.req-bell:hover{background:var(--panel-2);color:var(--ink);}
+.req-bell .badge{position:absolute;top:2px;right:2px;width:16px;height:16px;
+  border-radius:50%;background:#dc2626;color:#fff;font-size:10px;font-weight:700;
+  display:none;align-items:center;justify-content:center;}
+.req-bell .badge.show{display:flex;}
+
 /* Typing indicator bubble */
 .typing-dots{display:flex;gap:5px;padding:4px 2px;align-items:center;}
 .typing-dots span{width:8px;height:8px;border-radius:50%;background:var(--muted-2);
@@ -704,7 +931,28 @@ html,body{height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:v
       </span>
     </button>
 
-    <!-- Option 2: Live — collapsed by default -->
+    <!-- Option 2: Local Test — two tabs, same device, no backend needed -->
+    <details id="localDetails" style="border:1.5px solid var(--line);border-radius:14px;background:var(--panel);overflow:hidden;margin-bottom:10px;">
+      <summary style="padding:16px 18px;cursor:pointer;display:flex;align-items:flex-start;gap:14px;list-style:none;">
+        <span style="font-size:26px;line-height:1;flex-shrink:0;">🖥️</span>
+        <span>
+          <strong style="font-size:15px;display:block;margin-bottom:3px;">Local Test — two tabs, same device</strong>
+          <span style="font-size:13px;color:var(--muted);line-height:1.45;">Open this app in two browser tabs and chat between them instantly. No account or internet needed.</span>
+        </span>
+      </summary>
+      <div style="padding:0 18px 18px;">
+        <label class="flabel">Room Code</label>
+        <div style="display:flex;gap:8px;margin-bottom:6px;">
+          <input type="text" id="localRoomCode" class="finput" placeholder="ABC123" maxlength="8" autocomplete="off"
+            style="margin-bottom:0;text-transform:uppercase;letter-spacing:.12em;font-weight:600;">
+          <button class="btnsave" style="white-space:nowrap;padding:10px 14px;" onclick="document.getElementById('localRoomCode').value=Math.random().toString(36).slice(2,8).toUpperCase()">Generate</button>
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">Both tabs must use the same code. If you used "Connect" from a contact, it's already filled in.</p>
+        <button class="btnsave" style="width:100%;background:#16a34a;" onclick="connectLocal()">Start Local Test →</button>
+      </div>
+    </details>
+
+    <!-- Option 3: Live — collapsed by default -->
     <details id="liveDetails" style="border:1.5px solid var(--line);border-radius:14px;background:var(--panel);overflow:hidden;">
       <summary style="padding:16px 18px;cursor:pointer;display:flex;align-items:flex-start;gap:14px;list-style:none;">
         <span style="font-size:26px;line-height:1;flex-shrink:0;">📲</span>
@@ -737,14 +985,14 @@ html,body{height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:v
         </div>
         <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">Generate a code and share it, or type the other person's code to join.</p>
 
-        <label class="flabel" style="margin-bottom:8px;">Your relationship to this person</label>
-        <div class="relgrid" id="liveRelGrid" style="margin-bottom:16px;"></div>
-
         <button class="btnsave" style="width:100%;" onclick="connectFirebase()">Connect &amp; Start →</button>
       </div>
     </details>
   </div>
 </div>
+
+<!-- Friend Request Notifications -->
+<div class="freq-overlay" id="freqOverlay"></div>
 
 <!-- APP -->
 <div id="app" style="display:flex;">
@@ -758,6 +1006,10 @@ html,body{height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:v
             <button data-dir="en-vi" onclick="setAppDir('en-vi')" class="active">EN</button>
             <button data-dir="vi-en" onclick="setAppDir('vi-en')">VI</button>
           </div>
+          <button class="req-bell" id="reqBellBtn" onclick="showPendingRequests()" aria-label="Friend requests" title="Friend requests">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="badge" id="reqBadge"></span>
+          </button>
           <button class="gear-btn" onclick="openSettings()" aria-label="Settings" title="Settings">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="3"/>
@@ -819,6 +1071,13 @@ html,body{height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:v
               <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
             </svg>
           </button>
+          <!-- Connect button — visible only when contact has an email -->
+          <button class="icon-btn" id="btnConnectEmail" title="Connect live session" aria-label="Connect" style="display:none;color:var(--blue);" onclick="openLiveSessionForContact()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+            </svg>
+          </button>
           <button class="icon-btn" title="More" aria-label="More" onclick="if(activeId)openModal(activeId)">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
               <circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/>
@@ -835,17 +1094,50 @@ html,body{height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:v
       </div>
 
       <div class="composer">
-        <!-- Emoji popover (hidden until the emoji button is tapped) -->
-        <div class="emoji-pop" id="emojiPop" style="display:none;" role="dialog" aria-label="Emoji picker"></div>
+        <!-- Media picker (Emoji · Stickers · GIF) -->
+        <div class="media-pop" id="mediaPop" style="display:none;" role="dialog" aria-label="Media picker">
+          <div class="media-tabs">
+            <button class="media-tab-btn active" data-tab="emoji">😊 Emoji</button>
+            <button class="media-tab-btn" data-tab="stickers">🎭 Stickers</button>
+            <button class="media-tab-btn gif-tab-lbl" data-tab="gif">GIF</button>
+          </div>
+          <div class="media-pane" id="mediaEmojiPane"></div>
+          <div class="media-pane" id="mediaStickersPane" style="display:none;"></div>
+          <div class="media-pane" id="mediaGifPane" style="display:none;">
+            <div class="gif-search-wrap">
+              <input class="gif-search-inp" id="gifSearchInp" type="text" placeholder="Search GIFs…" autocomplete="off"/>
+            </div>
+            <div class="gif-grid-wrap">
+              <div class="gif-grid" id="gifGrid"><div class="gif-loading">Loading GIFs…</div></div>
+            </div>
+            <div class="gif-attr">Powered by Tenor</div>
+          </div>
+        </div>
+        <!-- Grammar suggestion chip — appears while typing when grammar check is on -->
+        <div id="grammarChip" class="grammar-chip hidden">
+          <span class="gc-icon">✏️</span>
+          <span class="gc-label">Suggestion:</span>
+          <span class="gc-text" id="gcText"></span>
+          <button class="gc-use" onclick="applyGrammarSuggestion()">Use it</button>
+          <button class="gc-dismiss" onclick="dismissGrammarChip()" aria-label="Dismiss">✕</button>
+        </div>
+        <!-- Reply preview bar — visible when replying to a message -->
+        <div class="reply-bar" id="replyBar">
+          <div class="reply-bar-inner">
+            <div class="reply-bar-label" id="replyBarLabel">Replying to</div>
+            <div class="reply-bar-text" id="replyBarText"></div>
+          </div>
+          <button class="reply-bar-close" id="replyBarClose" aria-label="Cancel reply">✕</button>
+        </div>
         <div class="cbox" id="cbox">
-          <button id="emojiBtn" class="c-iconbtn" title="Emoji" aria-label="Emoji" type="button">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-              <line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>
+          <button id="plusBtn" class="c-iconbtn plus-btn" title="Emoji, Stickers & GIFs" aria-label="Open media picker" type="button">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
           </button>
           <div class="c-input-wrap">
             <textarea id="txtInput" rows="1" placeholder="Type a message…"></textarea>
+            <span id="langBadge" class="lang-badge">EN→VI</span>
           </div>
           <!-- Mic column: button + tiny caption underneath so the capability is obvious -->
           <div class="cbtn-col" id="micCol">
@@ -903,6 +1195,8 @@ html,body{height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:v
     <input type="text" id="mcName" class="finput" placeholder="Their name or nickname" autocomplete="off">
     <label class="flabel">Mobile number (optional)</label>
     <input type="tel" id="mcPhone" class="finput" placeholder="+1 555 000 0000" autocomplete="off">
+    <label class="flabel">Email (optional)</label>
+    <input type="email" id="mcEmail" class="finput" placeholder="their@email.com" autocomplete="off">
     <label class="flabel">Relationship</label>
     <div class="relgrid" id="relGrid"></div>
     <div id="cActionGrid" style="display:none;">
@@ -931,48 +1225,272 @@ html,body{height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:v
 // ═══════════════════════════════════════════════════════
 const SLANG_EN = [
   // Kept: specific Gen-Z / internet phrases unlikely to appear literally
-  { pattern:/\bi'?m dead[.!?~\s]*$/i,          phrase:"I'm dead",           a:"laughing hysterically — pure humor",                         b:"genuinely distressed or exhausted",          reason:"Gen-Z hyperbole where 'dying/dead' = overwhelmed by laughter. Same word, totally different energy." },
-  { pattern:/\bi can'?t[!.?~\s]*$/i,           phrase:"I can't",            a:"overwhelmed with laughter or emotion — too funny to handle", b:"genuinely unable to do something",           reason:"Short for 'I can't even/deal/stop' — trailing without an object means emotion overload, not inability." },
-  { pattern:/\bshut up[!?~\s]*$/i,             phrase:"shut up",            a:"excited disbelief — 'no way, seriously?!'",                  b:"telling someone to actually be quiet",       reason:"Disbelief so strong you want the world to pause. Same command, completely opposite emotional intent." },
-  { pattern:/\bthat'?s sick[.!?]?$/i,          phrase:"that's sick",        a:"this is amazing, incredible",                                b:"this is disgusting or wrong",                reason:"1980s skate/surf culture flipped 'sick' to mean extreme/impressive — still confuses non-native speakers." },
-  { pattern:/\bi hate you[.!?~\s]*$/i,         phrase:"I hate you",         a:"playful affection between close friends",                    b:"genuine dislike",                            reason:"Between close friends, extreme emotion flips to affection — like a playful shove. Outsiders can't tell the difference." },
-  { pattern:/\byou'?re the worst[.!?~\s]*$/i,  phrase:"you're the worst",   a:"affectionate teasing — said with love",                      b:"genuine criticism",                          reason:"Affectionate exaggeration: 'the worst' = so funny/annoying I can't handle you. Tone carries everything." },
-  { pattern:/\bi'?m screaming[.!?~\s]*$/i,     phrase:"I'm screaming",      a:"laughing uncontrollably",                                    b:"actual distress",                            reason:"Laughter so intense it feels like screaming. In real distress people say 'I'm scared', not 'I'm screaming.'" },
-  { pattern:/\bi could cry[.!?~\s]*$/i,        phrase:"I could cry",        a:"something is so good it's overwhelming",                     b:"genuinely about to cry from sadness",        reason:"Emotional overload — could be joy or sadness. What triggered it is the only clue." },
-  { pattern:/\bthat slaps[.!?~\s]*$/i,         phrase:"that slaps",         a:"that sounds/feels incredible",                               b:"literal hitting — confusing if taken literally", reason:"From music slang — a beat that 'hits hard' slaps. Has nothing to do with physical contact." },
-  { pattern:/\bthat'?s fire[.!?~\s]*$/i,       phrase:"that's fire",        a:"that is excellent, amazing",                                 b:"something is literally on fire",             reason:"Hip-hop slang: fire = hot = excellent. Translated literally, it sounds like an emergency." },
-  { pattern:/\bno cap\b/i,                     phrase:"no cap",             a:"seriously, no lie — I mean it",                              b:"literal: no hat — makes no sense",           reason:"In AAVE, 'cap' = lie. 'No cap' = no lie = I'm being 100% real. Outsiders hear 'no hat' and are baffled." },
-  { pattern:/\b(killed it|kill it)[!.?]?\s*$/i,phrase:"killed it",          a:"did something amazingly well",                               b:"literal killing — alarming if translated directly", reason:"Performing so brilliantly it's like a 'kill' — a complete domination. The opposite of its literal meaning." },
-  { pattern:/\bi'?m obsessed[.!?~\s]*$/i,      phrase:"I'm obsessed",       a:"I love this so much",                                        b:"unhealthy fixation — sounds intense literally", reason:"Social media amplified 'obsessed' into a compliment. Literally it means an unhealthy fixation, which sounds alarming." },
-  { pattern:/\bit'?s giving\b/i,               phrase:"it's giving",        a:"it has the vibe/energy of something",                        b:"literal giving — makes no sense",            reason:"AAVE: something radiates/channels a certain energy. No object needed. Doesn't translate literally at all." },
-  { pattern:/\bslay[!.?~\s]*$/i,               phrase:"slay",               a:"you did that amazingly well",                                b:"literal: to kill — sounds violent",          reason:"From LGBTQ+ ballroom culture, adopted mainstream. Originally: perform flawlessly. Literally: to kill." },
-  { pattern:/\blowkey\b/i,                     phrase:"lowkey",             a:"quietly, subtly — I kind of feel this way",                  b:"literal low key — makes no sense",           reason:"Internet slang for 'understated, quietly, secretly.' Opposite of high-key. Means nothing literally." },
+  { pattern:/\bi'?m dead[.!?~\s]*$/i,          phrase:"I'm dead",           a:"laughing hysterically — pure humor",                         b:"genuinely distressed or exhausted",          reason:"Gen-Z hyperbole where 'dying/dead' = overwhelmed by laughter. Same word, totally different energy.",                                       vietnameseEquiv:"Chết con rồi",   dismissScope:"global" },
+  { pattern:/\bi can'?t[!.?~\s]*$/i,           phrase:"I can't",            a:"overwhelmed with laughter or emotion — too funny to handle", b:"genuinely unable to do something",           reason:"Short for 'I can't even/deal/stop' — trailing without an object means emotion overload, not inability.",                                    vietnameseEquiv:"Xỉu luôn",       dismissScope:"global" },
+  { pattern:/\bshut up[!?~\s]*$/i,             phrase:"shut up",            a:"excited disbelief — 'no way, seriously?!'",                  b:"telling someone to actually be quiet",       reason:"Disbelief so strong you want the world to pause. Same command, completely opposite emotional intent.",                                       vietnameseEquiv:"Thôi đi",        dismissScope:"global"  },
+  { pattern:/\bthat'?s sick[.!?]?$/i,          phrase:"that's sick",        a:"this is amazing, incredible",                                b:"this is disgusting or wrong",                reason:"1980s skate/surf culture flipped 'sick' to mean extreme/impressive — still confuses non-native speakers.",                                  vietnameseEquiv:"Đỉnh vãi",       dismissScope:"global" },
+  { pattern:/\bi hate you[.!?~\s]*$/i,         phrase:"I hate you",         a:"playful affection between close friends",                    b:"genuine dislike",                            reason:"Between close friends, extreme emotion flips to affection — like a playful shove. Outsiders can't tell the difference.",                     vietnameseEquiv:"Ghét cái mặt",   dismissScope:"global"  },
+  { pattern:/\byou'?re the worst[.!?~\s]*$/i,  phrase:"you're the worst",   a:"affectionate teasing — said with love",                      b:"genuine criticism",                          reason:"Affectionate exaggeration: 'the worst' = so funny/annoying I can't handle you. Tone carries everything.",                                  vietnameseEquiv:"Đồ tệ",          dismissScope:"global"  },
+  { pattern:/\bi'?m screaming[.!?~\s]*$/i,     phrase:"I'm screaming",      a:"laughing uncontrollably",                                    b:"actual distress",                            reason:"Laughter so intense it feels like screaming. In real distress people say 'I'm scared', not 'I'm screaming.'",                                vietnameseEquiv:"Cười muốn chết", dismissScope:"global" },
+  { pattern:/\bi could cry[.!?~\s]*$/i,        phrase:"I could cry",        a:"something is so good it's overwhelming",                     b:"genuinely about to cry from sadness",        reason:"Emotional overload — could be joy or sadness. What triggered it is the only clue.",                                                         vietnameseEquiv:"Muốn khóc quá",  dismissScope:"global"  },
+  { pattern:/\bthat slaps[.!?~\s]*$/i,         phrase:"that slaps",         a:"that sounds/feels incredible",                               b:"literal hitting — confusing if taken literally", reason:"From music slang — a beat that 'hits hard' slaps. Has nothing to do with physical contact.",                                             vietnameseEquiv:"Nghe đã tai",    dismissScope:"global" },
+  { pattern:/\bthat'?s fire[.!?~\s]*$/i,       phrase:"that's fire",        a:"that is excellent, amazing",                                 b:"something is literally on fire",             reason:"Hip-hop slang: fire = hot = excellent. Translated literally, it sounds like an emergency.",                                                 vietnameseEquiv:"Đỉnh vãi",       dismissScope:"global" },
+  { pattern:/\bno cap\b/i,                     phrase:"no cap",             a:"seriously, no lie — I mean it",                              b:"literal: no hat — makes no sense",           reason:"In AAVE, 'cap' = lie. 'No cap' = no lie = I'm being 100% real. Outsiders hear 'no hat' and are baffled.",                                  vietnameseEquiv:"Thật luôn",      dismissScope:"global" },
+  { pattern:/\b(killed it|kill it)[!.?]?\s*$/i,phrase:"killed it",          a:"did something amazingly well",                               b:"literal killing — alarming if translated directly", reason:"Performing so brilliantly it's like a 'kill' — a complete domination. The opposite of its literal meaning.",                          vietnameseEquiv:"Đỉnh luôn",      dismissScope:"global"  },
+  { pattern:/\bi'?m obsessed[.!?~\s]*$/i,      phrase:"I'm obsessed",       a:"I love this so much",                                        b:"unhealthy fixation — sounds intense literally", reason:"Social media amplified 'obsessed' into a compliment. Literally it means an unhealthy fixation, which sounds alarming.",                   vietnameseEquiv:"Nghiện luôn",    dismissScope:"global" },
+  { pattern:/\bit'?s giving\b/i,               phrase:"it's giving",        a:"it has the vibe/energy of something",                        b:"literal giving — makes no sense",            reason:"AAVE: something radiates/channels a certain energy. No object needed. Doesn't translate literally at all.",                                  vietnameseEquiv:"Có vibe",        dismissScope:"global" },
+  { pattern:/\bslay[!.?~\s]*$/i,               phrase:"slay",               a:"you did that amazingly well",                                b:"literal: to kill — sounds violent",          reason:"From LGBTQ+ ballroom culture, adopted mainstream. Originally: perform flawlessly. Literally: to kill.",                                     vietnameseEquiv:"Đỉnh vãi",       dismissScope:"global" },
+  { pattern:/\blowkey\b/i,                     phrase:"lowkey",             a:"quietly, subtly — I kind of feel this way",                  b:"literal low key — makes no sense",           reason:"Internet slang for 'understated, quietly, secretly.' Opposite of high-key. Means nothing literally.",                                       vietnameseEquiv:"Cũng hơi",       dismissScope:"global" },
   // Removed: 'sure', 'whatever', 'stop it' — too common as literal words; left to AI judgment
+
+  // New entries — English counterparts of Vietnamese-only slang phrases
+  { pattern:/\boh my god\b/i,                                    phrase:"oh my god",              a:"positive amazement or excitement",                           b:"distress, frustration, or genuine shock",     reason:"Pure intonation-dependent — the same three words cover awe, panic, and frustration with no other signal. Exact English mirror of 'Trời ơi'.", vietnameseEquiv:"Trời ơi",          dismissScope:"global"  },
+  { pattern:/\bwelp[.!?~\s]*$/i,                                 phrase:"welp",                   a:"joking 'well, that happened' — minor mishap",                b:"genuine 'we're in trouble' — real problem",   reason:"Same tone ambiguity as 'Thôi xong' — can be a shrug or a genuine alarm depending entirely on what caused it.",                             vietnameseEquiv:"Thôi xong",        dismissScope:"global" },
+  { pattern:/\byou (nearly |almost )?gave me a heart attack/i,   phrase:"you gave me a heart attack", a:"you scared me — said playfully",                         b:"a medical emergency — genuinely alarming if literal", reason:"Playful exaggeration for being startled, same as 'Hết hồn.' Can be teasing or genuine shock depending on delivery.",               vietnameseEquiv:"Hết hồn",          dismissScope:"global" },
+  { pattern:/\bi could scream[.!?~\s]*$/i,                       phrase:"I could scream",         a:"extreme frustration or exasperation — usually an exaggeration", b:"genuine distress",                          reason:"Anger so intense it needs a physical outlet — mirrors 'Tức chết.' Usually an exaggeration, but cold flat delivery makes it feel real.", vietnameseEquiv:"Tức chết",         dismissScope:"global" },
+  { pattern:/\bsuch an airhead\b/i,                              phrase:"such an airhead",        a:"affectionate teasing about forgetfulness",                    b:"genuinely calling someone unintelligent",     reason:"Same dual read as 'Não cá vàng' — warmly mocking a friend's short memory, or an actual insult depending on who says it and how.",        vietnameseEquiv:"Não cá vàng",      dismissScope:"global"  },
+  { pattern:/\bthat'?s so cute[.!?~\s]*$/i,                      phrase:"that's so cute",         a:"genuine warm compliment",                                    b:"patronizing or sarcastic — condescending",    reason:"Exact English mirror of 'Dễ thương quá' — sincere admiration or thinly veiled condescension, tone is everything.",                       vietnameseEquiv:"Dễ thương quá",    dismissScope:"global"  },
+  { pattern:/\bi know[,\s]+i know[.!?~\s]*$/i,                   phrase:"I know, I know",         a:"I genuinely heard you and understand",                       b:"I'm annoyed, please stop repeating yourself", reason:"Repetition gives it away either way — the same as 'Biết rồi biết rồi.' Genuine acknowledgment or barely contained irritation.",           vietnameseEquiv:"Biết rồi biết rồi",dismissScope:"global"  },
+  { pattern:/\bwhatever you want[.!?~\s]*$/i,                    phrase:"whatever you want",      a:"genuinely flexible — no real preference",                    b:"passive-aggressive — I've given up",          reason:"Direct English equivalent of 'Sao cũng được' — easygoing OR quietly resentful. Prior tension in the conversation is the only clue.",     vietnameseEquiv:"Sao cũng được",    dismissScope:"global"  },
+  { pattern:/\bforget it[.!?~\s]*$/i,                            phrase:"forget it",              a:"peaceful let it go — not a big deal",                        b:"I'm done, don't bring this up again",         reason:"Mirrors 'Thôi kệ' exactly — can mean peaceful acceptance or frustrated surrender. Same words, completely different weight.",               vietnameseEquiv:"Thôi kệ",          dismissScope:"global"  },
+  { pattern:/^fine then[.!?~\s]*/i,                              phrase:"fine then",              a:"genuine agreement — okay, fair enough",                      b:"passive-aggressive — fine, have it your way", reason:"English mirror of 'Ừ thì' — a soft opener that means real agreement OR sarcastic resignation. Tone and prior conversation decide everything.", vietnameseEquiv:"Ừ thì",           dismissScope:"global"  },
+  { pattern:/\biconic[.!?~\s]*$/i,                               phrase:"iconic",                 a:"this person has incredible standout personality",             b:"used sarcastically — the opposite of impressive",     reason:"Closest English equivalent of 'Mặn' — both describe someone with sharp, magnetic personality. Can flip to sarcasm with the wrong tone.", vietnameseEquiv:"Mặn",             dismissScope:"global"  },
+  { pattern:/\bthat'?s insane[.!?~\s]*$/i,                       phrase:"that's insane",          a:"that is incredible, unbelievably good",                       b:"something is actually crazy or alarming",              reason:"Gen-Z praise where 'insane' = so good it defies belief. Direct English equivalent of 'Đỉnh' — same top-of-the-scale admiration, nothing alarming.", vietnameseEquiv:"Đỉnh",           dismissScope:"global"  },
+  { pattern:/\bi'?m so tired of this[.!?~\s]*$/i,                phrase:"I'm so tired of this",   a:"emotional exhaustion built over time — fed up and worn down", b:"literal physical tiredness about a task — misses the weight", reason:"The accumulated exhaustion mirrors 'Em mệt rồi' — both signal a breaking point reached over time, not just today.",                                 vietnameseEquiv:"Em mệt rồi",      dismissScope:"contact" },
+  { pattern:/\bnoted[.!?~\s]*$/i,                               phrase:"noted",                   a:"cold acknowledgment — I've registered what you said and I'm done engaging",   b:"professional confirmation — genuinely neutral note-taking",       reason:"In professional contexts 'noted' is neutral. In personal ones it's a shutdown. No word-for-word Vietnamese equivalent — 'Hiểu rồi thôi' matches the emotion: same cold door-closing after acknowledging.",                  vietnameseEquiv:"Hiểu rồi thôi",  dismissScope:"global" },
+  { pattern:/\bmust be nice[.!?~\s]*$/i,                        phrase:"must be nice",             a:"sarcastic envy — bitter observation about someone else's ease or luck",        b:"genuine compliment — sincerely saying something sounds pleasant",  reason:"The sarcasm is baked into the phrase. No literal Vietnamese match — 'Sướng thật nhỉ' carries the same quiet resentment dressed as a casual observation.",                                                                   vietnameseEquiv:"Sướng thật nhỉ", dismissScope:"global" },
+  { pattern:/\bcool cool cool[.!?~\s]*$/i,                      phrase:"cool cool cool",           a:"masking discomfort — saying okay three times because once isn't convincing",   b:"genuinely enthusiastic agreement — repetition for emphasis",       reason:"Gen-Z tell for hidden anxiety. The repetition gives it away — you're not actually cool. No direct Vietnamese phrase; 'Oke oke oke' mirrors the same nervous-cheerful energy exactly.",                                         vietnameseEquiv:"Oke oke oke",    dismissScope:"global" },
+  { pattern:/\bit'?s fine[.!?~\s]*$/i,                           phrase:"it's fine",               a:"genuine acceptance — actually okay with it, no hidden tension",  b:"passive-aggressive shutdown — it is absolutely not fine",        reason:"The most disguised emotion in English. Said flatly after conflict it almost never means fine — it means 'I'm done talking about this.' Vietnamese equivalent: 'Thôi được rồi' — same resigned surrender.",                              vietnameseEquiv:"Thôi được rồi",          dismissScope:"contact" },
+  { pattern:/\bdo what you want[.!?~\s]*$/i,                     phrase:"do what you want",        a:"genuine freedom — I truly have no preference",                    b:"passive-aggressive resignation — I've emotionally withdrawn",    reason:"In a conflict this isn't permission — it's someone who has stopped caring enough to fight. The same emotional withdrawal as 'Cứ làm theo ý anh/em đi' — both say 'I'm done.'",                                                       vietnameseEquiv:"Cứ làm theo ý anh đi",   dismissScope:"contact" },
+  { pattern:/\bi'?m so over (it|this)[.!?~\s]*$/i,               phrase:"i'm so over it",          a:"accumulated exhaustion with a situation — done with the whole thing", b:"casual complaint about something minor",                     reason:"This isn't about today — it's about everything that's been building. Direct equivalent of 'Chán đời' — both signal someone who has been carrying this weight for a long time and finally said it out loud.",                       vietnameseEquiv:"Chán đời",               dismissScope:"contact" },
+  { pattern:/\bi miss you so much it hurts[.!?~\s]*$/i,          phrase:"i miss you so much it hurts", a:"raw vulnerability — the longing has crossed into something physical", b:"dramatic overstatement — too intense to take at face value", reason:"When missing someone becomes physical it's no longer casual. Equivalent of 'Nhớ không chịu được' — both say the absence has become unbearable, and both take courage to say.",                                             vietnameseEquiv:"Nhớ không chịu được",    dismissScope:"contact" },
+  { pattern:/\byou'?re the worst[.!?~\s]*$/i,                    phrase:"you're the worst",        a:"affectionate insult — said with warmth between close people, means the opposite", b:"genuinely calling someone terrible",                reason:"Between close friends or partners this flips completely — same playful warmth as 'Ghét lắm.' Both are terms of endearment disguised as insults. The relationship is everything.",                                              vietnameseEquiv:"Ghét lắm",               dismissScope:"contact" },
+
+  // Relationship / emotional weight phrases — calm on the surface, heavy underneath
+  // These slip through without a trigger because they look like plain sentences. The weight is everything.
+  { pattern:/\bwe need to talk[.!?~\s]*$/i,                phrase:"we need to talk",             a:"loaded relationship signal — something serious and potentially relationship-defining is coming",          b:"literally just requesting a conversation — neutral on its surface",                   reason:"The most loaded phrase in English. No translation should miss its weight — it signals something serious is about to be said." },
+  { pattern:/\bthat really hurt[s]?[.!?~\s]*$/i,          phrase:"that really hurt",             a:"direct emotional vulnerability — this landed painfully and the person is telling you exactly that",      b:"describing physical pain — can read as casual or literal",                           reason:"Said quietly and plainly, the calm makes it heavier. Flat translation sounds like a complaint; it needs to feel like raw honesty." },
+  { pattern:/\bi trusted you[.!?~\s]*$/i,                  phrase:"i trusted you",                a:"past tense betrayal — the trust is gone, and this is the sentence that marks when it ended",            b:"neutral statement of prior trust — misses the finality of past tense",               reason:"'I trust you' is intimacy; 'I trusted you' is the moment trust broke. Past tense is the whole weight." },
+  { pattern:/\byou always do this[.!?~\s]*$/i,             phrase:"you always do this",           a:"accusation of a recurring pattern — accumulated frustration, not a one-time complaint",                 b:"factual observation about behavior — misses the emotional buildup",                  reason:"'Always' in conflict means it's been building for a long time. Translation needs to carry the weight of repetition, not just the moment." },
+  { pattern:/\byou never listen[s]?[.!?~\s]*$/i,           phrase:"you never listen",             a:"emotional accusation — they feel chronically unheard, a pattern of feeling invisible",                  b:"literal description of listening habits — too mild",                                 reason:"Not about a single moment. 'Never' signals a pattern of feeling unseen. Must land like an accusation, not a request." },
+  { pattern:/\bi can'?t do this (anymore|any more)[.!?~\s]*$/i, phrase:"i can't do this anymore", a:"breaking point — they're at the end, this is a relationship-level statement",                          b:"expressing inability to continue a task — misses the emotional stakes",              reason:"In a personal context this isn't about tasks — it's about a person or a relationship. 'Anymore' marks a threshold crossed.",                    vietnameseEquiv:"Hết chịu nổi",  dismissScope:"contact" },
+  { pattern:/\bi give up[.!?~\s]*$/i,                      phrase:"i give up",                    a:"resignation — they've stopped trying, emotional exhaustion speaking",                                   b:"casual surrender in a task or game — too light",                                    reason:"Typed alone or at the end of a message, this is resignation from something that mattered. Needs the weight of someone who has run out of effort.", vietnameseEquiv:"Bỏ cuộc rồi",   dismissScope:"contact" },
+  { pattern:/\bi'?m not okay[.!?~\s]*$/i,                  phrase:"i'm not okay",                 a:"quiet distress signal — raw, direct vulnerability, often typed when someone can't say it out loud",     b:"simple statement of not being fine — misses how much it costs to say this",          reason:"People type this in lowercase at 1am without drama. Its plainness is the point — it means something is seriously wrong." },
+  { pattern:/\bi don'?t want to lose you[.!?~\s]*$/i,      phrase:"i don't want to lose you",     a:"high relationship stakes — fear of losing someone important, deep emotional disclosure",                b:"literal statement of not wanting to lose something — misses the intimacy",            reason:"This is someone saying the relationship matters at a moment of risk. The translation must carry that vulnerability, not sound transactional." },
+  { pattern:/\bplease don'?t leave[.!?~\s]*$/i,            phrase:"please don't leave",           a:"desperation — a plea, one of the most vulnerable things a person can say",                             b:"a request not to go — too neutral, misses the urgency",                             reason:"Three words that hold an entire relationship. Must sound like someone scared of being abandoned, not someone asking you to stay seated." },
+  { pattern:/\bafter everything i'?ve\b/i,                  phrase:"after everything i've",        a:"opener for a betrayal statement — everything that follows carries accumulated hurt",                    b:"generic reference to past events — misses that this is about to hit hard",            reason:"This phrase signals that something from the past was sacrificed and went unacknowledged. What comes next is always heavy." },
+  { pattern:/\bdo you even care[.!?~\s]*$/i,               phrase:"do you even care",             a:"accusation dressed as a question — they already feel the answer is no, and it hurts",                  b:"genuine inquiry about caring — misses the accusatory pain underneath",               reason:"The word 'even' is the tell. This isn't really a question — it's a statement of feeling unseen, framed as a challenge." },
+  { pattern:/\byou promised[.!?~\s]*$/i,                   phrase:"you promised",                 a:"betrayal — short, final, the weight of a broken commitment in two words",                              b:"reminder of a prior commitment — too neutral",                                      reason:"Two words with the weight of trust broken. Must hit like an accusation, not an administrative note." },
+  { pattern:/\bi feel like you (never|don'?t)\b/i,         phrase:"i feel like you never/don't",  a:"emotional confession opener — vulnerability + accusation of a pattern, the hardest combination to say", b:"neutral expression of a personal feeling — misses that this is a threshold statement", reason:"'I feel like' softens the accusation enough to say it, but the 'never/don't' makes it a pattern. Both parts need to survive translation." },
+  { pattern:/\bi'?m so done[.!?~\s]*$/i,                   phrase:"i'm so done",                  a:"resignation or frustration at its peak — I have nothing left to give this",                            b:"casual expression of being finished — loses the emotional exhaustion",               reason:"Quiet delivery makes this heavier, not lighter. In a conflict context, 'so done' is the sound of someone who stopped fighting.",                  vietnameseEquiv:"Chán lắm rồi",  dismissScope:"contact" },
+  { pattern:/\bwhy do you always\b/i,                      phrase:"why do you always",            a:"conflict pattern accusation — not asking a question, expressing pain at a recurring dynamic",           b:"genuine inquiry about behavior — misses the frustration underneath",                 reason:"Nobody asking this is really looking for an answer — they're telling you something hurts. The question form is just a shield.",                   vietnameseEquiv:"Sao lúc nào cũng vậy", dismissScope:"contact" },
 ];
 
 const SLANG_VI = [
   // Multi-word phrases — specific enough to be safe without trailing anchors
-  { pattern:/chết con rồi/i,         phrase:"Chết con rồi",       a:"laughing so hard, having a great time",                      b:"oh no, something actually went wrong",       reason:"Literally 'I'm dead (child form)' — Vietnamese hyperbole mirrors English 'I'm dying.' Death = extreme reaction, not literal." },
-  { pattern:/ghét cái mặt/i,         phrase:"Ghét cái mặt",       a:"playful affectionate teasing between close friends",          b:"genuinely disliking someone's face",         reason:"Literally 'hate your face' — between close friends it's like 'I can't stand how great you are.' Outsiders read it as an insult." },
-  { pattern:/thôi xong/i,            phrase:"Thôi xong",          a:"we're genuinely in trouble",                                 b:"joking reaction to something minor",         reason:"Literally 'that's done/over.' Can signal real trouble or a joking 'welp.' Stakes and tone make the difference." },
-  { pattern:/trời ơi/i,              phrase:"Trời ơi",            a:"positive amazement — wow, incredible",                       b:"frustration, panic, or distress",            reason:"Calling to the heavens — pure intonation-dependent. The same words cover awe, panic, or frustration with no other signal." },
-  { pattern:/hết hồn/i,              phrase:"Hết hồn",            a:"you scared me — said playfully",                             b:"genuinely shocked or frightened",            reason:"Literally 'lost my soul' — same idea as 'scared out of my mind.' Playful or genuine depends entirely on what caused it." },
-  { pattern:/tức chết/i,             phrase:"Tức chết",           a:"so annoying — casual exaggeration",                          b:"extreme genuine anger",                      reason:"Literally 'angry to death' — Vietnamese hyperbole. Usually an exaggeration, but very cold delivery makes it feel real." },
-  { pattern:/não cá vàng/i,          phrase:"Não cá vàng",        a:"affectionate teasing — you're so forgetful",                 b:"calling someone actually unintelligent",     reason:"Literally 'goldfish brain' — affectionate teasing about short memory. Can read as a mean intelligence insult to outsiders." },
-  { pattern:/dễ thương quá/i,        phrase:"Dễ thương quá",      a:"genuine compliment — you're adorable",                       b:"sarcastic, condescending",                   reason:"Literally 'so easy to love.' Usually sincere, but with the wrong tone it flips to patronizing sarcasm." },
-  { pattern:/biết rồi biết rồi/i,    phrase:"Biết rồi biết rồi",  a:"I genuinely heard and understood you",                       b:"I'm annoyed, stop repeating yourself",       reason:"Repeating 'I know, I know' — genuine acknowledgment OR an irritated 'please stop.' Speed and flatness of delivery decides it." },
-  { pattern:/sao cũng được/i,        phrase:"Sao cũng được",      a:"genuinely easy going, no real preference",                   b:"passive aggressive — I've given up caring",  reason:"'Any way is fine' — easygoing OR passive-aggressive giving up. Relationship and prior conversation are the only clues." },
-  { pattern:/thôi kệ/i,              phrase:"Thôi kệ",            a:"it's okay, let it go — peaceful",                            b:"I'm done, don't bring this up again",        reason:"'Forget it, let it go' — peaceful acceptance OR frustrated surrender. Very different outcomes depending on which it is." },
+  { pattern:/chết con rồi/i,         phrase:"Chết con rồi",       a:"laughing so hard, having a great time",                      b:"oh no, something actually went wrong",       reason:"Literally 'I'm dead (child form)' — Vietnamese hyperbole mirrors English 'I'm dying.' Death = extreme reaction, not literal.",         englishEquiv:"I'm dead",              dismissScope:"global" },
+  { pattern:/ghét cái mặt/i,         phrase:"Ghét cái mặt",       a:"playful affectionate teasing between close friends",          b:"genuinely disliking someone's face",         reason:"Literally 'hate your face' — between close friends it's like 'I can't stand how great you are.' Outsiders read it as an insult.",         englishEquiv:"I hate you",            dismissScope:"global"  },
+  { pattern:/thôi xong/i,            phrase:"Thôi xong",          a:"we're genuinely in trouble",                                 b:"joking reaction to something minor",         reason:"Literally 'that's done/over.' Can signal real trouble or a joking 'welp.' Stakes and tone make the difference.",                            englishEquiv:"welp",                  dismissScope:"global" },
+  { pattern:/trời ơi/i,              phrase:"Trời ơi",            a:"positive amazement — wow, incredible",                       b:"frustration, panic, or distress",            reason:"Calling to the heavens — pure intonation-dependent. The same words cover awe, panic, or frustration with no other signal.",                 englishEquiv:"oh my god",             dismissScope:"global"  },
+  { pattern:/hết hồn/i,              phrase:"Hết hồn",            a:"you scared me — said playfully",                             b:"genuinely shocked or frightened",            reason:"Literally 'lost my soul' — same idea as 'scared out of my mind.' Playful or genuine depends entirely on what caused it.",                   englishEquiv:"you gave me a heart attack", dismissScope:"global" },
+  { pattern:/tức chết/i,             phrase:"Tức chết",           a:"so annoying — casual exaggeration",                          b:"extreme genuine anger",                      reason:"Literally 'angry to death' — Vietnamese hyperbole. Usually an exaggeration, but very cold delivery makes it feel real.",                    englishEquiv:"I could scream",        dismissScope:"global" },
+  { pattern:/não cá vàng/i,          phrase:"Não cá vàng",        a:"affectionate teasing — you're so forgetful",                 b:"calling someone actually unintelligent",     reason:"Literally 'goldfish brain' — affectionate teasing about short memory. Can read as a mean intelligence insult to outsiders.",                 englishEquiv:"such an airhead",       dismissScope:"global"  },
+  { pattern:/dễ thương quá/i,        phrase:"Dễ thương quá",      a:"genuine compliment — you're adorable",                       b:"sarcastic, condescending",                   reason:"Literally 'so easy to love.' Usually sincere, but with the wrong tone it flips to patronizing sarcasm.",                                   englishEquiv:"that's so cute",        dismissScope:"global"  },
+  { pattern:/biết rồi biết rồi/i,    phrase:"Biết rồi biết rồi",  a:"I genuinely heard and understood you",                       b:"I'm annoyed, stop repeating yourself",       reason:"Repeating 'I know, I know' — genuine acknowledgment OR an irritated 'please stop.' Speed and flatness of delivery decides it.",             englishEquiv:"I know, I know",        dismissScope:"global"  },
+  { pattern:/sao cũng được/i,        phrase:"Sao cũng được",      a:"genuinely easy going, no real preference",                   b:"passive aggressive — I've given up caring",  reason:"'Any way is fine' — easygoing OR passive-aggressive giving up. Relationship and prior conversation are the only clues.",                    englishEquiv:"whatever you want",     dismissScope:"global"  },
+  { pattern:/thôi kệ/i,              phrase:"Thôi kệ",            a:"it's okay, let it go — peaceful",                            b:"I'm done, don't bring this up again",        reason:"'Forget it, let it go' — peaceful acceptance OR frustrated surrender. Very different outcomes depending on which it is.",                     englishEquiv:"forget it",             dismissScope:"global"  },
   // Tightened: short phrase anchored to start of message to avoid mid-sentence fragments
-  { pattern:/^ừ thì\b/i,             phrase:"Ừ thì",              a:"okay, fair enough, genuine agreement",                       b:"said to end conversation — not actually agreeing", reason:"Soft agreement opener that can mean genuine 'okay fair' OR a sarcastic 'fine, whatever you say.' Tone is everything." },
+  { pattern:/^ừ thì\b/i,             phrase:"Ừ thì",              a:"okay, fair enough, genuine agreement",                       b:"said to end conversation — not actually agreeing", reason:"Soft agreement opener that can mean genuine 'okay fair' OR a sarcastic 'fine, whatever you say.' Tone is everything.",              englishEquiv:"fine then",             dismissScope:"global"  },
   // Single-word slang — safe because these words have no other common meaning in chat
-  { pattern:/\bmặn\b/i,              phrase:"Mặn",                a:"witty, sharp, charming — has a great personality",           b:"literally salty — as in food",               reason:"Internet slang borrowed 'mặn' (salty/savory) to mean someone with a sharp, charming personality. No relation to food." },
-  { pattern:/\bđỉnh\b/i,             phrase:"Đỉnh",               a:"amazing, the best, incredible",                              b:"literally the peak of a mountain",           reason:"'Đỉnh' = summit/peak. Slang stretched it to 'the absolute top' in quality. Easy to mistake for a geography word." },
+  { pattern:/\bmặn\b/i,              phrase:"Mặn",                a:"witty, sharp, charming — has a great personality",           b:"literally salty — as in food",               reason:"Internet slang borrowed 'mặn' (salty/savory) to mean someone with a sharp, charming personality. No relation to food.",                   englishEquiv:"iconic",                dismissScope:"global" },
+  { pattern:/\bđỉnh\b/i,             phrase:"Đỉnh",               a:"amazing, the best, incredible",                              b:"literally the peak of a mountain",           reason:"'Đỉnh' = summit/peak. Slang stretched it to 'the absolute top' in quality. Easy to mistake for a geography word.",                        englishEquiv:"that's insane",         dismissScope:"global"  },
+  // Intensified Đỉnh forms — stronger than plain Đỉnh, used for extra emphasis
+  { pattern:/đỉnh vãi/i,             phrase:"Đỉnh vãi",           a:"incredibly amazing — emphatic, stronger than plain Đỉnh",    b:"peak + crude intensifier — sounds rude if literal",          reason:"'Vãi' is a crude intensifier that makes 'Đỉnh' even stronger — equivalent to English 'that's fire' or 'slay', same hyperbolic praise.", englishEquiv:"that's fire",           dismissScope:"global"  },
+  { pattern:/đỉnh luôn/i,            phrase:"Đỉnh luôn",          a:"absolutely nailed it — used to praise performance",          b:"literally 'peak immediately' — makes no sense directly",     reason:"'Luôn' (immediately/totally) amplifies 'Đỉnh' — the Vietnamese way of saying someone killed it. Same energy, same context.",              englishEquiv:"killed it",             dismissScope:"global"  },
+  // Thôi đi — Vietnamese disbelief exclamation matching English 'shut up'
+  { pattern:/thôi đi[.!?~\s]*$/i,    phrase:"Thôi đi",            a:"excited disbelief — 'no way, seriously?!'",                  b:"telling someone to actually stop or go away",                reason:"Between friends 'Thôi đi' is the Vietnamese equivalent of 'shut up' as excited disbelief — same energy, not a command.",                   englishEquiv:"shut up",               dismissScope:"global"  },
+  { pattern:/hiểu rồi thôi[.!?~\s]*$/i, phrase:"Hiểu rồi thôi",  a:"cold acknowledgment — I understood and I'm shutting this down now", b:"peaceful closure — okay I get it, no hidden tension",       reason:"'Thôi' (stop/that's it) is the key word — it cuts the conversation off after acknowledging. No word-for-word English match; same cold door-closing energy as 'noted.'",                                 englishEquiv:"noted",               dismissScope:"global" },
+  { pattern:/sướng thật nhỉ[.!?~\s]*$/i, phrase:"Sướng thật nhỉ", a:"sarcastic observation — 'how nice for you' dripping with quiet resentment", b:"genuine compliment — sincerely noting how good someone has it", reason:"'Nhỉ' at the end turns it sarcastic — the Vietnamese equivalent of 'must be nice.' No word-for-word English match; both dress envy as a casual remark.",                                    englishEquiv:"must be nice",        dismissScope:"global" },
+  { pattern:/oke oke oke[.!?~\s]*$/i,    phrase:"Oke oke oke",     a:"masking discomfort — saying okay three times because you're not actually okay", b:"genuinely enthusiastic agreement — repetition for emphasis", reason:"Vietnamese Gen-Z borrowed 'oke' and repeated it the same way 'cool cool cool' works in English — three times signals hidden anxiety, not real enthusiasm. No word-for-word match; the energy is the translation.", englishEquiv:"cool cool cool",      dismissScope:"global" },
+
+  // Relationship / emotional weight phrases — calm on the surface, heavy underneath
+  // These are plain sentences that slip through without a trigger. The weight is everything.
+  // New entries — Vietnamese counterparts of English-only slang phrases
+  { pattern:/cười muốn chết/i,       phrase:"Cười muốn chết",     a:"laughing uncontrollably — pure comedic expression",           b:"literally 'laughing to death' — alarming if taken literally", reason:"Vietnamese death-as-intensifier for laughter. Mirrors 'I'm screaming' in English — both mean overwhelmed by laughter, not actual dying.", englishEquiv:"I'm screaming",      dismissScope:"global" },
+  { pattern:/xỉu luôn/i,             phrase:"Xỉu luôn",           a:"completely overwhelmed — too much to handle",                 b:"literally 'fainting immediately' — sounds medical",           reason:"Gen-Z Vietnamese for being overwhelmed by emotion or laughter. Mirrors English 'I can't' — same trailing sense of emotional overload.",  englishEquiv:"I can't",            dismissScope:"global" },
+  { pattern:/nghe đã tai/i,          phrase:"Nghe đã tai",        a:"sounds incredible — deeply satisfying to hear",               b:"literal 'satisfying to the ear' — sounds like a compliment about hearing ability", reason:"Vietnamese way of saying something sounds amazing — used for music the same way English uses 'that slaps.' Same energy, zero shared words.", englishEquiv:"that slaps",        dismissScope:"global" },
+  { pattern:/thật luôn/i,            phrase:"Thật luôn",          a:"seriously, for real — I genuinely mean this",                 b:"literal 'really immediately' — makes no sense directly",      reason:"Gen-Z Vietnamese sincerity marker. Direct equivalent of 'no cap' — both signal 'I'm not joking, this is real.' Different words, same job.", englishEquiv:"no cap",            dismissScope:"global" },
+  { pattern:/\bcũng hơi\b/i,         phrase:"Cũng hơi",           a:"kind of, quietly — I sort of feel this way but won't shout it", b:"literal 'also a little' — misses the softening function",   reason:"Vietnamese understatement softener that works exactly like 'lowkey' — used to admit something without fully committing to it.",            englishEquiv:"lowkey",            dismissScope:"global" },
+  { pattern:/có vibe/i,              phrase:"Có vibe",            a:"radiates a certain energy or feeling",                        b:"literal 'has vibe' — makes no sense word-for-word",           reason:"Vietnamese internet slang borrowed 'vibe' but uses it the same way English uses 'it's giving' — something channels a particular energy.",   englishEquiv:"it's giving",       dismissScope:"global" },
+  { pattern:/nghiện luôn/i,          phrase:"Nghiện luôn",        a:"instantly hooked — I love this so much",                      b:"literally 'addicted immediately' — sounds serious",           reason:"Vietnamese Gen-Z compliment. 'Nghiện' (addicted) used as enthusiasm, exactly like 'I'm obsessed' — both sound alarming but mean adoration.", englishEquiv:"I'm obsessed",      dismissScope:"global" },
+  { pattern:/muốn khóc quá/i,        phrase:"Muốn khóc quá",      a:"something is so overwhelming it's moving — joy or beauty",    b:"literally 'want to cry so much' — sounds like distress",      reason:"Vietnamese emotional overflow for something beautiful or touching. Mirrors 'I could cry' — same ambiguity, joy or sadness, context decides.", englishEquiv:"I could cry",       dismissScope:"global"  },
+  { pattern:/đồ tệ/i,                phrase:"Đồ tệ",              a:"affectionate teasing — said with warmth between close friends", b:"genuinely calling someone terrible",                         reason:"Vietnamese affectionate insult between friends. Direct equivalent of 'you're the worst' — both flip from insult to term of endearment in close relationships.", englishEquiv:"you're the worst", dismissScope:"global"  },
+
+  // ── Vietnamese proverbs ──────────────────────────────────────
+  // Traditional sayings that come up naturally in casual conversation.
+  // Both sides should learn these — not just the Vietnamese speaker.
+  { pattern:/cây có cội|nước có nguồn/i,         phrase:"Cây có cội, nước có nguồn",  a:"every person comes from somewhere — your roots and origins never leave you",                          b:"a literal observation about trees and water — misses that this is a saying about identity and belonging", reason:"One of the most common Vietnamese proverbs. Closest English idea: 'you can't forget where you came from.' Both cultures carry this — they just say it differently.",    englishEquiv:"you can't forget where you came from", dismissScope:"global" },
+  { pattern:/ăn quả nhớ kẻ trồng cây/i,          phrase:"Ăn quả nhớ kẻ trồng cây",   a:"when you enjoy something, remember the people who made it possible — gratitude for those before you",  b:"a literal instruction about fruit and farming",                                                           reason:"Vietnamese proverb about gratitude and remembering your roots. The English parallel: 'don't forget who helped you get here.' Said when someone achieves something or forgets where their blessings came from.", englishEquiv:"don't forget who helped you get here", dismissScope:"global" },
+  { pattern:/uống nước nhớ nguồn/i,               phrase:"Uống nước nhớ nguồn",        a:"always remember where you came from and who gave you what you have",                                    b:"a reminder about water and its source — sounds like environmental advice",                                reason:"Literally 'when drinking water, remember the source.' One of the most widely known Vietnamese sayings — about gratitude, origins, and not forgetting your roots as you grow.",  englishEquiv:"remember where you came from",         dismissScope:"global" },
+  { pattern:/thương người như thể thương thân/i,  phrase:"Thương người như thể thương thân", a:"love others the way you love yourself — empathy as a core value",                              b:"a complex literal phrase that loses its meaning word-for-word",                                           reason:"Vietnamese equivalent of 'do unto others.' Used to teach compassion — especially to children. Comes up naturally in conversations about kindness or how someone treated another person.", englishEquiv:"treat others the way you want to be treated", dismissScope:"global" },
+  { pattern:/một miếng khi đói bằng một gói khi no/i, phrase:"Một miếng khi đói bằng một gói khi no", a:"a small gesture when someone truly needs it means more than a grand one when they don't", b:"a comparison about food portions — misses the entire point",                                          reason:"Vietnamese proverb about timing and meaning. The English parallel: 'it's the thought that counts — especially when it counts.' Said when a small act of kindness lands at exactly the right moment.", englishEquiv:"a little goes a long way when it matters", dismissScope:"global" },
+  { pattern:/lời nói chẳng mất tiền mua/i,        phrase:"Lời nói chẳng mất tiền mua", a:"kind words cost nothing — there's no excuse not to be gentle with people",                              b:"a statement about the price of words — sounds transactional",                                            reason:"Literally 'words don't cost money to buy.' Used the same way English uses 'if you don't have anything nice to say...' — a gentle reminder that how you speak to someone is a choice.", englishEquiv:"kind words cost nothing",              dismissScope:"global" },
+
+  // hardcodedEn: literal maps cleanly, no cultural gap — just translate directly every time, no banner
+  { pattern:/buồn lắm[.!?~\s]*$/i,            phrase:"Buồn lắm",               a:"direct emotional disclosure — 'I'm so sad', said plainly and meant completely",                             b:"literal 'very sad' — a cold translation strips the personal weight of this confession",            reason:"'Lắm' intensifies but also signals directness — they're not softening this. Cold translation flattens the intimacy of someone telling you exactly how they feel.",          hardcodedEn:"I'm so sad" },
+  { pattern:/tức lắm[.!?~\s]*$/i,             phrase:"Tức lắm",                a:"genuine anger fully felt — 'I'm really angry', the intensity is the whole message",                          b:"literal 'very angry' — loses the directness of someone who isn't softening their emotion",         reason:"'Lắm' at the end of an emotion signals they're stating it plainly, not cushioning it. The translation must carry that without sounding like a dictionary entry.",             hardcodedEn:"I'm so angry" },
+  { pattern:/không cần nữa[.!?~\s]*$/i,       phrase:"Không cần nữa",          a:"finality — 'I don't need it/you/this anymore', the 'nữa' makes it a closing statement",                       b:"simple statement of not needing something — misses the weight of 'nữa' in a personal context",     reason:"'Nữa' marks a before and after — there was a time when it was needed, and now that's over. In a relationship context this can mean a person. The translation needs to feel like an ending.", hardcodedEn:"I don't need this anymore" },
+  // englishEquiv: no word-for-word match — show explanation banner first time, then auto-use after dismiss
+  { pattern:/hết chịu nổi/i,                  phrase:"Hết chịu nổi",           a:"breaking point — 'I can't take it anymore', the limit has been reached",                                      b:"generic expression of difficulty — misses that this marks a threshold being crossed",              reason:"'Hết' (depleted/finished) + 'chịu nổi' (able to bear) = the capacity to endure is gone. In a relationship context this is not figurative — it signals something has to change.",  englishEquiv:"I can't do this anymore",              dismissScope:"contact" },
+  { pattern:/chán lắm rồi/i,                  phrase:"Chán lắm rồi",           a:"exhausted and fed up — 'rồi' signals this feeling has been building for a long time, not just today",         b:"simply bored or tired — misses the accumulated weight that 'rồi' adds",                            reason:"'Rồi' (already) is the key word — it means this isn't new, it has been building. Without it in the translation you lose the exhaustion of something that's been going on for a while.",englishEquiv:"I'm so done",                          dismissScope:"contact" },
+  { pattern:/mình cần nói chuyện/i,           phrase:"Mình cần nói chuyện",    a:"most loaded phrase in any language — signals something serious and potentially relationship-defining is coming", b:"literal 'I/we need to talk' — neutral surface that misses the weight everyone knows this phrase carries", reason:"Same weight as 'we need to talk' in English. Using 'mình' (soft, intimate self-reference) makes it even heavier — it's coming from somewhere personal.",              englishEquiv:"we need to talk",                      dismissScope:"global"  },
+  { pattern:/sao lúc nào cũng vậy/i,          phrase:"Sao lúc nào cũng vậy",  a:"frustration at a recurring pattern — accusation + exhaustion, this has happened before and it hurts",         b:"neutral question about why things are a certain way — misses the accumulated frustration",          reason:"'Lúc nào cũng' (always/every time) signals a pattern, not an incident. This isn't about today — it's about every time. Translation must carry that weight.",               englishEquiv:"why do you always",                      dismissScope:"contact" },
+  { pattern:/em mệt rồi[.!?~\s]*$/i,          phrase:"Em mệt rồi",             a:"emotional exhaustion that has been building — 'rồi' signals accumulation, not just today's tiredness",        b:"literal physical tiredness — misses that 'rồi' marks this as a culmination, not a passing state",   reason:"'Em' (intimate first person) + 'mệt' (exhausted) + 'rồi' (already, suggesting buildup) = someone who has been carrying something for a long time. Physical tiredness lacks the 'rồi.'", englishEquiv:"I'm so tired of this",                dismissScope:"contact" },
+  { pattern:/bỏ cuộc rồi[.!?~\s]*$/i,         phrase:"Bỏ cuộc rồi",            a:"resignation — 'I've given up', the decision is already made and 'rồi' marks it as final",                     b:"surrendering in a task or challenge — misses that in a personal context this is a profound statement", reason:"'Bỏ cuộc' (to abandon the fight) + 'rồi' (already done) = the giving up has already happened. This is someone telling you from the other side of a decision, not in the middle of making it.", englishEquiv:"i give up",                           dismissScope:"contact" },
+  { pattern:/thôi được rồi[.!?~\s]*$/i,       phrase:"Thôi được rồi",          a:"resigned acceptance — okay, letting this go, even if it still hurts",                                       b:"neutral confirmation that something is done or okay — misses the emotional cost behind the words",       reason:"'Thôi' (stop/let it be) + 'được' (okay) + 'rồi' (already) — said after conflict it almost never means everything is fine. Direct equivalent of 'it's fine' — same emotional disguise, same quiet surrender.", englishEquiv:"it's fine",                          dismissScope:"contact" },
+  { pattern:/cứ làm theo ý (anh|em) đi/i,     phrase:"Cứ làm theo ý anh đi",   a:"genuine permission — I truly don't mind, do as you please",                                                 b:"passive-aggressive resignation — I've emotionally withdrawn from the decision",                          reason:"'Cứ' (go ahead, just) + 'theo ý' (according to your will) — in conflict this is the Vietnamese equivalent of 'do what you want.' Said flatly, it means the person has already emotionally left the conversation.", englishEquiv:"do what you want",                   dismissScope:"contact" },
+  { pattern:/chán đời[.!?~\s]*$/i,            phrase:"Chán đời",               a:"world-weary exhaustion — overwhelmed by everything right now, not just one thing",                          b:"literal 'bored of life' — sounds dramatic or concerning when it's usually someone venting",              reason:"Not depression — accumulated weariness with the weight of everything at once. Equivalent of 'I'm so over it' in English. Both signal someone who has been carrying too much for too long and finally said it.", englishEquiv:"i'm so over it",                     dismissScope:"contact" },
+  { pattern:/nhớ không chịu được[.!?~\s]*$/i, phrase:"Nhớ không chịu được",    a:"intense longing — the missing has become physical, not just emotional",                                      b:"literal 'can't bear to miss' — sounds like a complaint about being bothered by something",               reason:"'Nhớ' (miss/long for) + 'không chịu được' (can't bear/endure) = the absence has crossed into something painful. Equivalent of 'I miss you so much it hurts' — both say the missing has become unbearable.", englishEquiv:"i miss you so much it hurts",        dismissScope:"contact" },
+  { pattern:/ghét lắm[.!?~\s]*$/i,           phrase:"Ghét lắm",               a:"deep affection disguised as annoyance — between close people this means the opposite of what it says",      b:"genuine strong dislike — reads as a real insult if the relationship is misread",                         reason:"'Ghét' (hate) + 'lắm' (so much) — between close friends or partners said with warmth, this flips completely. Equivalent of 'you're the worst' said affectionately — both are terms of endearment wearing insult clothing.", englishEquiv:"you're the worst",              dismissScope:"contact" },
 ];
 
 function detectSlang(text, direction){
   const dict = direction==='en-vi' ? SLANG_EN : SLANG_VI;
   return dict.filter(s => s.pattern.test(text));
+}
+
+// ─── Generation lookup ────────────────────────────────
+// Returns the generation tag + CSS class for a given slang phrase.
+// Three tiers: Gen Z (youngest), Millennial (mid), Older gen, Universal (all ages).
+const _GEN_MAP = {
+  // ── Gen Z ──
+  "I'm dead":"gen-z","I can't":"gen-z","I'm screaming":"gen-z","that slaps":"gen-z",
+  "that's fire":"gen-z","no cap":"gen-z","it's giving":"gen-z","slay":"gen-z",
+  "that's insane":"gen-z","iconic":"gen-z","lowkey":"gen-z","I'm obsessed":"gen-z",
+  "Chết con rồi":"gen-z","Đỉnh":"gen-z","Đỉnh vãi":"gen-z","Đỉnh luôn":"gen-z",
+  "Oke oke oke":"gen-z","Xỉu luôn":"gen-z","Thật luôn":"gen-z",
+  "Có vibe":"gen-z","Nghiện luôn":"gen-z","Mặn":"gen-z","Cũng hơi":"gen-z",
+  // ── Millennial ──
+  "killed it":"gen-mill","welp":"gen-mill","cool cool cool":"gen-mill",
+  "that's sick":"gen-mill","I'm so over it":"gen-mill","noted":"gen-mill",
+  "must be nice":"gen-mill","I could scream":"gen-mill",
+  "Não cá vàng":"gen-mill","Nghe đã tai":"gen-mill","Cười muốn chết":"gen-mill",
+  "Hiểu rồi thôi":"gen-mill","Sướng thật nhỉ":"gen-mill",
+  // ── Older gen ──
+  "such an airhead":"gen-old","forget it":"gen-old",
+  // ── Universal ──
+  "shut up":"gen-uni","oh my god":"gen-uni","I hate you":"gen-uni",
+  "you're the worst":"gen-uni","I could cry":"gen-uni","that's so cute":"gen-uni",
+  "I know, I know":"gen-uni","whatever you want":"gen-uni","fine then":"gen-uni",
+  "I'm so tired of this":"gen-uni","it's fine":"gen-uni","do what you want":"gen-uni",
+  "you gave me a heart attack":"gen-uni","we need to talk":"gen-uni",
+  "that really hurt":"gen-uni","i trusted you":"gen-uni","i give up":"gen-uni",
+  "i'm not okay":"gen-uni","please don't leave":"gen-uni","do you even care":"gen-uni",
+  "Trời ơi":"gen-uni","Hết hồn":"gen-uni","Tức chết":"gen-uni",
+  "Dễ thương quá":"gen-uni","Biết rồi biết rồi":"gen-uni","Sao cũng được":"gen-uni",
+  "Thôi kệ":"gen-uni","Ừ thì":"gen-uni","Thôi đi":"gen-uni","Thôi xong":"gen-uni",
+  "Muốn khóc quá":"gen-uni","Ghét cái mặt":"gen-uni","Đồ tệ":"gen-uni",
+  "Em mệt rồi":"gen-uni","Chán đời":"gen-uni","Bỏ cuộc rồi":"gen-uni",
+  "Thôi được rồi":"gen-uni","Ghét lắm":"gen-uni","Hết chịu nổi":"gen-uni",
+  // Vietnamese proverbs — timeless, all ages
+  "Cây có cội, nước có nguồn":"gen-uni",
+  "Ăn quả nhớ kẻ trồng cây":"gen-uni",
+  "Uống nước nhớ nguồn":"gen-uni",
+  "Thương người như thể thương thân":"gen-uni",
+  "Một miếng khi đói bằng một gói khi no":"gen-uni",
+  "Lời nói chẳng mất tiền mua":"gen-uni",
+};
+const _GEN_LABEL = { "gen-z":"Gen Z", "gen-mill":"Millennial", "gen-old":"Older gen", "gen-uni":"All ages" };
+function getPhraseGen(phrase){
+  const cls = _GEN_MAP[phrase] || 'gen-uni';
+  return { cls, label: _GEN_LABEL[cls] };
+}
+
+function buildLearnChip(match){
+  const g = getPhraseGen(match.phrase);
+  return `<div class="learn-chip">
+    <span class="lc-icon">💬</span>
+    <span class="lc-new-label">New phrase</span>
+    <span class="lc-phrase">"${esc(match.phrase)}"</span>
+    <span class="lc-sep">—</span>
+    <span class="lc-meaning">${esc(match.a)}</span>
+    <span class="lc-gen ${g.cls}">${g.label}</span>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// CULTURAL BRIDGE PAIRS
+// When both sides of a conversation use phrases that mean
+// the same thing — each from their own language — this is
+// the "same idea, different worlds" moment. Surface it.
+// ═══════════════════════════════════════════════════════
+const CULTURAL_BRIDGES = [
+  {
+    vi: { pattern:/cây có cội|nước có nguồn/i, phrase:"Cây có cội, nước có nguồn", meaning:"The tree has roots, the water has a source" },
+    en: { pattern:/roots (are|run) (hard|deep)|hard to pull up|where (you'?re?|we'?re?) from/i, phrase:"Roots are hard to pull up", meaning:"Hard to leave behind the people and places that shaped you" },
+    shared:"Every person comes from somewhere — and those origins never fully leave you."
+  },
+  {
+    vi: { pattern:/ăn cơm chưa|ăn chưa/i, phrase:"Ăn cơm chưa?", meaning:"Have you eaten yet?" },
+    en: { pattern:/how are you doing|how('?s| are) (it going|things|you)|you good\??/i, phrase:"How are you doing?", meaning:"I care about you / checking in on you" },
+    shared:"A simple question that means much more than it asks — both cultures use food and casual check-ins to say 'I care about you.'"
+  },
+  {
+    vi: { pattern:/chết con rồi|chết luôn/i, phrase:"Chết con rồi", meaning:"I'm dying (of laughter)" },
+    en: { pattern:/i'?m (literally )?dead|dying (rn|right now|laughing)|i (can'?t|cant)/i, phrase:"I'm dead 💀", meaning:"That was so funny I can't function" },
+    shared:"Both cultures use 'death' as the highest unit of laughter — same hyperbole, completely different words."
+  },
+  {
+    vi: { pattern:/thôi đi[.!?]*$/i, phrase:"Thôi đi!", meaning:"No way / stop it (excited disbelief)" },
+    en: { pattern:/shut up[.!?]*$|no way[.!?]*$|get out[.!?]*$/i, phrase:"Shut up!", meaning:"No way — I can't believe that (excited, not rude)" },
+    shared:"Both phrases literally mean 'stop' but between friends they mean pure excited disbelief — context turns a command into a compliment."
+  },
+  {
+    vi: { pattern:/sao cũng được/i, phrase:"Sao cũng được", meaning:"Whatever you want (easygoing OR quietly resentful)" },
+    en: { pattern:/whatever you want[.!?]*$|up to you[.!?]*$|i don'?t (care|mind)[.!?]*$/i, phrase:"Whatever you want", meaning:"I'm flexible — or I've given up (tone decides which)" },
+    shared:"The same surrender — genuine flexibility or quiet resignation. Only the tone in the room tells you which one it is."
+  },
+  {
+    vi: { pattern:/thật luôn/i, phrase:"Thật luôn", meaning:"For real, no cap — I genuinely mean this" },
+    en: { pattern:/no cap[.!?]*$|for real[.!?]*$|not (even )?joking[.!?]*$/i, phrase:"No cap", meaning:"I'm not lying — this is the truth" },
+    shared:"Both are sincerity markers — a way of saying 'I know this sounds unbelievable, but I swear it's true.'"
+  },
+  {
+    vi: { pattern:/em mệt rồi|mệt rồi/i, phrase:"Em mệt rồi", meaning:"I'm exhausted — emotionally worn down" },
+    en: { pattern:/i'?m so (tired|done|over) (of|with) (this|it)|i can'?t (do this|anymore)/i, phrase:"I'm so tired of this", meaning:"Not physical tiredness — the weight of something that's been building too long" },
+    shared:"The kind of tired that sleep won't fix. Both cultures have a word for this specific kind of worn-down — and both know the difference."
+  },
+  {
+    vi: { pattern:/nghe đã tai/i, phrase:"Nghe đã tai", meaning:"Sounds deeply satisfying — 'that slaps'" },
+    en: { pattern:/that (slaps|hits|goes hard)[.!?]*$|absolute(ly)? (fire|banger)[.!?]*$/i, phrase:"That slaps", meaning:"That sounds incredible — deeply satisfying" },
+    shared:"Both phrases use physical sensation to describe audio pleasure — one uses 'slapping,' one uses 'satisfying to the ear.' Same feeling."
+  },
+];
+
+// Scans recent messages for a cross-cultural bridge moment.
+// Returns { viMsg, enMsg, bridge } if found, null otherwise.
+// Both messages must come from different senders (isMe differs).
+function detectBridgeMoment(msgs){
+  if(!msgs || msgs.length < 2) return null;
+  const recent = msgs.slice(-14); // look at last 14 messages
+  for(const bridge of CULTURAL_BRIDGES){
+    let viMsg = null, enMsg = null;
+    for(const m of recent){
+      if(m.deleted || m.translating) continue;
+      const raw = (m.original || m.text || '').trim();
+      if(!viMsg && bridge.vi.pattern.test(raw)) viMsg = m;
+      if(!enMsg && bridge.en.pattern.test(raw)) enMsg = m;
+    }
+    // Both must exist AND come from different senders so it's a real exchange
+    if(viMsg && enMsg && viMsg.isMe !== enMsg.isMe){
+      // The bridge fires on the later of the two messages
+      const viIdx = recent.indexOf(viMsg);
+      const enIdx = recent.indexOf(enMsg);
+      const triggerMsg = viIdx > enIdx ? viMsg : enMsg;
+      return { triggerMsgId: triggerMsg.id, bridge };
+    }
+  }
+  return null;
 }
 
 // ─── Auto-learning dictionary ────────────────────────────
@@ -1009,9 +1527,12 @@ function logUnknownSlangCandidate(result, text, direction){
     if(entry && entry.count >= LEARN_THRESHOLD){
       try{
         const learned = JSON.parse(localStorage.getItem('learned_dictionary')||'{}');
-        learned[key] = { text: entry.text, direction: entry.direction,
-                         result: entry.result, learnedAt: Date.now(), count: entry.count };
+        const graduated = { text: entry.text, direction: entry.direction,
+                             result: entry.result, learnedAt: Date.now(), count: entry.count };
+        learned[key] = graduated;
         localStorage.setItem('learned_dictionary', JSON.stringify(learned));
+        // Report to community server — fire and forget
+        reportPhraseToServer(graduated);
         // Remove from candidate log — it's graduated
         const idx = log.findIndex(e => e.key === key);
         if(idx >= 0) log.splice(idx, 1);
@@ -1034,6 +1555,83 @@ function checkLearnedDictionary(text, direction){
     if(entry && entry.direction === direction) return entry.result;
   }catch(_){}
   return null;
+}
+
+// ═══════════════════════════════════════════════════════
+// COMMUNITY SLANG NETWORK LAYER
+// ═══════════════════════════════════════════════════════
+// When a phrase graduates locally (seen LEARN_THRESHOLD times),
+// it also gets reported to the community server so it can be
+// pooled with reports from other users.
+//
+// On app load, new community-approved phrases are pulled down
+// and merged into the local dictionary — so every user benefits
+// from what everyone else has seen.
+//
+// Set SLANG_SERVER_URL to your deployed server address.
+// Leave empty ('') to run fully offline (local learning only).
+// ═══════════════════════════════════════════════════════
+const SLANG_SERVER_URL = ''; // e.g. 'https://slang.yourapp.com'
+
+// Report a graduated phrase to the community server.
+// Fire-and-forget — never blocks the UI.
+function reportPhraseToServer(entry) {
+  if (!SLANG_SERVER_URL || !entry) return;
+  try {
+    fetch(`${SLANG_SERVER_URL}/api/slang/report`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        phrase:     entry.text,
+        direction:  entry.direction,
+        meaning:    entry.result?.likelyMeaning?.en || null,
+        ai_result:  entry.result || null,
+        first_seen: entry.learnedAt || Date.now(),
+      }),
+    }).catch(() => {}); // silently ignore network failures
+  } catch(_) {}
+}
+
+// Pull community-approved phrases from the server on app load.
+// Merges them into localStorage under 'community_dictionary'.
+// Only fetches entries newer than the last successful pull.
+async function fetchDictionaryUpdates() {
+  if (!SLANG_SERVER_URL) return;
+  try {
+    const lastFetch = parseInt(localStorage.getItem('community_dict_fetched') || '0', 10);
+    const res = await fetch(`${SLANG_SERVER_URL}/api/slang/updates?since=${lastFetch}`);
+    if (!res.ok) return;
+    const { entries } = await res.json();
+    if (!entries || !entries.length) return;
+
+    const dict = JSON.parse(localStorage.getItem('community_dictionary') || '{}');
+    for (const e of entries) {
+      const key = e.phrase.trim().toLowerCase().slice(0, 80) + '::' + e.direction;
+      dict[key] = {
+        phrase:    e.phrase,
+        direction: e.direction,
+        meaning:   e.meaning,
+        ai_result: e.ai_result,
+        gen:       e.gen,       // 'gen-z' | 'gen-mill' | 'gen-old'
+        gen_label: e.gen_label, // server computes this fresh each pull — aging is automatic
+        addedAt:   e.approved_at,
+      };
+    }
+    localStorage.setItem('community_dictionary', JSON.stringify(dict));
+    localStorage.setItem('community_dict_fetched', String(Date.now()));
+    console.log(`[slang] pulled ${entries.length} community entries`);
+  } catch(_) {}
+}
+
+// Check the community dictionary for a phrase.
+// Called alongside checkLearnedDictionary — same return shape.
+function checkCommunityDictionary(text, direction) {
+  if (!text) return null;
+  const key = text.trim().toLowerCase().slice(0, 80) + '::' + direction;
+  try {
+    const dict = JSON.parse(localStorage.getItem('community_dictionary') || '{}');
+    return dict[key] || null;
+  } catch(_) { return null; }
 }
 
 // ─── Preference learning ────────────────────────────────
@@ -1260,14 +1858,54 @@ function getUserPreferenceNote(rel, dir){
 
 function slangContextNote(matches){
   if(!matches.length) return '';
-  return '\n\nSLANG / WORDPLAY DETECTED — these phrases carry dual meanings depending on tone and context:\n'
-    + matches.map(m =>
-        `• "${m.phrase}"\n  WHY it's ambiguous: ${m.reason}\n  Reading A: ${m.a}\n  Reading B: ${m.b}`
-      ).join('\n\n')
-    + '\n\nFor EACH detected phrase above:\n'
-    + '1. Add a culturalWarning entry with type "slang", using the reason as whyRisky.\n'
-    + '2. Generate translation options that cover BOTH possible interpretations (A and B), so the sender can pick the one that matches what they actually meant.\n'
-    + '3. In the howItLands field for each option, briefly note which reading (A or B) that option reflects.';
+
+  // Partition into three buckets
+  const regular      = matches.filter(m => !m.englishEquiv && !m.hardcodedEn);
+  const withEquiv    = matches.filter(m => m.englishEquiv || m.vietnameseEquiv);
+  const withHardcode = matches.filter(m => m.hardcodedEn);
+
+  let note = '';
+
+  // ── Regular slang / wordplay (dual meaning) ──────────────────────────────
+  if(regular.length){
+    note += '\n\nSLANG / WORDPLAY DETECTED — these phrases carry dual meanings depending on tone and context:\n'
+      + regular.map(m =>
+          `• "${m.phrase}"\n  WHY it's ambiguous: ${m.reason}\n  Reading A: ${m.a}\n  Reading B: ${m.b}`
+        ).join('\n\n')
+      + '\n\nFor EACH detected phrase above:\n'
+      + '1. Add a culturalWarning entry with type "slang", using the reason as whyRisky.\n'
+      + '2. Generate translation options that cover BOTH possible interpretations (A and B), so the sender can pick the one that matches what they actually meant.\n'
+      + '3. In the howItLands field for each option, briefly note which reading (A or B) that option reflects.';
+  }
+
+  // ── Phrases with a natural cultural equivalent (both directions) ─────────
+  // No word-for-word match exists — the UI shows an explanation banner first time.
+  // The AI only needs to return ONE option using the natural equivalent.
+  if(withEquiv.length){
+    const m = withEquiv[0]; // take the first (should only be one at a time)
+    const equiv    = m.englishEquiv || m.vietnameseEquiv;
+    const tgtLang  = m.englishEquiv ? 'English' : 'Vietnamese';
+    note += `\n\nPHRASE WITH NATURAL ${tgtLang.toUpperCase()} EQUIVALENT:\n`
+      + `The source phrase "${m.phrase}" has no word-for-word ${tgtLang} translation, `
+      + `but "${equiv}" carries exactly the same meaning and emotional weight in ${tgtLang}.\n`
+      + `Why: ${m.reason}\n\n`
+      + `INSTRUCTIONS:\n`
+      + `1. Return EXACTLY ONE option in the options array. Its "translation" must be "${equiv}" (verbatim).\n`
+      + `2. Set detectedEmotion and recommendedOption to the emotion that best fits this phrase.\n`
+      + `3. Do NOT add a culturalWarning for this phrase — the app UI handles the explanation separately.\n`
+      + `4. Set howItLands.${m.englishEquiv ? 'en' : 'vi'} to a single sentence explaining why this phrase carries the same weight.`;
+  }
+
+  // ── Hard-coded direct translations ────────────────────────────────────────
+  // These translate cleanly — no cultural gap, no banner. Just use the phrase.
+  if(withHardcode.length){
+    note += '\n\nDIRECT TRANSLATIONS (use these exactly — no alternatives needed):\n'
+      + withHardcode.map(m => `• "${m.phrase}" → "${m.hardcodedEn}"`).join('\n')
+      + '\nFor each of the above: set the translation to the given English phrase verbatim. '
+      + 'Preserve the emotional directness — do not soften or rephrase.';
+  }
+
+  return note;
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1425,6 +2063,17 @@ function detectLang(text){
   return /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ]/.test(text||'') ? 'vi' : 'en';
 }
 
+// Detect code-switching: text mixes Vietnamese diacritics with clearly English words.
+// When true, the app leaves the message untouched — translation would mangle it.
+function isMixedLanguage(text){
+  if(!text || text.trim().length < 6) return false;
+  const hasVI = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ]/.test(text);
+  if(!hasVI) return false;
+  // English markers that never appear in standard Vietnamese text
+  const hasEN = /\b(i'm|i'll|i've|i'd|you're|you've|you'll|it's|that's|there's|what's|don't|doesn't|can't|won't|isn't|i |the |and |but |for |this |that |with |from |have |just |okay|what|how|when|where|why)\b/i.test(text);
+  return hasEN;
+}
+
 // Locale-aware formatters. We store only the raw timestamp (ts) on each message
 // and format at render time, so dates/times re-localize when the user toggles
 // language without touching the stored data.
@@ -1450,6 +2099,9 @@ function launchApp(){
   document.getElementById('liveSetupScreen').style.display='none';
   document.getElementById('app').style.display='flex';
   initRelGrid(); initDirPick(); renderSidebar(); updPlaceholder();
+  initFriendRequests();
+  // Pull new community-approved slang entries in the background
+  fetchDictionaryUpdates();
 }
 
 document.getElementById('saveKeyBtn').addEventListener('click',()=>{
@@ -1475,11 +2127,13 @@ function skipLiveSession(){ launchApp(); }
 let liveSelRel = 'formal';
 
 function renderLiveRelGrid(){
-  document.getElementById('liveRelGrid').innerHTML = RELS.map(r=>
+  const html = RELS.map(r=>
     `<button type="button" class="relbtn${liveSelRel===r.id?' sel':''}" onclick="livePickRel('${r.id}')">
       <span class="rn">${esc(r.label)}</span><span class="rh">${esc(r.hint)}</span>
     </button>`
   ).join('');
+  document.getElementById('liveRelGrid').innerHTML = html;
+  document.getElementById('localRelGrid').innerHTML = html.replace(/livePickRel/g,'livePickRel'); // shared rel selection
 }
 function livePickRel(id){ liveSelRel=id; renderLiveRelGrid(); }
 
@@ -1489,12 +2143,77 @@ document.getElementById('saveKeyBtn').addEventListener('click', ()=>{
   setTimeout(renderLiveRelGrid, 50);
 }, true);
 
+// Opens the Live Session panel pre-filled with the auto-derived room code
+function openLiveSessionForContact(){
+  const c = activeCont(); if(!c||!c.email) return;
+  const myEmail = (sessionStorage.getItem('mta_user_email')||'').toLowerCase();
+  if(!myEmail){ alert('Sign in first so your email is known.'); return; }
+  const code = roomCodeFromEmails(myEmail, c.email);
+
+  // Pre-fill both local and Firebase room code fields
+  document.getElementById('localRoomCode').value = code;
+  document.getElementById('fbRoomCode').value = code;
+  // Expand local test panel by default (easier for same-device testing)
+  document.getElementById('localDetails').open = true;
+  document.getElementById('liveSetupScreen').style.display='flex';
+  setTimeout(renderLiveRelGrid, 50);
+}
+
+// ── Local tab-to-tab mode (BroadcastChannel, no backend) ──
+function connectLocal(){
+  const code = (document.getElementById('localRoomCode').value||'').trim().toUpperCase();
+  if(!code||code.length<4){ alert('Enter a room code (4–8 characters).'); return; }
+  localMode = true;
+  roomCode  = code;
+  localChannel = new BroadcastChannel('mta_room_' + code);
+  startLocalListeners();
+  launchApp();
+}
+
+function startLocalListeners(){
+  joinedAt = Date.now();
+  const rc = ensureRoomContact();
+  renderSidebar();
+  openChat(rc.id);
+
+  localChannel.onmessage = (evt) => {
+    const m = evt.data;
+    if(!m || m.type !== 'msg') return;
+    const room = ensureRoomContact();
+    const d = new Date(m.ts);
+    if(activeId !== room.id) room.unread = (room.unread||0) + 1;
+    room.msgs.push({
+      text: m.text, translated: m.text, original: m.original||m.text,
+      emotion:'', isMe:false, mode:'text', direction: m.direction||'en-vi',
+      ts: m.ts,
+      time: d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
+      day:  d.toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'})
+    });
+    if(activeId===room.id){ renderMsgs(); }
+    renderSidebar();
+    // typing off when message arrives
+    otherTyping = false; refreshTypingRow();
+  };
+
+  localChannel.onmessage_typing = null; // handled below
+  // Piggyback typing on same channel with a different type
+  const _orig = localChannel.onmessage;
+  localChannel.onmessage = (evt) => {
+    if(evt.data && evt.data.type === 'typing'){
+      const someone = evt.data.val;
+      if(someone !== otherTyping){ otherTyping = someone; refreshTypingRow(); }
+      return;
+    }
+    if(_orig) _orig(evt);
+  };
+}
+
 function connectFirebase(){
   const fbKey=(document.getElementById('fbApiKey').value||'').trim();
   const fbProj=(document.getElementById('fbProjectId').value||'').trim().toLowerCase();
   const code=(document.getElementById('fbRoomCode').value||'').trim().toUpperCase();
   if(!fbKey||!fbProj){ alert('Please enter your Firebase API key and Project ID.'); return; }
-  if(!code||code.length<4){ alert('Please generate or enter a room code (4–8 characters).'); return; }
+  if(!code||code.length<4){ alert('Enter a room code (4–8 characters).'); return; }
   try{
     if(!firebase.apps.length){
       firebase.initializeApp({
@@ -2449,18 +3168,21 @@ function openModal(id){
     : (isVI?'Liên hệ mới':'New Contact');
 
   // Labels
-  const [lblName,lblPhone,lblRel,lblActions]=document.querySelectorAll('#modalBg .flabel');
+  const [lblName,lblPhone,lblEmail,lblRel,lblActions]=document.querySelectorAll('#modalBg .flabel');
   if(lblName)   lblName.textContent   = isVI?'Tên (tùy chọn)':'Name (optional)';
   if(lblPhone)  lblPhone.textContent  = isVI?'Số điện thoại (tùy chọn)':'Mobile number (optional)';
+  if(lblEmail)  lblEmail.textContent  = isVI?'Email (tùy chọn)':'Email (optional)';
   if(lblRel)    lblRel.textContent    = isVI?'Mối quan hệ':'Relationship';
   if(lblActions)lblActions.textContent= isVI?'Hành động':'Actions';
 
   // Placeholders
   document.getElementById('mcName').placeholder  = isVI?'Tên hoặc biệt danh':'Their name or nickname';
   document.getElementById('mcPhone').placeholder = isVI?'+84 xxx xxx xxxx':'+1 555 000 0000';
+  document.getElementById('mcEmail').placeholder = isVI?'email@cua-ho.com':'their@email.com';
 
   document.getElementById('mcName').value=c?c.name:'';
   document.getElementById('mcPhone').value=c?c.phone||'':'';
+  document.getElementById('mcEmail').value=c?c.email||'':'';
   selRelType=c?c.type:null;
   initRelGrid();
 
@@ -2525,15 +3247,18 @@ function saveContact(){
   if(!selRelType){ alert('Please select a relationship type.'); return; }
   const name=document.getElementById('mcName').value.trim();
   const phone=document.getElementById('mcPhone').value.trim();
+  const email=document.getElementById('mcEmail').value.trim().toLowerCase();
   const dir='en-vi';
   if(editingId){
     const c=contacts.find(x=>x.id===editingId);
-    if(c){ c.name=name; c.phone=phone; c.type=selRelType; c.direction=dir; }
+    if(c){ c.name=name; c.phone=phone; c.email=email; c.type=selRelType; c.direction=dir; }
     if(activeId===editingId) refreshHeader();
   } else {
-    contacts.unshift({id:nxtId++,name,phone,type:selRelType,direction:dir,msgs:[],
+    contacts.unshift({id:nxtId++,name,phone,email,type:selRelType,direction:dir,msgs:[],
       favourite:false,emergency:false,blocked:false});
     openChat(contacts[0].id);
+    // Send a friend request if they gave an email
+    if(email) sendFriendRequest(email);
   }
   closeModal(); renderSidebar();
 }
@@ -2677,6 +3402,191 @@ function mobileBack(){
     dir = null; dragging = false;
   }, { passive: true });
 })();
+// ═══════════════════════════════════════════════════════
+// FRIEND REQUEST SYSTEM
+// ═══════════════════════════════════════════════════════
+
+const FREQ_CHANNEL = 'mta_friend_requests';
+let freqChannel = null;
+
+function initFriendRequests(){
+  freqChannel = new BroadcastChannel(FREQ_CHANNEL);
+  freqChannel.onmessage = (evt) => {
+    const d = evt.data;
+    if(!d) return;
+    const me = (sessionStorage.getItem('mta_user_email')||'').toLowerCase();
+    if(d.type === 'friend_request' && d.to === me){
+      _savePendingRequest(d);
+      _renderFreqCard(d);
+    }
+    if(d.type === 'friend_accepted' && d.to === me){
+      _showToast('✅ ' + (d.fromName||d.from) + ' accepted your request!');
+    }
+  };
+  // Check localStorage for requests received while this tab was closed
+  const me = (sessionStorage.getItem('mta_user_email')||'').toLowerCase();
+  if(me) _loadPendingRequests(me);
+}
+
+// ── Storage helpers ────────────────────────────────────
+function _pendingKey(email){ return 'mta_freq_' + email; }
+
+function _savePendingRequest(req){
+  const me = (sessionStorage.getItem('mta_user_email')||'').toLowerCase();
+  if(!me) return;
+  try{
+    const list = JSON.parse(localStorage.getItem(_pendingKey(me))||'[]');
+    if(!list.find(r=>r.id===req.id)) list.push(req);
+    localStorage.setItem(_pendingKey(me), JSON.stringify(list));
+    _updateBadge(list.length);
+  }catch(_){}
+}
+
+function _removePendingRequest(id){
+  const me = (sessionStorage.getItem('mta_user_email')||'').toLowerCase();
+  if(!me) return;
+  try{
+    let list = JSON.parse(localStorage.getItem(_pendingKey(me))||'[]');
+    list = list.filter(r=>r.id!==id);
+    localStorage.setItem(_pendingKey(me), JSON.stringify(list));
+    _updateBadge(list.length);
+  }catch(_){}
+}
+
+function _loadPendingRequests(email){
+  try{
+    const list = JSON.parse(localStorage.getItem(_pendingKey(email))||'[]');
+    _updateBadge(list.length);
+    list.forEach(req => _renderFreqCard(req));
+  }catch(_){}
+}
+
+function _updateBadge(count){
+  const badge = document.getElementById('reqBadge');
+  if(!badge) return;
+  badge.textContent = count > 9 ? '9+' : String(count);
+  badge.classList.toggle('show', count > 0);
+}
+
+// ── Send a request ─────────────────────────────────────
+function sendFriendRequest(toEmail){
+  const me = (sessionStorage.getItem('mta_user_email')||'').toLowerCase();
+  if(!me || !toEmail || toEmail === me) return;
+  const req = {
+    id:       Date.now() + '_' + Math.random().toString(36).slice(2,6),
+    type:     'friend_request',
+    from:     me,
+    fromName: me.split('@')[0],
+    to:       toEmail,
+    ts:       Date.now()
+  };
+  // Persist for when the other tab isn't open yet
+  try{
+    const list = JSON.parse(localStorage.getItem(_pendingKey(toEmail))||'[]');
+    if(!list.find(r=>r.from===me)){
+      list.push(req);
+      localStorage.setItem(_pendingKey(toEmail), JSON.stringify(list));
+    }
+  }catch(_){}
+  // Live delivery if their tab is open
+  if(freqChannel) freqChannel.postMessage(req);
+}
+
+// ── Render a notification card ─────────────────────────
+function _renderFreqCard(req){
+  const overlay = document.getElementById('freqOverlay');
+  if(!overlay) return;
+  // Don't show duplicates
+  if(document.getElementById('freq_'+req.id)) return;
+  const initials = (req.fromName||req.from).slice(0,2).toUpperCase();
+  const card = document.createElement('div');
+  card.className = 'freq-card';
+  card.id = 'freq_'+req.id;
+  card.innerHTML = `
+    <div class="freq-top">
+      <div class="freq-av">${initials}</div>
+      <div class="freq-info">
+        <div class="freq-name">${req.fromName||req.from}</div>
+        <div class="freq-sub">${req.from} wants to connect with you</div>
+      </div>
+    </div>
+    <div class="freq-actions">
+      <button class="freq-accept" onclick="acceptFriendRequest('${req.id}','${req.from}','${req.fromName||req.from}')">Accept</button>
+      <button class="freq-deny"   onclick="denyFriendRequest('${req.id}')">Deny</button>
+    </div>`;
+  overlay.appendChild(card);
+  overlay.classList.add('show');
+}
+
+function _dismissFreqCard(id){
+  const card = document.getElementById('freq_'+id);
+  if(card) card.remove();
+  const overlay = document.getElementById('freqOverlay');
+  if(overlay && !overlay.querySelector('.freq-card')) overlay.classList.remove('show');
+}
+
+// ── Accept ─────────────────────────────────────────────
+function acceptFriendRequest(id, fromEmail, fromName){
+  _removePendingRequest(id);
+  _dismissFreqCard(id);
+  // Add them as a contact automatically if not already there
+  if(!contacts.find(c=>c.email===fromEmail)){
+    contacts.unshift({
+      id: nxtId++, name: fromName, phone:'', email: fromEmail,
+      type:'formal', direction:'en-vi', msgs:[],
+      favourite:false, emergency:false, blocked:false
+    });
+    renderSidebar();
+  }
+  // Notify the other tab
+  if(freqChannel){
+    const me = (sessionStorage.getItem('mta_user_email')||'').toLowerCase();
+    freqChannel.postMessage({ type:'friend_accepted', from: me, fromName: me.split('@')[0], to: fromEmail });
+  }
+  _showToast('✅ You\'re now connected with ' + fromName + '!');
+}
+
+// ── Deny ───────────────────────────────────────────────
+function denyFriendRequest(id){
+  _removePendingRequest(id);
+  _dismissFreqCard(id);
+}
+
+// ── Bell: show all pending ─────────────────────────────
+function showPendingRequests(){
+  const me = (sessionStorage.getItem('mta_user_email')||'').toLowerCase();
+  if(!me) return;
+  try{
+    const list = JSON.parse(localStorage.getItem(_pendingKey(me))||'[]');
+    if(list.length === 0){ _showToast('No pending friend requests.'); return; }
+    const overlay = document.getElementById('freqOverlay');
+    overlay.innerHTML = '';
+    list.forEach(req => _renderFreqCard(req));
+    overlay.classList.add('show');
+  }catch(_){}
+}
+
+// ── Simple toast ───────────────────────────────────────
+function _showToast(msg){
+  const t = document.createElement('div');
+  t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);' +
+    'background:#111827;color:#fff;padding:10px 20px;border-radius:999px;font-size:14px;' +
+    'font-weight:500;z-index:999;pointer-events:none;opacity:0;transition:opacity .2s;';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  requestAnimationFrame(()=>{ t.style.opacity='1'; });
+  setTimeout(()=>{ t.style.opacity='0'; setTimeout(()=>t.remove(),300); }, 3000);
+}
+
+// Derives a deterministic 6-char room code from two emails.
+// Both users get the same code without any manual sharing.
+function roomCodeFromEmails(a, b){
+  const s = [a,b].sort().join('|');
+  let h = 0;
+  for(let i=0;i<s.length;i++) h=(Math.imul(31,h)+s.charCodeAt(i))|0;
+  return Math.abs(h).toString(36).toUpperCase().padStart(6,'0').slice(0,6);
+}
+
 function refreshHeader(){
   const c=activeCont(); if(!c) return;
   const r=getRel(c.type);
@@ -2688,6 +3598,18 @@ function refreshHeader(){
   hdrAv.style.fontSize='13px';
   document.getElementById('hdrName').textContent=dispName(c);
   document.getElementById('hdrSub').textContent=relLabel(r);
+
+  // Show/hide the "Connect" button depending on whether contact has an email
+  const myEmail = (sessionStorage.getItem('mta_user_email')||'').toLowerCase();
+  const btn = document.getElementById('btnConnectEmail');
+  if(btn){
+    if(c.email && myEmail && c.email !== myEmail){
+      btn.style.display='flex';
+      btn.title = 'Connect to live session with '+c.email;
+    } else {
+      btn.style.display='none';
+    }
+  }
 }
 
 // ─── Relationship Editor ──────────────────────────────
@@ -2861,6 +3783,29 @@ function updPlaceholder(){
 // ═══════════════════════════════════════════════════════
 // MESSAGES
 // ═══════════════════════════════════════════════════════
+function buildBridgeCardHtml(bridge, isVI){
+  return `<div class="bridge-card">
+    <div class="bridge-header">
+      <span class="bridge-icon">🌉</span>
+      <span class="bridge-title">${isVI ? 'Cùng một ý nghĩa' : 'Same idea — different worlds'}</span>
+    </div>
+    <div class="bridge-pair">
+      <div class="bridge-side">
+        <div class="bridge-lang">🇻🇳 Vietnamese</div>
+        <div class="bridge-phrase">${esc(bridge.vi.phrase)}</div>
+        <div class="bridge-meaning">${esc(bridge.vi.meaning)}</div>
+      </div>
+      <div class="bridge-connector">≈</div>
+      <div class="bridge-side">
+        <div class="bridge-lang">🇺🇸 English</div>
+        <div class="bridge-phrase">${esc(bridge.en.phrase)}</div>
+        <div class="bridge-meaning">${esc(bridge.en.meaning)}</div>
+      </div>
+    </div>
+    <div class="bridge-shared">${esc(bridge.shared)}</div>
+  </div>`;
+}
+
 function renderMsgs(){
   const c=activeCont();
   const area=document.getElementById('msgsArea');
@@ -2871,6 +3816,9 @@ function renderMsgs(){
   }
   const isVI=appDir==='vi-en';
   const todayLbl=isVI?'Hôm nay':'Today';
+  // Detect bridge moment once for this render pass
+  const bridgeResult = detectBridgeMoment(c.msgs);
+  const bridgeTriggerMsgId = bridgeResult ? bridgeResult.triggerMsgId : null;
   // Read ticks: double checkmarks rendered as stacked SVGs (WhatsApp-style).
   // In this demo we don't have real delivery state, so "me" messages show as
   // "read" (blue double-check) right away.
@@ -2889,27 +3837,570 @@ function renderMsgs(){
     const isLastInStreak = !next || next.isMe !== m.isMe;
     const tailCls = isLastInStreak ? ' tail' : '';
     const translatingCls = m.translating ? ' translating' : '';
-    // Hide the original by default; tiny chevron inline with the timestamp to peek.
+    // All bubbles get data-msgid so context menu works on any bubble
+    const editAttr = m.id ? ` data-msgid="${esc(m.id)}" data-msisme="${m.isMe?'1':'0'}"${m.isMe?` data-msgts="${m.ts}"`:''}` : '';
+
+    // Reactions badge (top-left of bubble row)
+    const reactions = m.reactions || {};
+    const reactHtml = Object.keys(reactions).length
+      ? `<div class="msg-reactions">${Object.entries(reactions).map(([emoji,count])=>
+          `<span class="react-badge" data-msgid="${esc(m.id||'')}" data-emoji="${esc(emoji)}">${emoji}${count>1?` ${count}`:''}</span>`
+        ).join('')}</div>`
+      : '';
+
+    // Deleted message — show placeholder, nothing else
+    if(m.deleted){
+      h+=`<div class="mrow ${side}">${reactHtml}<div class="bubble ${side}${tailCls} deleted-msg"${editAttr}><span class="del-text">${isVI?'Tin nhắn đã bị xóa':'This message was deleted'}</span><div class="b-meta">${esc(fmtTime(m.ts))}</div></div></div>`;
+      return h;
+    }
+
+    // Reply reference — quoted block at top of bubble
+    const replyRefHtml = m.replyTo
+      ? `<div class="reply-ref" data-jumpid="${esc(m.replyTo.id||'')}">${esc((m.replyTo.text||'').slice(0,70))}${(m.replyTo.text||'').length>70?'…':''}</div>`
+      : '';
+
+    // Original text row — hidden by default, shown via context menu "Show original"
     const hasOrig = m.original && m.original.trim() && m.original.trim() !== (m.translated||m.text||'').trim();
     const origRow = hasOrig ? `<div class="b-orig">${esc(m.original)}</div>` : '';
-    const peekBtn = hasOrig ? `<button class="btgl" data-toggle="orig" aria-label="${isVI?'xem gốc':'show original'}" title="${isVI?'xem gốc':'show original'}">⌄</button>` : '';
-    // Alternatives: only on received messages where the sender had ambiguous options
-    const hasAlts = !m.isMe && m.hasAlternatives && Array.isArray(m.altOptions) && m.altOptions.length > 1;
+
+    // Alternatives — sender-only, never exposed to receiver
+    const hasAlts = m.isMe && m.hasAlternatives && Array.isArray(m.altOptions) && m.altOptions.length > 1;
     const altsPanel = hasAlts ? buildAltsPanel(m) : '';
     const altBtn = hasAlts && m.id
       ? `<button class="btgl" data-toggle="alts" title="${isVI?'Xem bản dịch khác':'See other translations'}" aria-label="${isVI?'Xem bản dịch khác':'See other translations'}">↕</button>`
       : '';
     const timeStr = fmtTime(m.ts);
-    const metaRow = `<div class="b-meta">${esc(timeStr)}${peekBtn}${altBtn}${m.isMe?ticksSvg:''}</div>`;
-    const changeChip = (m.autoSent && m.id)
+    const editedLabel = m.edited ? `<span class="b-edited">${isVI?'đã sửa':'edited'}</span>` : '';
+    const metaRow = `<div class="b-meta">${editedLabel}${esc(timeStr)}${altBtn}${m.isMe?ticksSvg:''}</div>`;
+    // "sent as playful · Change" chip — sender-only
+    const changeChip = (m.isMe && m.autoSent && m.id)
       ? `<button class="auto-change-chip" data-msgid="${esc(m.id)}">${isVI ? `Đã gửi dạng ${esc(m.emotion||'trung lập')} · Đổi` : `sent as ${esc(m.emotion||'neutral')} · Change`}</button>`
       : '';
-    h+=`<div class="mrow ${side}"><div class="bubble ${side}${tailCls}${translatingCls}">${esc(m.translated||m.text)}${origRow}${altsPanel}${metaRow}</div>${changeChip}</div>`;
+    // GIF messages
+    if(m.mode==='gif' && m.gifUrl){
+      h+=`<div class="mrow ${side}">${reactHtml}<div class="bubble ${side}${tailCls} gif-bubble"${editAttr}><img class="msg-gif" src="${esc(m.gifUrl)}" alt="GIF" loading="lazy"/>${metaRow}</div></div>`;
+      return h;
+    }
+    h+=`<div class="mrow ${side}">${reactHtml}<div class="bubble ${side}${tailCls}${translatingCls}"${editAttr}>${replyRefHtml}${esc(m.translated||m.text)}${origRow}${altsPanel}${metaRow}</div>${changeChip}</div>`;
+    // Learn chip — receiver only, fires when the other person's original text contains slang
+    if(!m.isMe && !m.deleted && !m.translating){
+      const srcText = m.original || m.text || '';
+      const srcDir  = m.direction || (appDir === 'en-vi' ? 'vi-en' : 'en-vi');
+      const slangHits = detectSlang(srcText, srcDir);
+      if(slangHits.length){
+        h += buildLearnChip(slangHits[0]);
+      }
+    }
+    // Bridge card — inject immediately after the trigger message
+    if(bridgeTriggerMsgId && m.id === bridgeTriggerMsgId){
+      h += buildBridgeCardHtml(bridgeResult.bridge, isVI);
+    }
     return h;
   }).join('');
   scrollBot();
 }
 function scrollBot(){ const a=document.getElementById('msgsArea'); a.scrollTop=a.scrollHeight; }
+
+// ═══════════════════════════════════════════════════════
+// MESSAGE EDIT (Snapchat-style — 60-second window)
+// ═══════════════════════════════════════════════════════
+const EDIT_WINDOW_MS = 3 * 60 * 1000; // 3 minutes
+
+let _editCtxMenu = null;
+
+function removeEditCtxMenu(){
+  if(_editCtxMenu){ _editCtxMenu.remove(); _editCtxMenu=null; }
+}
+
+function canEditMsg(msg){
+  return msg && msg.isMe && !msg.translating && (Date.now() - msg.ts) < EDIT_WINDOW_MS;
+}
+
+const REACTIONS = ['❤️','👍','👎','😂','😮','😢','😡'];
+
+function showBubbleCtxMenu(x, y, msgId, isMe){
+  removeEditCtxMenu();
+  const c = activeCont();
+  if(!c) return;
+  const msg = c.msgs.find(m=>m.id===msgId);
+  if(!msg) return;
+  const isVI = appDir==='vi-en';
+  const canEdit = isMe && canEditMsg(msg) && !msg.deleted;
+  const hasOrig = !msg.deleted && msg.original && msg.original.trim() && msg.original.trim() !== (msg.translated||msg.text||'').trim();
+  const bubble = document.querySelector(`.bubble[data-msgid="${CSS.escape(msgId)}"]`);
+  const isShowingOrig = bubble && bubble.classList.contains('showorig');
+  const myReaction = (msg.reactions||{}).__me;
+
+  // Reaction row
+  let html = `<div class="ctx-reactions">${REACTIONS.map(e=>
+    `<button class="ctx-react-btn${myReaction===e?' active':''}" data-react="${esc(e)}" title="${esc(e)}">${e}</button>`
+  ).join('')}</div><div class="ctx-sep"></div>`;
+
+  // Reply (always)
+  html += `<div class="edit-ctx-item" id="ctxReply"><span>${isVI?'Trả lời':'Reply'}</span></div>`;
+
+  // Show/hide original
+  if(hasOrig){
+    html += `<div class="edit-ctx-item" id="ctxOrig"><span>${isShowingOrig?(isVI?'Ẩn bản gốc':'Hide original'):(isVI?'Xem bản gốc':'Show original')}</span></div>`;
+  }
+
+  // Sender-only actions
+  if(isMe && !msg.deleted){
+    html += `<div class="ctx-sep"></div>`;
+    html += `<div class="edit-ctx-item${canEdit?'':' disabled'}" id="ctxEdit"><span>${isVI?'Sửa':'Edit'}</span></div>`;
+    html += `<div class="edit-ctx-item danger" id="ctxDelete"><span>${isVI?'Xóa tin nhắn':'Delete'}</span></div>`;
+  }
+
+  const menu = document.createElement('div');
+  menu.className = 'edit-ctx-menu';
+  menu.innerHTML = html;
+  document.body.appendChild(menu);
+  _editCtxMenu = menu;
+
+  const mw=menu.offsetWidth, mh=menu.offsetHeight;
+  const vw=window.innerWidth, vh=window.innerHeight;
+  menu.style.left = Math.min(x, vw-mw-8)+'px';
+  menu.style.top  = Math.min(y-mh-6, vh-mh-8)+'px';
+
+  // Reaction buttons
+  menu.querySelectorAll('.ctx-react-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ removeEditCtxMenu(); toggleReaction(msgId, btn.dataset.react); });
+  });
+  menu.querySelector('#ctxReply')?.addEventListener('click', ()=>{ removeEditCtxMenu(); startReply(msgId); });
+  menu.querySelector('#ctxOrig')?.addEventListener('click', ()=>{ removeEditCtxMenu(); if(bubble) bubble.classList.toggle('showorig'); });
+  if(isMe && !msg.deleted){
+    if(canEdit) menu.querySelector('#ctxEdit')?.addEventListener('click', ()=>{ removeEditCtxMenu(); startInlineEdit(msgId); });
+    menu.querySelector('#ctxDelete')?.addEventListener('click', ()=>{ removeEditCtxMenu(); deleteMessage(msgId); });
+  }
+
+  const dismiss = (e)=>{ if(!menu.contains(e.target)){ removeEditCtxMenu(); document.removeEventListener('mousedown', dismiss); document.removeEventListener('touchstart', dismiss); }};
+  setTimeout(()=>{ document.addEventListener('mousedown', dismiss); document.addEventListener('touchstart', dismiss); }, 0);
+}
+
+// Keep old name as alias so any remaining internal calls don't break
+function showEditCtxMenu(x, y, msgId){ showBubbleCtxMenu(x, y, msgId, true); }
+
+function deleteMessage(msgId){
+  const c = activeCont();
+  if(!c) return;
+  const msg = c.msgs.find(m=>m.id===msgId);
+  if(!msg) return;
+  msg.deleted = true;
+  renderMsgs(); renderSidebar();
+  syncToFirebase(msg);
+}
+
+function toggleReaction(msgId, emoji){
+  const c = activeCont();
+  if(!c) return;
+  const msg = c.msgs.find(m=>m.id===msgId);
+  if(!msg) return;
+  if(!msg.reactions) msg.reactions = {};
+  const prev = msg.reactions.__me;
+  // Remove previous reaction count
+  if(prev && msg.reactions[prev]){
+    msg.reactions[prev]--;
+    if(msg.reactions[prev] <= 0) delete msg.reactions[prev];
+  }
+  // Toggle: if same emoji, just remove; otherwise apply new
+  if(prev === emoji){
+    delete msg.reactions.__me;
+  } else {
+    msg.reactions[emoji] = (msg.reactions[emoji]||0) + 1;
+    msg.reactions.__me = emoji;
+  }
+  renderMsgs();
+  syncToFirebase(msg);
+}
+
+// ── Reply ──────────────────────────────────────────────
+let _replyState = null;
+
+function startReply(msgId){
+  const c = activeCont();
+  if(!c) return;
+  const msg = c.msgs.find(m=>m.id===msgId);
+  if(!msg || msg.deleted) return;
+  const isVI = appDir==='vi-en';
+  _replyState = { id: msgId, text: msg.translated||msg.text||'', isMe: msg.isMe };
+  const bar = document.getElementById('replyBar');
+  const label = document.getElementById('replyBarLabel');
+  const text = document.getElementById('replyBarText');
+  if(bar && label && text){
+    label.textContent = isVI ? 'Đang trả lời' : 'Replying to';
+    text.textContent = (_replyState.text).slice(0, 80) + (_replyState.text.length>80?'…':'');
+    bar.style.display = 'flex';
+  }
+  document.getElementById('txtInput').focus();
+}
+
+function cancelReply(){
+  _replyState = null;
+  const bar = document.getElementById('replyBar');
+  if(bar) bar.style.display = 'none';
+}
+
+// Jump to a referenced message when reply-ref is tapped
+function jumpToMsg(msgId){
+  const el = document.querySelector(`.bubble[data-msgid="${CSS.escape(msgId)}"]`);
+  if(!el) return;
+  el.scrollIntoView({behavior:'smooth', block:'center'});
+  el.style.transition='background .3s';
+  el.style.background='rgba(0,104,255,.18)';
+  setTimeout(()=>{ el.style.background=''; }, 1200);
+}
+
+function startInlineEdit(msgId){
+  const c = activeCont();
+  if(!c) return;
+  const msg = c.msgs.find(m=>m.id===msgId);
+  if(!msg || !canEditMsg(msg)) return;
+  const isVI = appDir==='vi-en';
+
+  // Find the bubble DOM node
+  const bubble = document.querySelector(`.bubble[data-msgid="${CSS.escape(msgId)}"]`);
+  if(!bubble) return;
+
+  const currentText = msg.translated || msg.text || '';
+  // Replace bubble content with an edit form
+  bubble.innerHTML = `
+    <div class="bubble-edit-wrap">
+      <textarea class="bubble-edit-ta" rows="2">${esc(currentText)}</textarea>
+      <div class="edit-timer" id="editTimer_${esc(msgId)}"></div>
+      <div class="bubble-edit-actions">
+        <button class="bubble-edit-cancel">${isVI?'Hủy':'Cancel'}</button>
+        <button class="bubble-edit-save">${isVI?'Lưu':'Save'}</button>
+      </div>
+    </div>`;
+
+  const ta = bubble.querySelector('.bubble-edit-ta');
+  const timerEl = bubble.querySelector(`#editTimer_${CSS.escape(msgId)}`);
+  ta.focus();
+  ta.setSelectionRange(ta.value.length, ta.value.length);
+
+  // Auto-resize textarea
+  ta.addEventListener('input', ()=>{ ta.style.height='auto'; ta.style.height=Math.min(ta.scrollHeight,120)+'px'; });
+
+  // Countdown timer display
+  function updateTimer(){
+    const remaining = Math.max(0, Math.ceil((EDIT_WINDOW_MS - (Date.now()-msg.ts))/1000));
+    if(timerEl) timerEl.textContent = isVI ? `Còn ${remaining}s để sửa` : `${remaining}s left to edit`;
+    if(remaining <= 0){ cancelEdit(); }
+  }
+  updateTimer();
+  const timerInterval = setInterval(updateTimer, 1000);
+
+  function cancelEdit(){
+    clearInterval(timerInterval);
+    renderMsgs();
+  }
+
+  function saveEdit(){
+    clearInterval(timerInterval);
+    const newText = (ta.value||'').trim();
+    if(!newText || newText === currentText){ renderMsgs(); return; }
+    msg.translated = newText;
+    msg.text = newText;
+    msg.edited = true;
+    msg.editedAt = Date.now();
+    renderMsgs(); renderSidebar();
+  }
+
+  bubble.querySelector('.bubble-edit-cancel').addEventListener('click', cancelEdit);
+  bubble.querySelector('.bubble-edit-save').addEventListener('click', saveEdit);
+  // Ctrl/Cmd+Enter saves, Escape cancels
+  ta.addEventListener('keydown', e=>{
+    if((e.ctrlKey||e.metaKey) && e.key==='Enter'){ e.preventDefault(); saveEdit(); }
+    if(e.key==='Escape'){ e.preventDefault(); cancelEdit(); }
+  });
+}
+
+// Wire up right-click and long-press on ALL bubbles in the messages area
+let _longPressTimer = null;
+document.addEventListener('DOMContentLoaded', ()=>{
+  const area = document.getElementById('msgsArea');
+  if(!area) return;
+
+  // Right-click (desktop) — works on any bubble
+  area.addEventListener('contextmenu', e=>{
+    const bubble = e.target.closest('.bubble[data-msgid]');
+    if(!bubble) return;
+    e.preventDefault();
+    showBubbleCtxMenu(e.clientX, e.clientY, bubble.dataset.msgid, bubble.dataset.msisme==='1');
+  });
+
+  // Long-press (mobile) — works on any bubble
+  area.addEventListener('touchstart', e=>{
+    const bubble = e.target.closest('.bubble[data-msgid]');
+    if(!bubble) return;
+    const touch = e.touches[0];
+    _longPressTimer = setTimeout(()=>{
+      showBubbleCtxMenu(touch.clientX, touch.clientY, bubble.dataset.msgid, bubble.dataset.msisme==='1');
+    }, 500);
+  }, {passive:true});
+  area.addEventListener('touchend', ()=>{ clearTimeout(_longPressTimer); _longPressTimer=null; });
+  area.addEventListener('touchmove', ()=>{ clearTimeout(_longPressTimer); _longPressTimer=null; });
+
+  // Reply bar close button
+  document.getElementById('replyBarClose')?.addEventListener('click', cancelReply);
+
+  // Tap a reply-ref block → jump to referenced message
+  area.addEventListener('click', e=>{
+    const ref = e.target.closest('.reply-ref[data-jumpid]');
+    if(ref && ref.dataset.jumpid) jumpToMsg(ref.dataset.jumpid);
+  });
+});
+
+// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// MEDIA PICKER — iMessage-style + button (Emoji · Stickers · GIF)
+// ═══════════════════════════════════════════════════════
+const TENOR_KEY = 'AIzaSyA8DX_qDKMMMDN7uE9h0s_6JvO6znpqzFc';
+const TENOR_BASE = 'https://tenor.googleapis.com/v2';
+let _gifSearchTimer = null;
+
+const EMOJI_CATEGORIES = [
+  { name:'Smileys',  emojis:['😀','😃','😄','😁','😆','😅','🤣','😂','🙂','🙃','😉','😊','😇','🥰','😍','🤩','😘','😗','😚','😙','🥲','😋','😛','😝','🤪','🧐','🤓','😎','🥸','🤠','😏','😒','😞','😔','😟','😕','🙁','☹️','😣','😖','😫','😩','🥺','😢','😭','😤','😠','😡','🤬','🤯','😳','🥵','🥶','😱','😨','😰','😥','😓','🤗','🤔','🫣','🤭','🫢','🤫','🫠','🥱','😴','🤐','🥴','🤢','🤮','🤧','😷','🤒','🤕'] },
+  { name:'Hearts',   emojis:['❤️','🧡','💛','💚','💙','💜','🤎','🖤','🤍','💔','❣️','💕','💞','💓','💗','💖','💘','💝','💟','♥️'] },
+  { name:'Gestures', emojis:['👍','👎','👌','✌️','🤞','🤟','🤘','🤙','👈','👉','👆','👇','☝️','👋','🤚','🖐','✋','🖖','👏','🙌','🫶','👐','🤲','🤝','🙏','💅','💪','🫵'] },
+  { name:'Vibes',    emojis:['🔥','✨','🎉','🎊','💯','💥','⭐','🌟','💫','⚡','☀️','🌈','🥳','🎈','🎁','🌹','🌸','🌺','🌼','🌻','🌿','🍀','🌙','☁️','💤'] },
+  { name:'Food',     emojis:['☕','🍵','🍜','🍚','🥘','🍲','🍙','🍱','🍣','🍤','🍛','🥢','🥂','🍻','🍺','🍹','🍷','🥤','🍰','🍩','🍪','🍫','🍭','🍦','🍎','🍌'] },
+  { name:'Objects',  emojis:['💬','📞','📱','💻','🖥','📷','🎵','🎶','⏰','📅','💰','💸','🎯','🏆','🎮','🎤','🎧','📚','✏️','✉️','💡','🔔','🎀','💎'] },
+];
+
+const STICKER_CATEGORIES = [
+  { name:'Trending',    query:'cute sticker' },
+  { name:'Animals',     query:'cute animal sticker' },
+  { name:'Love',        query:'love heart sticker' },
+  { name:'Happy',       query:'happy smile sticker' },
+  { name:'Celebrate',   query:'celebrate party sticker' },
+  { name:'Sad & Sorry', query:'sad sorry cry sticker' },
+  { name:'Food',        query:'food yummy sticker' },
+  { name:'Kawaii',      query:'kawaii chibi sticker' },
+  { name:'Funny',       query:'funny meme sticker' },
+  { name:'Cool',        query:'cool sunglasses sticker' },
+];
+
+function mediaPopEl(){ return document.getElementById('mediaPop'); }
+
+function closeMediaPop(){
+  const p = mediaPopEl();
+  if(p) p.style.display = 'none';
+}
+
+function toggleMediaPop(){
+  const p = mediaPopEl();
+  if(!p) return;
+  if(p.style.display === 'flex'){ closeMediaPop(); return; }
+  buildMediaPicker();
+  p.style.display = 'flex';
+  // Pre-load stickers in background so the tab feels instant when switched to
+  setTimeout(() => {
+    const sp = document.getElementById('mediaStickersPane');
+    if(sp && !sp.dataset.built){ buildStickerPane(sp); sp.dataset.built = '1'; }
+  }, 200);
+}
+
+function switchMediaTab(tabName){
+  const p = mediaPopEl();
+  if(!p) return;
+  p.querySelectorAll('.media-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabName));
+  ['emoji','stickers','gif'].forEach(t => {
+    const pane = document.getElementById('media' + t.charAt(0).toUpperCase() + t.slice(1) + 'Pane');
+    if(pane) pane.style.display = 'none';
+  });
+  const target = document.getElementById('media' + tabName.charAt(0).toUpperCase() + tabName.slice(1) + 'Pane');
+  if(target) target.style.display = (tabName === 'gif' || tabName === 'stickers') ? 'flex' : 'block';
+  if(tabName === 'gif'){
+    const gifPane = document.getElementById('mediaGifPane');
+    if(gifPane && !gifPane.dataset.loaded){ fetchGifs(''); gifPane.dataset.loaded = '1'; }
+    setTimeout(()=>{ const inp = document.getElementById('gifSearchInp'); if(inp) inp.focus(); }, 50);
+  }
+  if(tabName === 'stickers'){
+    const sp = document.getElementById('mediaStickersPane');
+    if(sp && !sp.dataset.built){ buildStickerPane(sp); sp.dataset.built = '1'; }
+  }
+}
+
+function buildMediaPicker(){
+  const p = mediaPopEl();
+  if(!p || p.dataset.built) return;
+  p.dataset.built = '1';
+  // Build emoji pane
+  const emojiPane = document.getElementById('mediaEmojiPane');
+  if(emojiPane && !emojiPane.dataset.built){
+    let h = '';
+    for(const cat of EMOJI_CATEGORIES){
+      h += `<div class="emoji-cat">${esc(cat.name)}</div><div class="emoji-grid">`;
+      for(const e of cat.emojis){
+        h += `<button class="emoji-btn" type="button" data-emoji="${esc(e)}" title="${esc(e)}">${e}</button>`;
+      }
+      h += '</div>';
+    }
+    emojiPane.innerHTML = h;
+    emojiPane.dataset.built = '1';
+    emojiPane.addEventListener('click', function(ev){
+      const btn = ev.target.closest('.emoji-btn');
+      if(btn) insertEmoji(btn.dataset.emoji || btn.textContent);
+    });
+  }
+  // Wire tab buttons
+  p.querySelectorAll('.media-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchMediaTab(btn.dataset.tab));
+  });
+  // Wire GIF search
+  const gifInp = document.getElementById('gifSearchInp');
+  if(gifInp){
+    gifInp.addEventListener('input', ()=>{
+      clearTimeout(_gifSearchTimer);
+      _gifSearchTimer = setTimeout(() => fetchGifs(gifInp.value), 400);
+    });
+  }
+  // Dismiss on outside click
+  document.addEventListener('mousedown', function onOutside(ev){
+    const pop = mediaPopEl();
+    if(!pop || pop.style.display === 'none') return;
+    if(!pop.contains(ev.target) && ev.target.id !== 'plusBtn') closeMediaPop();
+  }, { capture: true });
+  // Dismiss on Escape
+  document.addEventListener('keydown', function(ev){
+    if(ev.key === 'Escape') closeMediaPop();
+  });
+}
+
+function getRecentStickers(){
+  try{ return JSON.parse(localStorage.getItem('recent_stickers')||'[]'); }catch(_){ return []; }
+}
+function saveRecentSticker(preview, full){
+  const list = getRecentStickers().filter(s => s.full !== full);
+  list.unshift({preview, full});
+  try{ localStorage.setItem('recent_stickers', JSON.stringify(list.slice(0,24))); }catch(_){}
+}
+
+function buildStickerPane(pane){
+  const hasRecents = getRecentStickers().length > 0;
+  let h = '<div class="sticker-cat-pills">';
+  if(hasRecents){
+    h += `<button class="sticker-cat-pill active" data-scat="__recent__">Recent</button>`;
+  }
+  STICKER_CATEGORIES.forEach((cat, i) => {
+    const isFirst = !hasRecents && i === 0;
+    h += `<button class="sticker-cat-pill${isFirst?' active':''}" data-scat="${esc(cat.query)}">${esc(cat.name)}</button>`;
+  });
+  h += '</div><div class="sticker-grid-wrap" id="stickerGridWrap"><div class="sticker-loading">Loading stickers…</div></div>';
+  pane.innerHTML = h;
+  pane.querySelectorAll('.sticker-cat-pill').forEach(pill => {
+    pill.addEventListener('click', ()=>{
+      pane.querySelectorAll('.sticker-cat-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      loadStickers(pill.dataset.scat);
+    });
+  });
+  // Load first tab
+  loadStickers(hasRecents ? '__recent__' : STICKER_CATEGORIES[0].query);
+}
+
+async function loadStickers(query){
+  const wrap = document.getElementById('stickerGridWrap');
+  if(!wrap) return;
+  wrap.innerHTML = '<div class="sticker-loading">Loading stickers…</div>';
+
+  // Recent tab — loads instantly from localStorage, no network call
+  if(query === '__recent__'){
+    const recents = getRecentStickers();
+    if(!recents.length){ wrap.innerHTML = '<div class="sticker-loading">No recently used stickers yet</div>'; return; }
+    wrap.innerHTML = `<div class="sticker-grid">${recents.map(s=>
+      `<div class="sticker-item" data-gif="${esc(s.full)}" data-preview="${esc(s.preview)}"><img src="${esc(s.preview)}" alt="sticker" loading="lazy"/></div>`
+    ).join('')}</div>`;
+    wrap.querySelectorAll('.sticker-item').forEach(item => {
+      item.addEventListener('click', ()=>{
+        saveRecentSticker(item.dataset.preview, item.dataset.gif);
+        sendGif(item.dataset.gif); closeMediaPop();
+      });
+    });
+    return;
+  }
+
+  try{
+    const url = `${TENOR_BASE}/search?q=${encodeURIComponent(query)}&key=${TENOR_KEY}&limit=20&media_filter=gif&searchfilter=sticker`;
+    const res = await fetch(url);
+    const data = await res.json();
+    const results = data.results || [];
+    if(!results.length){ wrap.innerHTML = '<div class="sticker-loading">No stickers found</div>'; return; }
+    wrap.innerHTML = `<div class="sticker-grid">${results.map(r=>{
+      const preview = r.media_formats?.tinygif?.url || r.media_formats?.gif?.url || '';
+      const full = r.media_formats?.gif?.url || preview;
+      return `<div class="sticker-item" data-gif="${esc(full)}" data-preview="${esc(preview)}" title="${esc(r.content_description||'')}"><img src="${esc(preview)}" alt="sticker" loading="lazy"/></div>`;
+    }).join('')}</div>`;
+    wrap.querySelectorAll('.sticker-item').forEach(item => {
+      item.addEventListener('click', ()=>{
+        saveRecentSticker(item.dataset.preview, item.dataset.gif);
+        sendGif(item.dataset.gif); closeMediaPop();
+      });
+    });
+  }catch(err){
+    wrap.innerHTML = '<div class="sticker-loading">Couldn\'t load stickers</div>';
+  }
+}
+
+async function fetchGifs(query){
+  const grid = document.getElementById('gifGrid');
+  if(!grid) return;
+  grid.innerHTML = '<div class="gif-loading">Loading…</div>';
+  try{
+    const endpoint = query.trim()
+      ? `${TENOR_BASE}/search?q=${encodeURIComponent(query)}&key=${TENOR_KEY}&limit=20&media_filter=gif`
+      : `${TENOR_BASE}/featured?key=${TENOR_KEY}&limit=20&media_filter=gif`;
+    const res = await fetch(endpoint);
+    const data = await res.json();
+    const results = data.results || [];
+    if(!results.length){ grid.innerHTML = '<div class="gif-loading">No GIFs found</div>'; return; }
+    grid.innerHTML = results.map(r=>{
+      const tiny = r.media_formats?.tinygif?.url || r.media_formats?.gif?.url || '';
+      const full = r.media_formats?.gif?.url || tiny;
+      const preview = r.media_formats?.tinygif?.url || tiny;
+      return `<div class="gif-item" data-gif="${esc(full)}" data-preview="${esc(preview)}" title="${esc(r.content_description||'')}">
+        <img src="${esc(preview)}" alt="${esc(r.content_description||'GIF')}" loading="lazy"/></div>`;
+    }).join('');
+    grid.querySelectorAll('.gif-item').forEach(item=>{
+      item.addEventListener('click', ()=>{ sendGif(item.dataset.gif || item.dataset.preview); closeMediaPop(); });
+    });
+  }catch(err){
+    grid.innerHTML = '<div class="gif-loading">Couldn\'t load GIFs</div>';
+  }
+}
+
+function sendGif(gifUrl){
+  const c = activeCont();
+  if(!c || !gifUrl) return;
+  const isVI = appDir==='vi-en';
+  const now = Date.now();
+  const msg = {
+    id: 'g'+now+Math.random().toString(36).slice(2,6),
+    text: isVI ? '[GIF]' : '[GIF]',
+    translated: isVI ? '[GIF]' : '[GIF]',
+    gifUrl,
+    mode: 'gif',
+    isMe: true,
+    direction: appDir,
+    ts: now,
+    translating: false
+  };
+  c.msgs.push(msg);
+  renderMsgs(); renderSidebar();
+  if(msg.isMe) syncToFirebase(msg);
+}
+
+// Wire up + button
+document.addEventListener('DOMContentLoaded', ()=>{
+  const btn = document.getElementById('plusBtn');
+  if(btn){
+    btn.addEventListener('click', e=>{
+      e.stopPropagation();
+      toggleMediaPop();
+    });
+  }
+});
 
 // ═══════════════════════════════════════════════════════
 // COMPOSER
@@ -2941,8 +4432,27 @@ function updBtns(){
   if(sendSub) sendSub.textContent = isVI ? 'Enter để gửi' : 'Enter to send';
   const lbl=document.getElementById('directLbl');
   if(lbl) lbl.textContent = isVI ? 'Gửi thẳng' : 'Direct';
+  const badge=document.getElementById('langBadge');
+  if(badge && !(txtInput.value||'').trim()){ badge.textContent=isVI?'VI→EN':'EN→VI'; badge.classList.remove('as-is'); }
 }
-txtInput.addEventListener('input',()=>{ txtInput.style.height='auto'; txtInput.style.height=Math.min(txtInput.scrollHeight,140)+'px'; updBtns(); });
+txtInput.addEventListener('input',()=>{
+  txtInput.style.height='auto'; txtInput.style.height=Math.min(txtInput.scrollHeight,140)+'px'; updBtns();
+  // Live-update the direction badge as the user types
+  const val=(txtInput.value||'').trim();
+  const badge=document.getElementById('langBadge');
+  if(!badge) return;
+  if(!val){ badge.textContent=appDir==='en-vi'?'EN→VI':'VI→EN'; badge.classList.remove('as-is');
+    hideGrammarChip(); clearTimeout(_grammarTimer); return; }
+  if(isMixedLanguage(val)){
+    badge.textContent='as-is'; badge.classList.add('as-is');
+  } else {
+    const detDir=detectLang(val)==='vi'?'vi-en':'en-vi';
+    if(detDir!==appDir){ badge.textContent='as-is'; badge.classList.add('as-is'); }
+    else { badge.textContent=appDir==='en-vi'?'EN→VI':'VI→EN'; badge.classList.remove('as-is'); }
+  }
+  // Grammar check — debounced, English only
+  scheduleGrammarCheck(val);
+});
 txtInput.addEventListener('keydown',e=>{
   // Enter = smart send (auto-bypass picker if no emotional signal)
   // Shift+Enter inside a non-empty field = force the picker (escape hatch)
@@ -2957,37 +4467,8 @@ if(directBtn) directBtn.addEventListener('click',()=>{ if(!directBtn.disabled) o
 micBtn.addEventListener('click',async()=>{ if(!apiKey)return; if(!isRecording)await startRec(); else stopRec(); });
 
 // ═══════════════════════════════════════════════════════
-// EMOJI PICKER
+// INSERT EMOJI (shared helper)
 // ═══════════════════════════════════════════════════════
-const EMOJI_CATEGORIES = [
-  { name:'Smileys',  emojis:['😀','😃','😄','😁','😆','😅','🤣','😂','🙂','🙃','😉','😊','😇','🥰','😍','🤩','😘','😗','😚','😙','🥲','😋','😛','😝','🤪','🧐','🤓','😎','🥸','🤠','😏','😒','😞','😔','😟','😕','🙁','☹️','😣','😖','😫','😩','🥺','😢','😭','😤','😠','😡','🤬','🤯','😳','🥵','🥶','😱','😨','😰','😥','😓','🤗','🤔','🫣','🤭','🫢','🤫','🫠','🥱','😴','🤐','🥴','🤢','🤮','🤧','😷','🤒','🤕'] },
-  { name:'Hearts',   emojis:['❤️','🧡','💛','💚','💙','💜','🤎','🖤','🤍','💔','❣️','💕','💞','💓','💗','💖','💘','💝','💟','♥️'] },
-  { name:'Gestures', emojis:['👍','👎','👌','✌️','🤞','🤟','🤘','🤙','👈','👉','👆','👇','☝️','👋','🤚','🖐','✋','🖖','👏','🙌','🫶','👐','🤲','🤝','🙏','💅','💪','🫵'] },
-  { name:'Vibes',    emojis:['🔥','✨','🎉','🎊','💯','💥','⭐','🌟','💫','⚡','☀️','🌈','🥳','🎈','🎁','🌹','🌸','🌺','🌼','🌻','🌿','🍀','🌙','☁️','💤'] },
-  { name:'Food',     emojis:['☕','🍵','🍜','🍚','🥘','🍲','🍙','🍱','🍣','🍤','🍛','🥢','🥂','🍻','🍺','🍹','🍷','🥤','🍰','🍩','🍪','🍫','🍭','🍦','🍎','🍌'] },
-  { name:'Objects',  emojis:['💬','📞','📱','💻','🖥','📷','🎵','🎶','⏰','📅','💰','💸','🎯','🏆','🎮','🎤','🎧','📚','✏️','✉️','💡','🔔','🎀','💎'] },
-];
-
-function buildEmojiPicker(){
-  const pop = document.getElementById('emojiPop');
-  if(!pop || pop.dataset.built) return;
-  let html = '';
-  for(const cat of EMOJI_CATEGORIES){
-    html += `<div class="emoji-cat">${esc(cat.name)}</div><div class="emoji-grid">`;
-    for(const e of cat.emojis){
-      html += `<button class="emoji-btn" type="button" data-emoji="${esc(e)}" title="${esc(e)}">${e}</button>`;
-    }
-    html += `</div>`;
-  }
-  pop.innerHTML = html;
-  pop.dataset.built = '1';
-  pop.addEventListener('click', function(e){
-    const btn = e.target.closest('.emoji-btn');
-    if(!btn) return;
-    insertEmoji(btn.dataset.emoji || btn.textContent);
-  });
-}
-
 function insertEmoji(emoji){
   const ta = document.getElementById('txtInput');
   const start = ta.selectionStart != null ? ta.selectionStart : (ta.value||'').length;
@@ -2997,39 +4478,8 @@ function insertEmoji(emoji){
   const pos = start + emoji.length;
   ta.focus();
   try { ta.setSelectionRange(pos, pos); } catch(_){}
-  // Trigger the input handler so height + button visibility update
   ta.dispatchEvent(new Event('input', { bubbles:true }));
 }
-
-function toggleEmojiPicker(){
-  const pop = document.getElementById('emojiPop');
-  if(!pop) return;
-  buildEmojiPicker();
-  pop.style.display = (pop.style.display === 'block') ? 'none' : 'block';
-}
-
-(function wireEmojiPicker(){
-  const btn = document.getElementById('emojiBtn');
-  if(btn){
-    btn.addEventListener('click', function(e){
-      e.stopPropagation();
-      toggleEmojiPicker();
-    });
-  }
-  // Close on outside click
-  document.addEventListener('click', function(e){
-    const pop = document.getElementById('emojiPop');
-    if(!pop || pop.style.display !== 'block') return;
-    if(e.target.closest('#emojiPop') || e.target.closest('#emojiBtn')) return;
-    pop.style.display = 'none';
-  });
-  // Close on Escape
-  document.addEventListener('keydown', function(e){
-    if(e.key !== 'Escape') return;
-    const pop = document.getElementById('emojiPop');
-    if(pop && pop.style.display === 'block') pop.style.display = 'none';
-  });
-})();
 
 function buildAltsPanel(m){
   if(!m.altOptions || !m.altOptions.length) return '';
@@ -3053,9 +4503,12 @@ document.getElementById('msgsArea').addEventListener('click', function(e){
       const showing = bubble.classList.toggle('showalts');
       togBtn.textContent = showing ? '↑' : '↕';
     } else {
-      // default: orig peek
+      // default: orig peek — toggle badge label
       const showing = bubble.classList.toggle('showorig');
-      togBtn.textContent = showing ? '⌃' : '⌄';
+      const isVI = appDir === 'vi-en';
+      togBtn.innerHTML = showing
+        ? `${isVI ? 'Ẩn đi' : 'Hide'}`
+        : `${isVI ? 'Đã dịch' : 'Translated'}`;
     }
     return;
   }
@@ -3072,7 +4525,9 @@ document.getElementById('msgsArea').addEventListener('click', function(e){
 async function onSendDirect(){
   const text=(txtInput.value||'').trim();
   if(!text||!activeCont()) return;
+  if(isMixedLanguage(text)){ sendAsIs(text); return; }
   const direction = detectLang(text)==='vi' ? 'vi-en' : 'en-vi';
+  if(direction !== appDir){ sendAsIs(text); return; }
   await sendOptimistic(text, direction);
 }
 
@@ -3089,14 +4544,16 @@ function looksEmotional(text){
   const t = String(text).trim();
   const low = t.toLowerCase();
 
-  // — TIER 1: Emoji — strongest signal, always triggers —
-  if(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(t)) return true;
+  // — TIER 1: Emotional emoji — faces, hearts, reaction symbols — triggers alone —
+  // (decorative emoji like 📷🎵⏰ are Tier 4 weak signals, not triggers by themselves)
+  const emotionalEmojiRe = /[\u{1F600}-\u{1F64F}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}\u{2764}\u{2665}\u{2763}\u{2661}]/u;
+  if(emotionalEmojiRe.test(t)) return true;
 
   // — TIER 2: High-confidence tonal signals — triggers alone —
   if(/\b[A-Z]{2,}\b/.test(t)) return true;            // ALL CAPS word (WTF, STOP)
   if(/([a-zA-ZÀ-ỹ])\1{2,}/.test(t)) return true;     // elongation (noooo, hahaha)
   if(/[!?]{2,}|!\?|\?!/.test(t)) return true;         // multiple punctuation (?! !!)
-  if(/\.{3,}|…/.test(t)) return true;                 // ellipsis (trailing off / tension)
+  // ellipsis moved to Tier 4 — too common in casual texting to trigger alone
 
   // — TIER 3: Clear emotional or idiomatic phrases — triggers alone —
   const strongPhrases = [
@@ -3119,6 +4576,8 @@ function looksEmotional(text){
   let weak = 0;
   if(/\b[a-z]+[A-Z]{2,}[a-z]*\b/.test(t)) weak++;           // mid-word caps (fiNE)
   if(/\b(\w{2,12})\b[\s,]+\1\b/i.test(t)) weak++;            // word repetition (stop stop)
+  if(/\.{3,}|…/.test(t)) weak++;                             // ellipsis — common in casual texting, weak signal only
+  if(/[\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F8FF}\u{2600}-\u{27BF}]/u.test(t)) weak++; // decorative emoji (📷🎵☀️)
   const softEN = ["fine.","k.","ok.","sure.","whatever","never mind","forget it","leave me alone","i'm fine","im fine"];
   if(softEN.some(p => low.includes(p))) weak++;
   const softVI = ["thôi kệ","mặc kệ","thôi đi","chán thật","mệt quá","kinh khủng","đừng","stop it"];
@@ -3131,17 +4590,43 @@ function looksEmotional(text){
 // the input, then swap in the translated text when the API returns. Used by the
 // Direct button AND by the smart-send auto-bypass path so EVERY non-picker send
 // feels instant — no noticeable lag between Enter/click and bubble appearing.
+// Send a message exactly as typed — no translation, no API call.
+// Used when the person writes in the other person's language, or code-switches.
+function sendAsIs(text){
+  const c = activeCont();
+  if(!c) return;
+  const now = new Date();
+  const reply = _replyState ? { id: _replyState.id, text: _replyState.text } : null;
+  cancelReply();
+  const msg = {
+    id: 'a'+now.getTime()+Math.random().toString(36).slice(2,6),
+    text, translated: text, original: text,
+    emotion: '', isMe: true, mode: 'text', direction: appDir,
+    ts: now.getTime(), translating: false,
+    replyTo: reply
+  };
+  c.msgs.push(msg);
+  updateContactProfile(c.id, c.msgs);
+  const ta = document.getElementById('txtInput');
+  ta.value = ''; ta.style.height = 'auto'; updBtns();
+  renderMsgs(); renderSidebar(); ta.focus();
+  syncToFirebase(msg);
+}
+
 async function sendOptimistic(text, direction){
   const c = activeCont();
   if(!c) return;
   const now = new Date();
   const isMe = direction==='en-vi' ? (appDir==='en-vi') : (appDir==='vi-en');
+  const reply = _replyState ? { id: _replyState.id, text: _replyState.text } : null;
+  cancelReply();
   const msg = {
     id: 'o'+now.getTime()+Math.random().toString(36).slice(2,6),
     text, translated: text, original: text,
     emotion: '', isMe, mode: 'text', direction,
     ts: now.getTime(),
-    translating: true
+    translating: true,
+    replyTo: reply
   };
   c.msgs.push(msg);
   updateContactProfile(c.id, c.msgs);
@@ -3172,8 +4657,18 @@ async function sendOptimistic(text, direction){
 async function onSendText(ev){
   const text=(txtInput.value||'').trim();
   if(!text||!activeCont()) return;
+  hideGrammarChip(); clearTimeout(_grammarTimer); _grammarDismissedFor = null;
   const forcePicker = ev && ev.shiftKey;
+
+  // Mixed Viet-English code-switching → send as-is, translation would mangle it
+  if(!forcePicker && isMixedLanguage(text)){ sendAsIs(text); return; }
+
   const direction = detectLang(text)==='vi' ? 'vi-en' : 'en-vi';
+
+  // Person typed in the other person's language — respect it, send as-is
+  // e.g. English speaker writing in Vietnamese, Vietnamese speaker writing in English
+  if(!forcePicker && direction !== appDir){ sendAsIs(text); return; }
+
   const showPicker = forcePicker || looksEmotional(text);
 
   if(!showPicker){
@@ -3195,6 +4690,42 @@ async function onSendText(ev){
 
   // Picker path — skeleton streams in immediately.
   txtInput.disabled=true; sendBtn.disabled=true;
+
+  // ── Equiv phrase handling (both directions) ───────────────────────────────
+  // Check BEFORE the skeleton/API so we can short-circuit when appropriate.
+  {
+    const equivMatch = detectSlang(text, direction).find(m => m.englishEquiv || m.vietnameseEquiv || m.hardcodedEn);
+    if(equivMatch){
+      if(equivMatch.hardcodedEn){
+        // Direct mapping — bypass AI, show 1-card picker immediately, no banner
+        pendingReceiverPhrase = equivMatch;
+        showSkeletonSheet(text);
+        const synth = buildEquivSynthResult(equivMatch.hardcodedEn);
+        pending = { result: synth, original: text, mode: 'text' };
+        finalizeStreamedSheet(synth, text);
+        txtInput.disabled=false; sendBtn.disabled=false;
+        return;
+      }
+      const equiv = getEquivTranslation(equivMatch);
+      if(equiv){
+        const phraseKey = getEquivPhraseKey(equivMatch.phrase);
+        const scopeKey  = equivMatch.dismissScope === 'global' ? 'global' : String(activeId);
+        pendingReceiverPhrase = equivMatch;
+        if(isEquivDismissed(phraseKey, scopeKey)){
+          // Already learned — bypass AI, use the natural equivalent directly
+          showSkeletonSheet(text);
+          const synth = buildEquivSynthResult(equiv);
+          pending = { result: synth, original: text, mode: 'text' };
+          finalizeStreamedSheet(synth, text);
+          txtInput.disabled=false; sendBtn.disabled=false;
+          return;
+        }
+        // First time — let AI run; banner appears in finalizeStreamedSheet
+        pendingEquivPhrase = equivMatch;
+      }
+    }
+  }
+
   showSkeletonSheet(text);
   let renderedCount = 0;
   try{
@@ -3252,10 +4783,13 @@ async function sendWithContextBypass(text, direction, c){
   const now = new Date();
   const isMe = direction === 'en-vi' ? (appDir === 'en-vi') : (appDir === 'vi-en');
   const msgId = 'cx' + now.getTime() + Math.random().toString(36).slice(2,5);
+  const reply = _replyState ? { id: _replyState.id, text: _replyState.text } : null;
+  cancelReply();
   const msg = {
     id: msgId, text, translated: text, original: text,
     emotion: '', isMe, mode: 'text', direction,
-    ts: now.getTime(), translating: true
+    ts: now.getTime(), translating: true,
+    replyTo: reply
   };
   c.msgs.push(msg);
   updateContactProfile(c.id, c.msgs);
@@ -3445,6 +4979,23 @@ function finalizeStreamedSheet(result, original){
     }
   }
 
+  // ── Equivalent phrase banner (first-time only, both directions) ──────────
+  if(pendingEquivPhrase && getEquivTranslation(pendingEquivPhrase)){
+    const evp = pendingEquivPhrase;
+    const phraseKey = getEquivPhraseKey(evp.phrase);
+    const scopeKey  = evp.dismissScope === 'global' ? 'global' : String(activeId);
+    if(!isEquivDismissed(phraseKey, scopeKey)){
+      const banner = buildEquivBanner(evp, phraseKey, scopeKey);
+      list.insertBefore(banner, list.firstChild);
+      // Show ONLY the recommended option card — hide the rest
+      const recEmo = (result.recommendedOption || '').toLowerCase();
+      list.querySelectorAll('.ocard:not(.skel)').forEach(card => {
+        if(card.dataset.emotion !== recEmo) card.style.display = 'none';
+      });
+    }
+    pendingEquivPhrase = null;
+  }
+
   // Wordplay note at TOP
   const allWarnings = Array.isArray(result.culturalWarnings) ? result.culturalWarnings.filter(Boolean) : [];
   const wordplay = allWarnings.filter(w => ['idiom','slang','face_threat'].includes((w.type||'').toLowerCase()));
@@ -3460,6 +5011,20 @@ function finalizeStreamedSheet(result, original){
     if(cwEl) list.appendChild(cwEl);
   }
 
+  // ── Receiver learning note (shown once per contact per phrase) ──────────────
+  if(pendingReceiverPhrase){
+    const rp = pendingReceiverPhrase;
+    const phraseKey = getEquivPhraseKey(rp.phrase);
+    const scopeKey  = rp.dismissScope === 'global' ? 'global' : String(activeId);
+    const cont = activeCont();
+    if(cont && !isContactLearned(phraseKey, scopeKey)){
+      const note = buildReceiverNote(rp, dispName(cont));
+      list.appendChild(note);
+      setContactLearned(phraseKey, scopeKey);
+    }
+    pendingReceiverPhrase = null;
+  }
+
   // Update the "You said" header with the detected emotion
   const emo = result.detectedEmotion || '';
   const isVI = appDir === 'vi-en';
@@ -3472,6 +5037,106 @@ function getSlangDismissed(){ try{ return JSON.parse(localStorage.getItem('slang
 function dismissSlangTerm(term){ try{ const d=getSlangDismissed(); if(!d.includes(term)){ d.push(term); localStorage.setItem('slang_dismissed',JSON.stringify(d)); } }catch(_){} }
 function isSlangDismissed(term){ return getSlangDismissed().includes(term); }
 
+// ─── Equivalent phrase system (both directions) ──────────────────────────────
+// Handles phrases that have no word-for-word translation but have a natural
+// cultural equivalent in the target language. Works for en-vi and vi-en.
+// Stores: { phraseKey: "global" | [contactId, ...] }
+// dismissScope "global"  → once dismissed, never shown again for any contact
+// dismissScope "contact" → dismissed per contact; learns per relationship
+let pendingEquivPhrase    = null; // set before API call, consumed in finalizeStreamedSheet
+let pendingReceiverPhrase = null; // tracks outgoing equiv phrase so we can notify sender if contact hasn't learned it yet
+
+function getEquivDismissed(){
+  try{ return JSON.parse(localStorage.getItem('equiv_dismissed')||'{}'); }catch(_){ return {}; }
+}
+function setEquivDismissed(phraseKey, scopeKey){
+  try{
+    const d = getEquivDismissed();
+    if(scopeKey === 'global'){
+      d[phraseKey] = 'global';
+    } else {
+      if(!Array.isArray(d[phraseKey])) d[phraseKey] = [];
+      const id = String(scopeKey);
+      if(!d[phraseKey].includes(id)) d[phraseKey].push(id);
+    }
+    localStorage.setItem('equiv_dismissed', JSON.stringify(d));
+  }catch(_){}
+}
+function isEquivDismissed(phraseKey, scopeKey){
+  const d = getEquivDismissed();
+  const val = d[phraseKey];
+  if(!val) return false;
+  if(val === 'global') return true;
+  return Array.isArray(val) && val.includes(String(scopeKey));
+}
+function getEquivPhraseKey(phrase){
+  return (phrase||'').toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'').slice(0,40);
+}
+
+// ─── Receiver learning system ─────────────────────────────────────────────────
+// Tracks whether the contact (receiver) has been shown an explanation for a phrase.
+// Same scope logic as equiv_dismissed: "global" once for all contacts, or per-contact array.
+// Stored in localStorage under 'contact_learned'.
+function getContactLearned(){
+  try{ return JSON.parse(localStorage.getItem('contact_learned')||'{}'); }catch(_){ return {}; }
+}
+function setContactLearned(phraseKey, scopeKey){
+  try{
+    const d = getContactLearned();
+    if(scopeKey === 'global'){
+      d[phraseKey] = 'global';
+    } else {
+      if(!Array.isArray(d[phraseKey])) d[phraseKey] = [];
+      const id = String(scopeKey);
+      if(!d[phraseKey].includes(id)) d[phraseKey].push(id);
+    }
+    localStorage.setItem('contact_learned', JSON.stringify(d));
+  }catch(_){}
+}
+function isContactLearned(phraseKey, scopeKey){
+  const d = getContactLearned();
+  const val = d[phraseKey];
+  if(!val) return false;
+  if(val === 'global') return true;
+  return Array.isArray(val) && val.includes(String(scopeKey));
+}
+
+// Builds the subtle blue note shown to the sender once per contact per phrase.
+// Informs them that the contact will see a one-time explanation on their end.
+function buildReceiverNote(phraseEntry, contactName){
+  const el = document.createElement('div');
+  el.className = 'rn';
+  el.innerHTML =
+    `<span class="rn-icon">👁</span>`
+    + `<span class="rn-body"><strong>${esc(contactName)}</strong> hasn't seen this phrase before — they'll get a one-time explanation on their end when they read it.</span>`
+    + `<button class="rn-close" title="Dismiss">✕</button>`;
+  el.querySelector('.rn-close').addEventListener('click', () => el.remove());
+  setTimeout(() => { if(el.parentElement) el.remove(); }, 7000);
+  return el;
+}
+// Returns the equiv translation for a matched entry based on current direction
+function getEquivTranslation(m){
+  return appDir === 'vi-en' ? m.englishEquiv : m.vietnameseEquiv;
+}
+function buildEquivSynthResult(equiv){
+  // Minimal 1-card result for dismissed/hardcoded phrases — bypasses the AI entirely
+  const isViEn = appDir === 'vi-en';
+  return {
+    detectedEmotion: 'direct',
+    options: [{
+      emotion: 'direct',
+      translation: equiv,
+      backTranslation: null,
+      literalFlow: isViEn ? null : equiv,
+      breakdown: null,
+      howItLands: { en: 'Natural equivalent — carries the same meaning as the original.', vi: 'Cách diễn đạt tự nhiên, giữ nguyên ý nghĩa của bản gốc.' }
+    }],
+    recommendedOption: 'direct',
+    recommendationReason: { en: 'Natural equivalent that preserves the meaning and tone.', vi: 'Cách diễn đạt tự nhiên, giữ nguyên ý nghĩa và sắc thái.' },
+    culturalWarnings: []
+  };
+}
+
 // Build the wordplay block (shared by streaming + non-streaming paths).
 function buildWordplayBlock(wordplay){
   // Filter out phrases the user has already said "don't show again" for
@@ -3482,8 +5147,8 @@ function buildWordplayBlock(wordplay){
   wp.className = 'wpblock';
   const isVI = appDir==='vi-en';
   const labels = isVI
-    ? { headline:'Lưu ý — cách nói này có nghĩa khác khi dịch', literal:'Nghĩa đen:', likely:'Ý bạn có lẽ là:', why:'Vì sao có thể gây hiểu nhầm:', tip:'Lần sau rõ hơn, thử:', dismiss:"Tôi hiểu rồi, đừng hiện nữa" }
-    : { headline:'Heads up — this phrase can mean two things', literal:'Literal reading:', likely:'What you probably mean:', why:'Why it trips people up:', tip:'Clearer next time, try:', dismiss:"Got it, don't show again" };
+    ? { headline:'Lưu ý — cách nói này có nghĩa khác khi dịch', literal:'Nghĩa đen:', likely:'Ý bạn có lẽ là:', why:'Vì sao có thể gây hiểu nhầm:', tip:'Lần sau rõ hơn, thử:', dismiss:"Đừng cảnh báo tôi về câu này nữa" }
+    : { headline:'Heads up — this phrase can mean two things', literal:'Literal reading:', likely:'What you probably mean:', why:'Why it trips people up:', tip:'Clearer next time, try:', dismiss:"Don't warn me about this again" };
 
   const rows = visible.map((w, idx) => {
     const lit = pickUi(w.literalMeaning), lik = pickUi(w.likelyMeaning), why = pickUi(w.whyRisky);
@@ -3523,9 +5188,33 @@ function buildWordplayBlock(wordplay){
   return wp;
 }
 
+// Equivalent phrase banner — shown on first encounter only, both directions.
+// Teaches the user that there's no word-for-word translation but a natural equivalent exists.
+function buildEquivBanner(phraseEntry, phraseKey, scopeKey){
+  const equiv = getEquivTranslation(phraseEntry);
+  const isViEn = appDir === 'vi-en';
+  const headline = isViEn
+    ? `There's no word-for-word English for <strong>"${esc(phraseEntry.phrase)}"</strong> — but <strong>"${esc(equiv)}"</strong> means the same thing the right way.`
+    : `There's no word-for-word Vietnamese for <strong>"${esc(phraseEntry.phrase)}"</strong> — but <strong>"${esc(equiv)}"</strong> means the same thing the right way.`;
+
+  const banner = document.createElement('div');
+  banner.className = 'eeb';
+  banner.innerHTML =
+    `<div class="eeb-headline">${headline}</div>`
+    + `<div class="eeb-reason">${esc(phraseEntry.reason)}</div>`
+    + `<button class="eeb-dismiss-btn">Stop showing this explanation</button>`;
+
+  banner.querySelector('.eeb-dismiss-btn').addEventListener('click', () => {
+    setEquivDismissed(phraseKey, scopeKey);
+    banner.remove();
+    pendingEquivPhrase = null;
+  });
+  return banner;
+}
+
 function buildCulturalWarningsBlock(cws){
   const isVI = appDir === 'vi-en';
-  const dismissLabel = isVI ? "Tôi hiểu rồi, đừng hiện nữa" : "Got it, don't show again";
+  const dismissLabel = isVI ? "Đừng cảnh báo tôi về câu này nữa" : "Don't warn me about this again";
   const tm = {kinship:'Kinship',face_threat:'Face-threatening',idiom:'Idiom',slang:'Slang',other:'Cultural note'};
 
   // Filter out phrases the user has already dismissed
@@ -4303,6 +5992,8 @@ async function blobToWav(blob) {
 // ═══════════════════════════════════════════════════════
 let firebaseDb   = null;
 let roomCode     = null;
+let localChannel = null;  // BroadcastChannel for local tab-to-tab testing
+let localMode    = false;
 let otherTyping  = false;
 let typingTimer  = null;
 let joinedAt     = 0;
@@ -4361,6 +6052,16 @@ function startFirebaseListeners(){
 }
 
 function syncToFirebase(msg){
+  if(localMode && localChannel){
+    localChannel.postMessage({
+      type:      'msg',
+      text:      msg.text||msg.translated||'',
+      original:  msg.original||msg.text||'',
+      direction: msg.direction||appDir,
+      ts:        msg.ts||Date.now()
+    });
+    return;
+  }
   if(!firebaseDb||!roomCode) return;
   firebaseDb.ref(`rooms/${roomCode}/messages`).push({
     text:      msg.text||msg.translated||'',
@@ -4372,6 +6073,10 @@ function syncToFirebase(msg){
 }
 
 function setMyTyping(val){
+  if(localMode && localChannel){
+    localChannel.postMessage({ type:'typing', val });
+    return;
+  }
   if(!firebaseDb||!roomCode) return;
   firebaseDb.ref(`rooms/${roomCode}/typing/${deviceId}`).set(val);
 }
@@ -4551,6 +6256,80 @@ function getUserFeedbackNote(rel, dir){
   }catch(_){ return ''; }
 }
 
+// ─── Grammar Check ───────────────────────────────────────
+let _grammarTimer = null;
+let _grammarDismissedFor = null; // the exact text the user dismissed so we don't re-surface it
+
+function showGrammarChip(corrected){
+  const chip = document.getElementById('grammarChip');
+  const txt  = document.getElementById('gcText');
+  if(!chip || !txt) return;
+  txt.textContent = corrected;
+  chip.classList.remove('hidden');
+}
+function hideGrammarChip(){
+  const chip = document.getElementById('grammarChip');
+  if(chip) chip.classList.add('hidden');
+}
+function dismissGrammarChip(){
+  _grammarDismissedFor = (document.getElementById('txtInput').value||'').trim();
+  hideGrammarChip();
+}
+function applyGrammarSuggestion(){
+  const txt = document.getElementById('gcText');
+  const ta  = document.getElementById('txtInput');
+  if(!txt || !ta) return;
+  ta.value = txt.textContent;
+  ta.style.height = 'auto';
+  ta.style.height = Math.min(ta.scrollHeight, 140) + 'px';
+  updBtns();
+  hideGrammarChip();
+  _grammarDismissedFor = null;
+  ta.focus();
+}
+
+async function checkGrammarInline(text){
+  if(!text || text.length < 4 || !apiKey || apiKey === 'demo') return null;
+  // Only run on English messages
+  if(detectLang(text) === 'vi') return null;
+  try{
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + apiKey },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [{
+          role: 'user',
+          content: `You are a grammar checker. If the message below has grammar errors, return ONLY the corrected version with no explanation. If the message is already grammatically correct, return exactly: OK\n\nMessage: "${text}"`
+        }],
+        max_tokens: 150,
+        temperature: 0
+      })
+    });
+    const data = await res.json();
+    const result = (data.choices?.[0]?.message?.content || '').trim();
+    if(!result || result === 'OK' || result.toLowerCase() === 'ok') return null;
+    if(result === text) return null;
+    return result;
+  } catch(e){ return null; }
+}
+
+function scheduleGrammarCheck(val){
+  clearTimeout(_grammarTimer);
+  hideGrammarChip();
+  if(!isGrammarCheckOn() || !val || val.length < 4) return;
+  _grammarTimer = setTimeout(async () => {
+    const currentVal = (document.getElementById('txtInput').value || '').trim();
+    if(currentVal !== val) return;               // user kept typing
+    if(_grammarDismissedFor === val) return;      // already dismissed for this exact text
+    const suggestion = await checkGrammarInline(val);
+    const stillSame = (document.getElementById('txtInput').value || '').trim() === val;
+    if(suggestion && stillSame && _grammarDismissedFor !== val){
+      showGrammarChip(suggestion);
+    }
+  }, 1800);
+}
+
 // ─── Settings ────────────────────────────────────────────
 function openSettings(){
   const ov = document.getElementById('settingsOverlay');
@@ -4571,7 +6350,15 @@ function openSettings(){
   const styleSectionLabel = document.querySelector('#stylePanel .sett-section-label');
   if(styleSectionLabel) styleSectionLabel.textContent = isVI ? 'Phong cách của bạn' : 'Your style insights';
 
+  // Localize grammar section
+  document.getElementById('settLangLabel').textContent = isVI ? 'Ngôn ngữ' : 'Language';
+  document.getElementById('settGrammarTitle').textContent = isVI ? 'Kiểm tra ngữ pháp' : 'Grammar check';
+  document.getElementById('settGrammarSub').textContent = isVI
+    ? 'Gợi ý sửa lỗi khi bạn gõ — như tính năng tự động sửa ngữ pháp trên iMessage. Mặc định bật.'
+    : 'Suggests a correction as you type — like auto-grammar on iMessage. On by default.';
+
   // Restore toggle state
+  document.getElementById('grammarToggle').checked = isGrammarCheckOn();
   const on = localStorage.getItem('style_insights_on') === 'true';
   document.getElementById('styleToggle').checked = on;
   document.getElementById('stylePanel').style.display = on ? 'block' : 'none';
@@ -4579,6 +6366,14 @@ function openSettings(){
 }
 function closeSettings(){
   document.getElementById('settingsOverlay').style.display = 'none';
+}
+function onGrammarToggleChange(checked){
+  localStorage.setItem('grammar_check_on', checked ? 'true' : 'false');
+  if(!checked) hideGrammarChip();
+}
+function isGrammarCheckOn(){
+  // Default: on (returns true unless user explicitly turned it off)
+  return localStorage.getItem('grammar_check_on') !== 'false';
 }
 function onStyleToggleChange(checked){
   localStorage.setItem('style_insights_on', checked ? 'true' : 'false');
@@ -4649,11 +6444,6 @@ const ONBOARDING_SLIDES = [
     en: { title: 'Words carry tone',          body: 'The same sentence can sound warm, playful, or cold. The app shows you how your message will land before it sends.' },
     vi: { title: 'Câu chữ mang cảm xúc',      body: 'Cùng một câu có thể nghe ấm áp, vui vẻ hoặc lạnh lùng. Ứng dụng cho bạn thấy tin nhắn sẽ được hiểu như thế nào trước khi gửi.' }
   },
-  {
-    icon: '🧠',
-    en: { title: 'It learns how you talk',    body: 'Every choice you make teaches the app your style. Over time it stops asking and just sends — the way you would.' },
-    vi: { title: 'Ứng dụng học cách bạn nói', body: 'Mỗi lựa chọn của bạn giúp ứng dụng hiểu phong cách của bạn. Dần dần nó sẽ tự gửi — đúng cách bạn muốn.' }
-  }
 ];
 
 function showOnboarding(){
@@ -4740,6 +6530,18 @@ setTimeout(showOnboarding, 300);
       <button id="settingsClose" onclick="closeSettings()">✕</button>
     </div>
     <div id="settingsBody">
+      <div class="sett-section-label" id="settLangLabel">Language</div>
+      <div class="sett-row">
+        <div class="sett-row-info">
+          <div class="sett-row-title" id="settGrammarTitle">Grammar check</div>
+          <div class="sett-row-sub" id="settGrammarSub">Suggests a correction as you type — like auto-grammar on iMessage. On by default.</div>
+        </div>
+        <label class="sett-toggle">
+          <input type="checkbox" id="grammarToggle" onchange="onGrammarToggleChange(this.checked)">
+          <span class="sett-toggle-track"></span>
+        </label>
+      </div>
+      <div class="sett-divider"></div>
       <div class="sett-section-label">Privacy</div>
       <div class="sett-row">
         <div class="sett-row-info">
