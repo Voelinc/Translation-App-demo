@@ -380,7 +380,7 @@ html,body{height:100%;height:100dvh;overflow:hidden;background:var(--bg);color:v
 .shsaid{padding:0 20px 14px;border-bottom:1px solid var(--line);margin-bottom:12px;}
 .shsaid .sh-label{font-size:11px;font-weight:700;letter-spacing:.05em;color:var(--muted);
   text-transform:uppercase;margin-bottom:6px;display:block;}
-.shsaid strong{display:block;color:var(--ink);font-size:15px;font-weight:500;line-height:1.4;}
+.shsaid strong{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;color:var(--ink);font-size:15px;font-weight:500;line-height:1.4;}
 .shemo{display:inline-block;background:var(--chip);border-radius:999px;
   padding:2px 10px;font-size:11px;font-weight:700;color:var(--ink);margin-left:8px;}
 .shlabel{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
@@ -1605,6 +1605,503 @@ const DEMO_SCENARIOS = [
       culturalWarnings: [],
       recommendedOption:"affectionate",
       recommendationReason:{en:"The 🥺 emoji and phrasing make this unambiguously tender. The affectionate option mirrors that register exactly.",vi:"Emoji 🥺 và cách diễn đạt làm rõ đây là sự nhớ nhung dịu dàng. Lựa chọn 'tình cảm' phản chiếu chính xác cảm xúc đó."},
+      contextConfidence: 0
+    })
+  }
+  {
+    // "I'm obsessed with you" — affectionate in English, reads as stalker/creepy in Vietnamese
+    match: t => /i'?m obsessed with (you|u)\b|obsessed with (you|u)\b/i.test(t),
+    result: (dir) => ({
+      transcript: dir==='en-vi' ? "I'm obsessed with you 😍" : "Anh/em mê bạn quá",
+      detectedEmotion: "affectionate",
+      detectedTone: { en: "Intense admiration — in English slang, 'obsessed with you' means deeply fond or infatuated.", vi: "Sự ngưỡng mộ mãnh liệt — trong tiếng lóng Anh, 'obsessed with you' có nghĩa là yêu thích hoặc mê đắm." },
+      toneSignals: { en: ["'Obsessed' used hyperbolically for deep fondness", "Common in Gen-Z romantic or friend contexts"], vi: ["'Obsessed' dùng để cường điệu sự yêu thích", "Phổ biến trong ngữ cảnh lãng mạn hoặc bạn bè Gen-Z"] },
+      category: "other",
+      options: dir==='en-vi' ? [
+        { emotion:"affectionate", translation:"Em mê anh lắm luôn 😍", literalFlow:null, backTranslation:"I'm so into you", breakdown:null, howItLands:{en:"Warm and affectionate — 'mê' captures deep fondness without the alarming stalker connotation.",vi:"Ấm áp và tình cảm — 'mê' thể hiện sự yêu thích sâu sắc mà không có hàm ý đáng lo."} },
+        { emotion:"playful",      translation:"Anh cuốn hút em quá đi 😍", literalFlow:null, backTranslation:"You're so captivating to me", breakdown:null, howItLands:{en:"Playful and flattering — focuses on their pull rather than your fixation.",vi:"Vui vẻ và khen ngợi — tập trung vào sức hút của họ chứ không phải sự ám ảnh của bạn."} },
+        { emotion:"direct",       translation:"Em rất thích anh.", literalFlow:null, backTranslation:"I really like you.", breakdown:null, howItLands:{en:"Clear and safe — loses the intensity but zero risk of misreading.",vi:"Rõ ràng và an toàn — mất đi sự mãnh liệt nhưng không có nguy cơ hiểu sai."} }
+      ] : [
+        { emotion:"affectionate", translation:"I'm so into you 😍", literalFlow:null, backTranslation:"I'm very attracted to you", breakdown:null, howItLands:{en:"Natural English equivalent — warm and flirty without sounding alarming.",vi:"Tương đương tự nhiên trong tiếng Anh — ấm áp và vui vẻ mà không đáng lo."} },
+        { emotion:"playful",      translation:"You're literally everything 😍", literalFlow:null, backTranslation:"You mean everything to me", breakdown:null, howItLands:{en:"Playful hyperbole — affectionate and light.",vi:"Cường điệu vui vẻ — tình cảm và nhẹ nhàng."} },
+        { emotion:"direct",       translation:"I really like you.", literalFlow:null, backTranslation:"I really like you.", breakdown:null, howItLands:{en:"Simple and unambiguous — genuine warmth without intensity.",vi:"Đơn giản và rõ ràng — ấm áp chân thành."} }
+      ],
+      sourceDecoding: null,
+      culturalWarnings: [{
+        type:"slang", term:"I'm obsessed with you", where:"source",
+        literalMeaning:{en:"The speaker is mentally fixated on the listener in a compulsive way.",vi:"Người nói đang ám ảnh về người nghe theo cách cưỡng bức."},
+        likelyMeaning:{en:"Deep fondness or infatuation — a hyperbolic way of saying 'I'm really into you.'",vi:"Sự yêu thích sâu sắc — cách nói quá để diễn tả 'tôi rất thích bạn'."},
+        whyRisky:{en:"In Vietnamese, 'ám ảnh' or 'bị ám' carries a genuinely unsettling, stalker-like connotation. What sounds flattering in English can sound disturbing in Vietnamese.",vi:"Trong tiếng Việt, 'ám ảnh' mang hàm ý thực sự đáng lo, giống như kẻ theo dõi. Điều nghe có vẻ khen ngợi trong tiếng Anh có thể nghe đáng sợ trong tiếng Việt."},
+        suggestionKind:"rewrite", suggestion:"Em mê anh lắm luôn 😍"
+      }],
+      recommendedOption:"affectionate",
+      recommendationReason:{en:"'Em mê anh lắm' captures the same intensity of fondness as 'obsessed' without the alarming literal reading.",vi:"'Em mê anh lắm' thể hiện cùng mức độ yêu thích mà không có nghĩa đen đáng lo ngại."},
+      contextConfidence: 0
+    })
+  },
+  {
+    // "I could kill for..." / "to die for" — desire hyperbole, sounds violent/morbid literally
+    match: t => /i could kill for|to die for|would kill for|die for (some|a |this)/i.test(t),
+    result: (dir) => ({
+      transcript: "I could kill for some food right now 😭",
+      detectedEmotion: "playful",
+      detectedTone: { en: "Craving hyperbole — 'I could kill for' means desperately wanting something, not actual violence.", vi: "Cường điệu về sự thèm muốn — 'I could kill for' có nghĩa là muốn điều gì đó tha thiết, không phải bạo lực thật." },
+      toneSignals: { en: ["Violent verb used as intensity marker for craving", "Common casual English expression for strong desire"], vi: ["Động từ bạo lực dùng để nhấn mạnh sự thèm muốn", "Thành ngữ tiếng Anh thông thường cho sự mong muốn mạnh mẽ"] },
+      category: "other",
+      options: [
+        { emotion:"playful",  translation:"Thèm ăn lắm luôn 😭", literalFlow:null, backTranslation:"I'm craving food so bad 😭", breakdown:null, howItLands:{en:"Natural Vietnamese craving expression — captures the desperation without any violent connotation.",vi:"Cách diễn đạt sự thèm muốn tự nhiên trong tiếng Việt — thể hiện sự tha thiết mà không có hàm ý bạo lực."} },
+        { emotion:"warm",     translation:"Đói bụng muốn xỉu luôn 😭", literalFlow:null, backTranslation:"So hungry I could faint 😭", breakdown:null, howItLands:{en:"Vivid and relatable — keeps the dramatic flair without any alarming words.",vi:"Sinh động và dễ đồng cảm — giữ sự kịch tính mà không có từ ngữ đáng lo."} },
+        { emotion:"direct",   translation:"Đói lắm rồi.", literalFlow:null, backTranslation:"I'm really hungry.", breakdown:null, howItLands:{en:"Plain and safe — loses the drama but completely clear.",vi:"Đơn giản và an toàn — mất đi sự kịch tính nhưng hoàn toàn rõ ràng."} }
+      ],
+      sourceDecoding: null,
+      culturalWarnings: [{
+        type:"idiom", term:"I could kill for / to die for", where:"source",
+        literalMeaning:{en:"The speaker would commit violence or sacrifice their life for something.",vi:"Người nói sẽ gây ra bạo lực hoặc hy sinh mạng sống vì điều gì đó."},
+        likelyMeaning:{en:"The speaker is desperately craving something — food, sleep, coffee, etc.",vi:"Người nói đang thèm muốn điều gì đó tha thiết — đồ ăn, ngủ, cà phê, v.v."},
+        whyRisky:{en:"Translated literally into Vietnamese, 'tôi có thể giết để có' sounds genuinely alarming. Vietnamese has vivid craving expressions that carry the same desperation without the violence.",vi:"Dịch đen nghĩa thành 'tôi có thể giết để có' nghe thực sự đáng lo. Tiếng Việt có những cách diễn đạt sự thèm muốn sinh động mang cùng sự tha thiết mà không có bạo lực."},
+        suggestionKind:"rewrite", suggestion:"Thèm ăn lắm luôn 😭"
+      }],
+      recommendedOption:"playful",
+      recommendationReason:{en:"'Thèm ăn lắm luôn' captures the same desperate craving energy without any alarming literal reading.",vi:"'Thèm ăn lắm luôn' thể hiện cùng sự thèm muốn tha thiết mà không có nghĩa đen đáng lo."},
+      contextConfidence: 0
+    })
+  },
+  {
+    // "Ghosted" / "ghost me" — no natural Vietnamese equivalent, confusing literally
+    match: t => /ghost(ed)?\s+(me|him|her|them|you)\b|you\s+ghost(ed)?\s+me\b|stop\s+ghosting/i.test(t),
+    result: (dir) => ({
+      transcript: dir==='en-vi' ? "You ghosted me 😭" : "Sao bạn bỗng dưng mất tích vậy?",
+      detectedEmotion: "hurt",
+      detectedTone: { en: "Hurt and confused — 'ghosted' means someone suddenly stopped responding without explanation.", vi: "Tổn thương và bối rối — 'ghosted' có nghĩa là ai đó đột ngột ngừng liên lạc mà không giải thích." },
+      toneSignals: { en: ["'Ghosted' = suddenly vanished from contact with no explanation", "Social media era term for being ignored/abandoned"], vi: ["'Ghosted' = đột ngột biến mất khỏi liên lạc mà không giải thích", "Thuật ngữ thời mạng xã hội khi bị phớt lờ/bỏ rơi"] },
+      category: "other",
+      options: dir==='en-vi' ? [
+        { emotion:"hurt",    translation:"Sao bạn bỗng dưng mất tích vậy? 😭", literalFlow:null, backTranslation:"Why did you suddenly disappear? 😭", breakdown:null, howItLands:{en:"Captures the hurt of being ignored — 'mất tích' (disappear) is the closest natural Vietnamese equivalent.",vi:"Thể hiện sự tổn thương khi bị phớt lờ — 'mất tích' là cách diễn đạt tự nhiên gần nhất trong tiếng Việt."} },
+        { emotion:"direct",  translation:"Bạn cắt liên lạc với mình không nói gì à?", literalFlow:null, backTranslation:"Did you cut contact without saying anything?", breakdown:null, howItLands:{en:"More direct confrontation — clearer but slightly more accusatory.",vi:"Đối đầu trực tiếp hơn — rõ ràng hơn nhưng có phần buộc tội."} },
+        { emotion:"playful", translation:"Ủa bạn biến đi đâu vậy 😭", literalFlow:null, backTranslation:"Hey where did you disappear to 😭", breakdown:null, howItLands:{en:"Lighter tone — softer way to bring it up without sounding too serious.",vi:"Giọng nhẹ hơn — cách đề cập nhẹ nhàng hơn mà không quá nghiêm túc."} }
+      ] : [
+        { emotion:"hurt",    translation:"You ghosted me 😭", literalFlow:null, backTranslation:"You ghosted me", breakdown:null, howItLands:{en:"Direct — English speakers will understand immediately.",vi:"Trực tiếp — người nói tiếng Anh sẽ hiểu ngay."} },
+        { emotion:"direct",  translation:"Why did you suddenly stop responding?", literalFlow:null, backTranslation:"Why did you stop responding?", breakdown:null, howItLands:{en:"Clear and accessible to all ages — no slang required.",vi:"Rõ ràng và dễ hiểu với mọi lứa tuổi — không cần tiếng lóng."} },
+        { emotion:"playful", translation:"Hello?? Did you fall off the earth? 😭", literalFlow:null, backTranslation:"Are you still there?", breakdown:null, howItLands:{en:"Playful and light — softens the accusation with humor.",vi:"Vui vẻ và nhẹ nhàng — làm giảm nhẹ sự buộc tội bằng sự hài hước."} }
+      ],
+      sourceDecoding: null,
+      culturalWarnings: [{
+        type:"slang", term:"ghosted", where:"source",
+        literalMeaning:{en:"A ghost (spirit) appeared or performed an action.",vi:"Một con ma (linh hồn) đã xuất hiện hoặc thực hiện hành động."},
+        likelyMeaning:{en:"Someone suddenly cut off all contact without explanation.",vi:"Ai đó đột ngột cắt đứt mọi liên lạc mà không giải thích."},
+        whyRisky:{en:"'Ghosted' has no direct Vietnamese equivalent. A literal translation involving ghosts would be completely confusing. The concept needs to be rephrased as 'suddenly disappeared' or 'cut contact.'",vi:"'Ghosted' không có từ tương đương trực tiếp trong tiếng Việt. Dịch đen nghĩa liên quan đến ma sẽ hoàn toàn gây bối rối. Khái niệm này cần được diễn đạt lại là 'bỗng dưng mất tích' hoặc 'cắt liên lạc'."},
+        suggestionKind:"rewrite", suggestion:"Sao bạn bỗng dưng mất tích vậy? 😭"
+      }],
+      recommendedOption:"hurt",
+      recommendationReason:{en:"'Mất tích' (suddenly disappeared) is the closest Vietnamese equivalent to being ghosted — it carries the same feeling of being abandoned without explanation.",vi:"'Mất tích' là cách diễn đạt gần nhất trong tiếng Việt với 'ghosted' — mang cùng cảm giác bị bỏ rơi mà không có giải thích."},
+      contextConfidence: 0
+    })
+  },
+  {
+    // "Slay" / "slaying" — sounds violent literally, means amazing/owning it
+    match: t => /\bslay(ing|ed)?\b|\bshe slays?\b|\byou('?re)?\s+slaying\b/i.test(t),
+    result: (dir) => ({
+      transcript: "You're slaying right now 🔥",
+      detectedEmotion: "playful",
+      detectedTone: { en: "High praise — 'slaying' means someone is performing or looking absolutely amazing.", vi: "Lời khen cao — 'slaying' có nghĩa là ai đó đang thể hiện hoặc trông cực kỳ tuyệt vời." },
+      toneSignals: { en: ["'Slay' = dominating something impressively", "Pop culture compliment popularized by drag and LGBTQ+ communities"], vi: ["'Slay' = làm chủ điều gì đó một cách ấn tượng", "Lời khen văn hóa đại chúng được phổ biến bởi cộng đồng drag và LGBTQ+"] },
+      category: "opinion",
+      options: [
+        { emotion:"playful",  translation:"Bạn đang quá đỉnh luôn 🔥", literalFlow:null, backTranslation:"You're absolutely killing it right now 🔥", breakdown:null, howItLands:{en:"'Đỉnh' is the go-to Vietnamese Gen-Z praise — matches the energy perfectly.",vi:"'Đỉnh' là lời khen Gen-Z Việt phổ biến nhất — khớp hoàn toàn với cảm xúc."} },
+        { emotion:"warm",     translation:"Bạn xuất sắc lắm nha 🔥", literalFlow:null, backTranslation:"You're so excellent right now 🔥", breakdown:null, howItLands:{en:"Warm genuine praise — safe for all audiences.",vi:"Lời khen chân thành — an toàn với mọi đối tượng."} },
+        { emotion:"direct",   translation:"Bạn làm tốt lắm.", literalFlow:null, backTranslation:"You're doing great.", breakdown:null, howItLands:{en:"Simple and clear — no drama, universally understood.",vi:"Đơn giản và rõ ràng — không kịch tính, ai cũng hiểu."} }
+      ],
+      sourceDecoding: null,
+      culturalWarnings: [{
+        type:"slang", term:"slay / slaying", where:"source",
+        literalMeaning:{en:"To kill or violently defeat someone.",vi:"Giết hoặc đánh bại ai đó bằng bạo lực."},
+        likelyMeaning:{en:"Looking or performing absolutely amazingly — high praise.",vi:"Trông hoặc thể hiện cực kỳ tuyệt vời — lời khen ngợi cao."},
+        whyRisky:{en:"Translated literally, 'bạn đang giết chết' sounds alarming or violent. Vietnamese has no single-word equivalent — 'đỉnh' is the closest Gen-Z praise that carries the same energy safely.",vi:"Dịch đen nghĩa, 'bạn đang giết chết' nghe đáng lo hoặc bạo lực. Tiếng Việt không có từ tương đương đơn lẻ — 'đỉnh' là lời khen Gen-Z gần nhất mang cùng cảm xúc một cách an toàn."},
+        suggestionKind:"rewrite", suggestion:"Bạn đang quá đỉnh luôn 🔥"
+      }],
+      recommendedOption:"playful",
+      recommendationReason:{en:"'Đỉnh' is the natural Vietnamese Gen-Z equivalent of 'slay' — enthusiastic praise with zero violent connotation.",vi:"'Đỉnh' là từ tương đương Gen-Z Việt tự nhiên của 'slay' — lời khen nhiệt tình mà không có hàm ý bạo lực."},
+      contextConfidence: 0
+    })
+  },
+  {
+    // "I'm going to destroy you" — gaming/competition context, sounds violent literally
+    match: t => /i'?m (going to|gonna|about to)\s+(destroy|obliterate|annihilate|wreck|ruin)\s+(you|u)\b/i.test(t),
+    result: (dir) => ({
+      transcript: "I'm gonna destroy you 😤",
+      detectedEmotion: "playful",
+      detectedTone: { en: "Competitive trash talk — 'destroy you' in gaming or sports means winning decisively, not actual harm.", vi: "Nói xấu cạnh tranh — 'destroy you' trong game hoặc thể thao có nghĩa là thắng áp đảo, không phải gây hại thật." },
+      toneSignals: { en: ["Violent verb used as competitive boast", "Common in gaming, sports, or playful rivalry"], vi: ["Động từ bạo lực dùng để khoe khoang cạnh tranh", "Phổ biến trong game, thể thao hoặc sự ganh đua vui vẻ"] },
+      category: "other",
+      options: [
+        { emotion:"playful",  translation:"Tao sẽ đánh bại mày dễ ợt 😤", literalFlow:null, backTranslation:"I'll beat you easily 😤", breakdown:null, howItLands:{en:"Competitive and fun — 'đánh bại' (defeat) captures the rivalry without sounding violent.",vi:"Cạnh tranh và vui vẻ — 'đánh bại' thể hiện sự ganh đua mà không nghe bạo lực."} },
+        { emotion:"direct",   translation:"Mày không có cửa thắng đâu.", literalFlow:null, backTranslation:"You have no chance of winning.", breakdown:null, howItLands:{en:"Confident trash talk — clear and direct without violent words.",vi:"Nói xấu tự tin — rõ ràng và trực tiếp mà không có từ ngữ bạo lực."} },
+        { emotion:"warm",     translation:"Chuẩn bị thua đi nha 😄", literalFlow:null, backTranslation:"Get ready to lose 😄", breakdown:null, howItLands:{en:"Playful and light — teasing without aggression.",vi:"Vui vẻ và nhẹ nhàng — trêu chọc mà không hung hăng."} }
+      ],
+      sourceDecoding: null,
+      culturalWarnings: [{
+        type:"face_threat", term:"I'm going to destroy you", where:"source",
+        literalMeaning:{en:"The speaker intends to physically destroy the listener.",vi:"Người nói có ý định tiêu diệt người nghe về mặt thể chất."},
+        likelyMeaning:{en:"A competitive boast — the speaker is confident they will win decisively in a game or competition.",vi:"Lời khoe khoang cạnh tranh — người nói tự tin mình sẽ thắng áp đảo trong game hoặc cuộc thi."},
+        whyRisky:{en:"Translated literally into Vietnamese, 'tôi sẽ tiêu diệt bạn' sounds like a genuine threat. Vietnamese competitive trash talk uses 'đánh bại' (defeat) rather than destruction or killing language.",vi:"Dịch đen nghĩa thành 'tôi sẽ tiêu diệt bạn' nghe như mối đe dọa thật sự. Nói xấu cạnh tranh trong tiếng Việt dùng 'đánh bại' (defeat) thay vì ngôn ngữ tiêu diệt."},
+        suggestionKind:"rewrite", suggestion:"Tao sẽ đánh bại mày dễ ợt 😤"
+      }],
+      recommendedOption:"playful",
+      recommendationReason:{en:"'Đánh bại mày dễ ợt' carries the same confident trash-talk energy without sounding like a genuine threat.",vi:"'Đánh bại mày dễ ợt' mang cùng cảm giác nói xấu tự tin mà không nghe như mối đe dọa thật."},
+      contextConfidence: 0
+    })
+  },
+  {
+    // Vietnamese: commenting on weight ("mập/béo") — normal in Vietnamese, offensive in English
+    match: t => /\b(mập|béo|gầy)\s+(vậy|thế|quá|lên|ra|đi)\b|mày\s+(mập|béo|gầy)|trông\s+(mập|béo|gầy)/i.test(t),
+    result: (dir) => ({
+      transcript: dir==='vi-en' ? "Bạn mập ra rồi kìa!" : "You've gained weight!",
+      detectedEmotion: "neutral",
+      detectedTone: { en: "Observation delivered as casual conversation — in Vietnamese culture, commenting on weight is normal small talk, not a personal attack.", vi: "Nhận xét được đưa ra như cuộc trò chuyện thông thường — trong văn hóa Việt, nhận xét về cân nặng là chuyện bình thường, không phải tấn công cá nhân." },
+      toneSignals: { en: ["Weight comment given as neutral observation, not insult", "Reflects Vietnamese cultural norm of commenting on physical appearance"], vi: ["Nhận xét về cân nặng được đưa ra như quan sát trung lập, không phải xúc phạm", "Phản ánh chuẩn mực văn hóa Việt về nhận xét ngoại hình"] },
+      category: "other",
+      options: dir==='vi-en' ? [
+        { emotion:"warm",    translation:"You look great — have you been taking care of yourself?", literalFlow:null, backTranslation:"You look good, are you doing well?", breakdown:null, howItLands:{en:"Redirects to positive intention — avoids the weight comment entirely while keeping the warmth.",vi:"Chuyển hướng sang ý định tích cực — tránh hoàn toàn nhận xét về cân nặng trong khi vẫn giữ sự ấm áp."} },
+        { emotion:"direct",  translation:"You look like you've changed a bit!", literalFlow:null, backTranslation:"You look a bit different", breakdown:null, howItLands:{en:"Vague enough to be safe — acknowledges change without specifying weight.",vi:"Đủ mơ hồ để an toàn — thừa nhận sự thay đổi mà không chỉ rõ cân nặng."} },
+        { emotion:"neutral", translation:"You've put on a bit of weight!", literalFlow:null, backTranslation:"You've gained weight", breakdown:null, howItLands:{en:"Literal translation — will likely cause offence to an English speaker. Use with caution.",vi:"Dịch đen nghĩa — có thể gây xúc phạm với người nói tiếng Anh. Dùng cẩn thận."} }
+      ] : [
+        { emotion:"neutral", translation:"Bạn mập ra một chút rồi đó.", literalFlow:null, backTranslation:"You've gained a little weight.", breakdown:null, howItLands:{en:"Matter-of-fact observation — in Vietnamese context this is neutral.",vi:"Nhận xét thực tế — trong ngữ cảnh tiếng Việt điều này là trung lập."} },
+        { emotion:"warm",    translation:"Nhìn bạn có vẻ khỏe hơn rồi đó!", literalFlow:null, backTranslation:"You look healthier now!", breakdown:null, howItLands:{en:"Reframes weight gain as looking healthy — warmer and less direct.",vi:"Diễn giải lại việc tăng cân là trông khỏe hơn — ấm áp và ít trực tiếp hơn."} }
+      ],
+      sourceDecoding: null,
+      culturalWarnings: [{
+        type:"other", term:"mập/béo (weight comment)", where:"source",
+        literalMeaning:{en:"A direct observation that someone has gained weight.",vi:"Một nhận xét trực tiếp rằng ai đó đã tăng cân."},
+        likelyMeaning:{en:"In Vietnamese culture, this is often casual small talk or even a sign of concern — not meant as an insult.",vi:"Trong văn hóa Việt, đây thường là chuyện trò thông thường hoặc thậm chí là dấu hiệu quan tâm — không có ý xúc phạm."},
+        whyRisky:{en:"In English-speaking cultures, commenting on someone's weight is considered deeply personal and often offensive — regardless of intent. What is warm concern in Vietnamese can land as a hurtful insult in English.",vi:"Trong văn hóa nói tiếng Anh, nhận xét về cân nặng của ai đó được coi là rất cá nhân và thường gây xúc phạm — bất kể ý định. Điều thể hiện sự quan tâm ấm áp trong tiếng Việt có thể bị hiểu là xúc phạm trong tiếng Anh."},
+        suggestionKind:"rewrite", suggestion:"You look great — have you been taking care of yourself?"
+      }],
+      recommendedOption:"warm",
+      recommendationReason:{en:"Redirecting to 'you look great' preserves the warmth and care behind the original comment without the cultural risk of a direct weight observation.",vi:"Chuyển hướng sang 'trông bạn thật tuyệt' giữ được sự ấm áp và quan tâm đằng sau nhận xét gốc mà không có nguy cơ văn hóa của việc nhận xét trực tiếp về cân nặng."},
+      contextConfidence: 0
+    })
+  },
+  {
+    // Vietnamese: "Ăn cơm chưa?" as greeting — confusing if taken literally in English
+    match: t => /ăn cơm chưa|ăn chưa\??|mày ăn chưa/i.test(t),
+    result: (dir) => ({
+      transcript: "Ăn cơm chưa?",
+      detectedEmotion: "warm",
+      detectedTone: { en: "A warm Vietnamese greeting — literally 'have you eaten yet?' but functions as 'how are you?' or 'I care about you.'", vi: "Lời chào hỏi ấm áp của Việt Nam — theo nghĩa đen là 'đã ăn cơm chưa?' nhưng có chức năng như 'bạn có khỏe không?' hoặc 'tôi quan tâm đến bạn'." },
+      toneSignals: { en: ["Food-based greeting rooted in Vietnamese culture of care", "Not a literal question about meals — a warmth ritual"], vi: ["Lời chào dựa trên thức ăn bắt nguồn từ văn hóa quan tâm của người Việt", "Không phải câu hỏi thực tế về bữa ăn — một nghi thức thể hiện sự ấm áp"] },
+      category: "other",
+      options: [
+        { emotion:"warm",    translation:"Hey, how are you doing? 😊", literalFlow:null, backTranslation:"How are you?", breakdown:null, howItLands:{en:"Captures the caring intent of the greeting without confusing an English speaker.",vi:"Nắm bắt được ý định quan tâm của lời chào mà không gây bối rối cho người nói tiếng Anh."} },
+        { emotion:"direct",  translation:"Have you eaten yet?", literalFlow:null, backTranslation:"Ăn chưa?", breakdown:null, howItLands:{en:"Literal — an English speaker will take this as a genuine question about food, not a greeting.",vi:"Theo nghĩa đen — người nói tiếng Anh sẽ hiểu đây là câu hỏi thực sự về thức ăn, không phải lời chào."} },
+        { emotion:"playful", translation:"Hey! Just checking in on you 😊", literalFlow:null, backTranslation:"Hey, thinking of you", breakdown:null, howItLands:{en:"Friendly and light — conveys the 'I'm thinking of you' warmth behind the greeting.",vi:"Thân thiện và nhẹ nhàng — truyền đạt sự ấm áp 'tôi đang nghĩ đến bạn' đằng sau lời chào."} }
+      ],
+      sourceDecoding: null,
+      culturalWarnings: [{
+        type:"other", term:"Ăn cơm chưa?", where:"source",
+        literalMeaning:{en:"Have you eaten rice/a meal yet?",vi:"Bạn đã ăn cơm/bữa ăn chưa?"},
+        likelyMeaning:{en:"A warm greeting expressing care — equivalent to 'how are you doing?' or 'I'm thinking of you.'",vi:"Lời chào ấm áp thể hiện sự quan tâm — tương đương với 'bạn có khỏe không?' hoặc 'tôi đang nghĩ đến bạn'."},
+        whyRisky:{en:"An English speaker will take 'have you eaten yet?' as a literal question about food — not a greeting. They may give a confused answer about their last meal rather than understanding it as a warmth check-in.",vi:"Người nói tiếng Anh sẽ hiểu 'have you eaten yet?' là câu hỏi thực tế về thức ăn — không phải lời chào. Họ có thể trả lời bối rối về bữa ăn cuối cùng của mình thay vì hiểu đây là lời hỏi thăm ấm áp."},
+        suggestionKind:"rewrite", suggestion:"Hey, how are you doing? 😊"
+      }],
+      recommendedOption:"warm",
+      recommendationReason:{en:"'Hey, how are you doing?' captures the caring intent behind 'ăn cơm chưa?' without the cultural confusion of a literal food question.",vi:"'Hey, how are you doing?' nắm bắt được ý định quan tâm đằng sau 'ăn cơm chưa?' mà không có sự nhầm lẫn văn hóa của câu hỏi thực tế về thức ăn."},
+      contextConfidence: 0
+    })
+  },
+  {
+    // Vietnamese: asking about marriage ("Sao chưa lấy chồng/vợ?") — normal in Vietnam, intrusive in English
+    match: t => /chưa lấy (chồng|vợ)|sao chưa (cưới|kết hôn)|bao giờ (lấy chồng|lấy vợ|kết hôn|cưới)/i.test(t),
+    result: (dir) => ({
+      transcript: "Sao bạn chưa lấy chồng vậy?",
+      detectedEmotion: "warm",
+      detectedTone: { en: "A caring question in Vietnamese culture — asking about marriage is common small talk and signals genuine interest in someone's life.", vi: "Câu hỏi quan tâm trong văn hóa Việt — hỏi về hôn nhân là chuyện trò thông thường và thể hiện sự quan tâm chân thành đến cuộc sống của ai đó." },
+      toneSignals: { en: ["Marriage question as social bonding ritual in Vietnamese culture", "Implies 'I care about your future and happiness'"], vi: ["Câu hỏi về hôn nhân như nghi lễ gắn kết xã hội trong văn hóa Việt", "Ý nghĩa là 'tôi quan tâm đến tương lai và hạnh phúc của bạn'"] },
+      category: "other",
+      options: [
+        { emotion:"warm",    translation:"How's your personal life going these days? 😊", literalFlow:null, backTranslation:"How are things going in your life?", breakdown:null, howItLands:{en:"Opens the door to sharing without pressuring — conveys care without being intrusive.",vi:"Mở cửa để chia sẻ mà không gây áp lực — thể hiện sự quan tâm mà không xâm phạm."} },
+        { emotion:"direct",  translation:"Are you seeing anyone?", literalFlow:null, backTranslation:"Are you in a relationship?", breakdown:null, howItLands:{en:"More direct than the warm option but still acceptable between friends — less loaded than marriage talk.",vi:"Trực tiếp hơn lựa chọn ấm áp nhưng vẫn chấp nhận được giữa bạn bè — ít nặng nề hơn việc nói về hôn nhân."} },
+        { emotion:"neutral", translation:"Why aren't you married yet?", literalFlow:null, backTranslation:"Sao chưa kết hôn?", breakdown:null, howItLands:{en:"Literal — will feel intrusive and presumptuous to most English speakers. Use only with very close friends who know your cultural context.",vi:"Nghĩa đen — sẽ cảm thấy xâm phạm và tự phụ với hầu hết người nói tiếng Anh. Chỉ dùng với bạn bè rất thân biết bối cảnh văn hóa của bạn."} }
+      ],
+      sourceDecoding: null,
+      culturalWarnings: [{
+        type:"other", term:"Sao chưa lấy chồng/vợ?", where:"source",
+        literalMeaning:{en:"Why haven't you gotten married yet?",vi:"Tại sao bạn chưa kết hôn?"},
+        likelyMeaning:{en:"A warm expression of interest in someone's life and happiness — not a criticism or pressure in Vietnamese context.",vi:"Sự thể hiện ấm áp về sự quan tâm đến cuộc sống và hạnh phúc của ai đó — không phải chỉ trích hay áp lực trong bối cảnh Việt Nam."},
+        whyRisky:{en:"In English-speaking cultures, asking why someone isn't married is considered deeply personal and presumptuous — it implies their life is incomplete without marriage. What is caring in Vietnamese reads as intrusive or offensive in English.",vi:"Trong văn hóa nói tiếng Anh, hỏi tại sao ai đó chưa kết hôn được coi là rất cá nhân và tự phụ — nó ám chỉ cuộc sống của họ không đầy đủ nếu không có hôn nhân. Điều thể hiện sự quan tâm trong tiếng Việt bị hiểu là xâm phạm hoặc xúc phạm trong tiếng Anh."},
+        suggestionKind:"rewrite", suggestion:"How's your personal life going these days? 😊"
+      }],
+      recommendedOption:"warm",
+      recommendationReason:{en:"'How's your personal life going?' conveys the same caring interest without the cultural pressure of a direct marriage question.",vi:"'How's your personal life going?' truyền đạt cùng sự quan tâm mà không có áp lực văn hóa của câu hỏi hôn nhân trực tiếp."},
+      contextConfidence: 0
+    })
+  },
+  {
+    // "Kick the bucket" — older generation idiom for dying, sounds like literal bucket kicking
+    match: t => /kick(ed)?\s+the\s+bucket|kicking\s+the\s+bucket/i.test(t),
+    result: (dir) => ({
+      transcript: "He kicked the bucket last year.",
+      detectedEmotion: "neutral",
+      detectedTone: { en: "A casual, slightly darkly humorous way older English speakers refer to someone dying.", vi: "Cách nói thông thường, hơi mang tính hài hước tối tăm mà người lớn tuổi nói tiếng Anh dùng để chỉ ai đó qua đời." },
+      toneSignals: { en: ["Death idiom common among older generations", "Less formal than 'passed away', less blunt than 'died'"], vi: ["Thành ngữ về cái chết phổ biến ở thế hệ lớn tuổi", "Ít trang trọng hơn 'qua đời', ít thẳng thắn hơn 'chết'"] },
+      category: "other",
+      options: [
+        { emotion:"neutral",  translation:"Ông ấy qua đời năm ngoái.", literalFlow:null, backTranslation:"He passed away last year.", breakdown:null, howItLands:{en:"Respectful and clear — the standard Vietnamese way to speak about someone dying.",vi:"Trang trọng và rõ ràng — cách nói tiêu chuẩn của tiếng Việt về việc ai đó mất."} },
+        { emotion:"warm",     translation:"Ông ấy mất năm ngoái rồi.", literalFlow:null, backTranslation:"He passed last year.", breakdown:null, howItLands:{en:"Gentle and natural — 'mất' is a soft, respectful way to say someone has died.",vi:"Nhẹ nhàng và tự nhiên — 'mất' là cách nói nhẹ nhàng, tôn trọng khi ai đó qua đời."} },
+        { emotion:"direct",   translation:"Ông ấy chết năm ngoái.", literalFlow:null, backTranslation:"He died last year.", breakdown:null, howItLands:{en:"Blunt and factual — 'chết' is direct but can feel harsh in formal contexts.",vi:"Thẳng thắn và thực tế — 'chết' trực tiếp nhưng có thể cảm thấy thô trong ngữ cảnh trang trọng."} }
+      ],
+      sourceDecoding: null,
+      culturalWarnings: [{
+        type:"idiom", term:"kick the bucket", where:"source",
+        literalMeaning:{en:"Someone physically kicked a bucket.",vi:"Ai đó đã đá vào một cái xô."},
+        likelyMeaning:{en:"Someone died — a casual, older-generation English expression for death.",vi:"Ai đó đã mất — cách diễn đạt thông thường của thế hệ lớn tuổi trong tiếng Anh về cái chết."},
+        whyRisky:{en:"Translated literally, a Vietnamese reader would picture someone actually kicking a bucket — completely nonsensical. The idiom has no Vietnamese equivalent and must be rewritten as 'qua đời' or 'mất'.",vi:"Dịch đen nghĩa, người đọc tiếng Việt sẽ hình dung ai đó thực sự đá vào xô — hoàn toàn vô nghĩa. Thành ngữ này không có từ tương đương trong tiếng Việt và phải được viết lại là 'qua đời' hoặc 'mất'."},
+        suggestionKind:"rewrite", suggestion:"Ông ấy qua đời năm ngoái."
+      }],
+      recommendedOption:"neutral",
+      recommendationReason:{en:"'Qua đời' is the natural, respectful Vietnamese equivalent — it conveys the same meaning without any confusion.",vi:"'Qua đời' là từ tương đương tự nhiên, trang trọng trong tiếng Việt — truyền đạt cùng ý nghĩa mà không gây nhầm lẫn."},
+      contextConfidence: 0
+    })
+  },
+  {
+    // "Bite the dust" — older idiom for failing or dying
+    match: t => /bite?\s+the\s+dust|bit\s+the\s+dust/i.test(t),
+    result: (dir) => ({
+      transcript: "That project bit the dust.",
+      detectedEmotion: "neutral",
+      detectedTone: { en: "A casual older-generation phrase meaning something failed or ended — sometimes also used for dying.", vi: "Cụm từ thông thường của thế hệ lớn tuổi có nghĩa là điều gì đó thất bại hoặc kết thúc — đôi khi cũng dùng cho việc chết." },
+      toneSignals: { en: ["Failure or death idiom common in older English", "Slightly dramatic but matter-of-fact tone"], vi: ["Thành ngữ về thất bại hoặc cái chết phổ biến trong tiếng Anh lớn tuổi", "Giọng hơi kịch tính nhưng thực tế"] },
+      category: "other",
+      options: [
+        { emotion:"neutral",  translation:"Dự án đó thất bại rồi.", literalFlow:null, backTranslation:"That project failed.", breakdown:null, howItLands:{en:"Clear and direct — universally understood in Vietnamese.",vi:"Rõ ràng và trực tiếp — ai cũng hiểu trong tiếng Việt."} },
+        { emotion:"playful",  translation:"Dự án đó xong rồi, không cứu được nữa.", literalFlow:null, backTranslation:"That project is done, can't be saved.", breakdown:null, howItLands:{en:"Captures the finality of the idiom — nothing left to do.",vi:"Nắm bắt được sự kết thúc dứt khoát của thành ngữ — không còn gì để làm."} },
+        { emotion:"direct",   translation:"Dự án đó chết rồi.", literalFlow:null, backTranslation:"That project is dead.", breakdown:null, howItLands:{en:"Blunt and vivid — Vietnamese does use 'chết' for failed projects in casual speech.",vi:"Thẳng thắn và sinh động — tiếng Việt thực sự dùng 'chết' cho các dự án thất bại trong hội thoại thông thường."} }
+      ],
+      sourceDecoding: null,
+      culturalWarnings: [{
+        type:"idiom", term:"bite the dust", where:"source",
+        literalMeaning:{en:"Someone or something physically bit into the ground/dust.",vi:"Ai đó hoặc thứ gì đó cắn vào đất/bụi."},
+        likelyMeaning:{en:"Something failed, ended, or someone died.",vi:"Điều gì đó thất bại, kết thúc, hoặc ai đó mất."},
+        whyRisky:{en:"Translated literally, a Vietnamese reader would picture someone biting the ground — confusing and strange. Needs to be rewritten as 'thất bại' (failed) or 'kết thúc' (ended) depending on context.",vi:"Dịch đen nghĩa, người đọc tiếng Việt sẽ hình dung ai đó cắn vào đất — gây bối rối và kỳ lạ. Cần viết lại là 'thất bại' hoặc 'kết thúc' tùy ngữ cảnh."},
+        suggestionKind:"rewrite", suggestion:"Dự án đó thất bại rồi."
+      }],
+      recommendedOption:"neutral",
+      recommendationReason:{en:"'Thất bại rồi' is clean, direct, and universally understood — no confusion from the literal dust/biting imagery.",vi:"'Thất bại rồi' rõ ràng, trực tiếp và ai cũng hiểu — không gây nhầm lẫn từ hình ảnh đất/cắn theo nghĩa đen."},
+      contextConfidence: 0
+    })
+  },
+  {
+    // "Cost an arm and a leg" — very expensive, sounds like body parts literally
+    match: t => /cost?\s+(an?\s+)?(arm|leg)\s+and\s+(an?\s+)?(arm|leg)|cost(s|ed)?\s+a\s+fortune\s+—\s+arm|arm\s+and\s+a\s+leg/i.test(t),
+    result: (dir) => ({
+      transcript: "That car cost an arm and a leg.",
+      detectedEmotion: "neutral",
+      detectedTone: { en: "A common older-generation English expression meaning something was extremely expensive.", vi: "Cách diễn đạt phổ biến của thế hệ lớn tuổi tiếng Anh có nghĩa là thứ gì đó cực kỳ đắt tiền." },
+      toneSignals: { en: ["Price hyperbole using body parts", "Common among Baby Boomers and older generations"], vi: ["Cường điệu về giá cả sử dụng bộ phận cơ thể", "Phổ biến ở thế hệ Baby Boomer và lớn tuổi hơn"] },
+      category: "other",
+      options: [
+        { emotion:"neutral",  translation:"Chiếc xe đó đắt kinh khủng.", literalFlow:null, backTranslation:"That car was terribly expensive.", breakdown:null, howItLands:{en:"Natural and clear — conveys the shock of the price without confusing body-part imagery.",vi:"Tự nhiên và rõ ràng — truyền đạt sự sốc về giá mà không có hình ảnh bộ phận cơ thể gây nhầm lẫn."} },
+        { emotion:"playful",  translation:"Chiếc xe đó tốn cả gia tài luôn.", literalFlow:null, backTranslation:"That car cost a whole fortune.", breakdown:null, howItLands:{en:"Vivid and expressive — 'cả gia tài' (whole fortune) carries the same dramatic flair.",vi:"Sinh động và biểu cảm — 'cả gia tài' mang cùng sự kịch tính."} },
+        { emotion:"direct",   translation:"Chiếc xe đó rất đắt.", literalFlow:null, backTranslation:"That car was very expensive.", breakdown:null, howItLands:{en:"Simple and safe — no drama, but completely clear.",vi:"Đơn giản và an toàn — không kịch tính nhưng hoàn toàn rõ ràng."} }
+      ],
+      sourceDecoding: null,
+      culturalWarnings: [{
+        type:"idiom", term:"cost an arm and a leg", where:"source",
+        literalMeaning:{en:"Something required a person's arm and leg as payment.",vi:"Thứ gì đó yêu cầu cánh tay và chân của ai đó làm giá trả."},
+        likelyMeaning:{en:"Something was extremely expensive.",vi:"Thứ gì đó cực kỳ đắt tiền."},
+        whyRisky:{en:"Translated literally, a Vietnamese reader would picture someone trading body parts — alarming and confusing. Vietnamese has vivid price expressions like 'đắt kinh khủng' or 'tốn cả gia tài' that carry the same shock.",vi:"Dịch đen nghĩa, người đọc tiếng Việt sẽ hình dung ai đó đánh đổi bộ phận cơ thể — đáng lo và gây nhầm lẫn. Tiếng Việt có những cách diễn đạt về giá sinh động như 'đắt kinh khủng' hoặc 'tốn cả gia tài' mang cùng sự sốc."},
+        suggestionKind:"rewrite", suggestion:"Chiếc xe đó đắt kinh khủng."
+      }],
+      recommendedOption:"neutral",
+      recommendationReason:{en:"'Đắt kinh khủng' captures the same price shock as 'cost an arm and a leg' without any alarming body-part imagery.",vi:"'Đắt kinh khủng' thể hiện cùng sự sốc về giá như 'cost an arm and a leg' mà không có hình ảnh bộ phận cơ thể đáng lo."},
+      contextConfidence: 0
+    })
+  },
+  {
+    // "Under the weather" — feeling sick, sounds strange literally
+    match: t => /under\s+the\s+weather\b/i.test(t),
+    result: (dir) => ({
+      transcript: "I've been feeling a bit under the weather.",
+      detectedEmotion: "warm",
+      detectedTone: { en: "A gentle, polite older-generation way to say someone is feeling unwell without going into detail.", vi: "Cách nói nhẹ nhàng, lịch sự của thế hệ lớn tuổi để nói ai đó đang cảm thấy không khỏe mà không đi vào chi tiết." },
+      toneSignals: { en: ["Softened illness expression — avoids being graphic", "Common among older English speakers"], vi: ["Cách diễn đạt bệnh nhẹ nhàng — tránh nói chi tiết", "Phổ biến ở người nói tiếng Anh lớn tuổi"] },
+      category: "other",
+      options: [
+        { emotion:"warm",    translation:"Mình đang cảm thấy hơi không khỏe.", literalFlow:null, backTranslation:"I've been feeling a bit unwell.", breakdown:null, howItLands:{en:"Gentle and clear — matches the polite, understated tone of the original.",vi:"Nhẹ nhàng và rõ ràng — phù hợp với giọng lịch sự, kín đáo của câu gốc."} },
+        { emotion:"direct",  translation:"Mình đang bị bệnh một chút.", literalFlow:null, backTranslation:"I'm a bit sick.", breakdown:null, howItLands:{en:"Direct and clear — simple Vietnamese way to say you're sick.",vi:"Trực tiếp và rõ ràng — cách nói đơn giản trong tiếng Việt khi bị bệnh."} },
+        { emotion:"playful", translation:"Mình đang hơi xíu bệnh thôi.", literalFlow:null, backTranslation:"I'm just a tiny bit sick.", breakdown:null, howItLands:{en:"Casual and light — plays down the illness with 'xíu' (tiny bit).",vi:"Thông thường và nhẹ nhàng — hạ nhẹ bệnh với 'xíu' (một chút)."} }
+      ],
+      sourceDecoding: null,
+      culturalWarnings: [{
+        type:"idiom", term:"under the weather", where:"source",
+        literalMeaning:{en:"Physically located beneath the weather/sky.",vi:"Đang ở dưới thời tiết/bầu trời."},
+        likelyMeaning:{en:"Feeling unwell or slightly sick.",vi:"Cảm thấy không khỏe hoặc hơi bệnh."},
+        whyRisky:{en:"Translated literally, 'ở dưới thời tiết' is completely meaningless in Vietnamese. This idiom has no equivalent and must be rewritten as simply feeling unwell.",vi:"Dịch đen nghĩa, 'ở dưới thời tiết' hoàn toàn vô nghĩa trong tiếng Việt. Thành ngữ này không có từ tương đương và phải được viết lại đơn giản là cảm thấy không khỏe."},
+        suggestionKind:"rewrite", suggestion:"Mình đang cảm thấy hơi không khỏe."
+      }],
+      recommendedOption:"warm",
+      recommendationReason:{en:"'Hơi không khỏe' matches the gentle, understated tone of 'under the weather' perfectly.",vi:"'Hơi không khỏe' phù hợp hoàn hảo với giọng nhẹ nhàng, kín đáo của 'under the weather'."},
+      contextConfidence: 0
+    })
+  },
+  {
+    // "It's raining cats and dogs" — completely nonsensical literally
+    match: t => /raining\s+cats\s+and\s+dogs/i.test(t),
+    result: (dir) => ({
+      transcript: "It's raining cats and dogs out there!",
+      detectedEmotion: "playful",
+      detectedTone: { en: "A classic older-generation English idiom for very heavy rain.", vi: "Thành ngữ tiếng Anh cổ điển của thế hệ lớn tuổi về mưa rất nặng hạt." },
+      toneSignals: { en: ["Weather hyperbole — common among older English speakers", "Playful exaggeration of heavy rainfall"], vi: ["Cường điệu thời tiết — phổ biến ở người nói tiếng Anh lớn tuổi", "Cường điệu vui vẻ về mưa nặng hạt"] },
+      category: "other",
+      options: [
+        { emotion:"playful",  translation:"Mưa như trút nước ngoài đó!", literalFlow:null, backTranslation:"It's pouring like water being dumped out there!", breakdown:null, howItLands:{en:"'Mưa như trút nước' is the natural Vietnamese equivalent — vivid, dramatic, and perfect.",vi:"'Mưa như trút nước' là từ tương đương tự nhiên trong tiếng Việt — sinh động, kịch tính và hoàn hảo."} },
+        { emotion:"direct",   translation:"Mưa to lắm ngoài đó!", literalFlow:null, backTranslation:"It's raining really hard out there!", breakdown:null, howItLands:{en:"Simple and clear — less poetic but universally understood.",vi:"Đơn giản và rõ ràng — ít thơ mộng hơn nhưng ai cũng hiểu."} },
+        { emotion:"warm",     translation:"Mưa xối xả ngoài đó luôn!", literalFlow:null, backTranslation:"It's pouring heavily out there!", breakdown:null, howItLands:{en:"'Xối xả' adds vivid intensity — feels natural and expressive.",vi:"'Xối xả' thêm sự mãnh liệt sinh động — cảm thấy tự nhiên và biểu cảm."} }
+      ],
+      sourceDecoding: null,
+      culturalWarnings: [{
+        type:"idiom", term:"raining cats and dogs", where:"source",
+        literalMeaning:{en:"Cats and dogs are falling from the sky.",vi:"Mèo và chó đang rơi xuống từ bầu trời."},
+        likelyMeaning:{en:"It is raining very heavily.",vi:"Trời đang mưa rất to."},
+        whyRisky:{en:"Translated literally, a Vietnamese reader would picture animals falling from the sky — bizarre and confusing. Vietnamese has its own vivid heavy-rain expression: 'mưa như trút nước' (raining like water being poured).",vi:"Dịch đen nghĩa, người đọc tiếng Việt sẽ hình dung động vật rơi từ bầu trời — kỳ lạ và gây nhầm lẫn. Tiếng Việt có cách diễn đạt mưa lớn sinh động riêng: 'mưa như trút nước'."},
+        suggestionKind:"rewrite", suggestion:"Mưa như trút nước ngoài đó!"
+      }],
+      recommendedOption:"playful",
+      recommendationReason:{en:"'Mưa như trút nước' is the perfect Vietnamese equivalent — same vivid drama, zero confusion.",vi:"'Mưa như trút nước' là từ tương đương hoàn hảo trong tiếng Việt — cùng sự sinh động kịch tính, không gây nhầm lẫn."},
+      contextConfidence: 0
+    })
+  },
+  {
+    // "Lose your marbles" — go crazy/senile, confusing literally
+    match: t => /lost?\s+(your|his|her|my|their)\s+marbles|losing\s+(your|his|her|my|their)\s+marbles/i.test(t),
+    result: (dir) => ({
+      transcript: "I think he's losing his marbles.",
+      detectedEmotion: "neutral",
+      detectedTone: { en: "An older-generation expression for someone becoming forgetful, confused, or mentally declining.", vi: "Cách diễn đạt của thế hệ lớn tuổi về ai đó đang trở nên hay quên, bối rối, hoặc suy giảm tinh thần." },
+      toneSignals: { en: ["Mental decline idiom common among older English speakers", "Can mean crazy or increasingly forgetful/confused"], vi: ["Thành ngữ về suy giảm tinh thần phổ biến ở người nói tiếng Anh lớn tuổi", "Có thể có nghĩa là điên hoặc ngày càng hay quên/bối rối"] },
+      category: "other",
+      options: [
+        { emotion:"neutral",  translation:"Tôi nghĩ ông ấy đang có vấn đề về trí nhớ rồi.", literalFlow:null, backTranslation:"I think he's having memory problems.", breakdown:null, howItLands:{en:"Respectful and clear — addresses cognitive decline without being harsh.",vi:"Tôn trọng và rõ ràng — đề cập đến suy giảm nhận thức mà không thô lỗ."} },
+        { emotion:"playful",  translation:"Tôi nghĩ ông ấy hơi lẩm cẩm rồi.", literalFlow:null, backTranslation:"I think he's getting a bit dotty.", breakdown:null, howItLands:{en:"'Lẩm cẩm' is a gentle Vietnamese word for being forgetful or senile in an older person — matches the tone well.",vi:"'Lẩm cẩm' là từ Việt nhẹ nhàng chỉ sự hay quên hoặc lú lẫn ở người lớn tuổi — phù hợp giọng điệu."} },
+        { emotion:"direct",   translation:"Tôi nghĩ ông ấy bắt đầu lú lẫn rồi.", literalFlow:null, backTranslation:"I think he's starting to get confused.", breakdown:null, howItLands:{en:"Direct but not harsh — 'lú lẫn' is commonly understood as cognitive confusion in Vietnamese.",vi:"Trực tiếp nhưng không thô — 'lú lẫn' thường được hiểu là bối rối nhận thức trong tiếng Việt."} }
+      ],
+      sourceDecoding: null,
+      culturalWarnings: [{
+        type:"idiom", term:"losing his marbles", where:"source",
+        literalMeaning:{en:"Someone is physically losing small glass balls.",vi:"Ai đó đang mất những viên bi thủy tinh nhỏ."},
+        likelyMeaning:{en:"Someone is becoming forgetful, confused, or mentally declining — often used for older people.",vi:"Ai đó đang trở nên hay quên, bối rối, hoặc suy giảm tinh thần — thường dùng cho người lớn tuổi."},
+        whyRisky:{en:"Translated literally, a Vietnamese reader would picture someone dropping toy marbles — completely nonsensical. Needs to be rewritten using Vietnamese terms for cognitive decline like 'lẩm cẩm' or 'lú lẫn'.",vi:"Dịch đen nghĩa, người đọc tiếng Việt sẽ hình dung ai đó làm rơi bi đồ chơi — hoàn toàn vô nghĩa. Cần viết lại bằng các từ tiếng Việt chỉ suy giảm nhận thức như 'lẩm cẩm' hoặc 'lú lẫn'."},
+        suggestionKind:"rewrite", suggestion:"Tôi nghĩ ông ấy hơi lẩm cẩm rồi."
+      }],
+      recommendedOption:"playful",
+      recommendationReason:{en:"'Hơi lẩm cẩm' is the natural Vietnamese equivalent for gentle cognitive decline — same tone, no confusion.",vi:"'Hơi lẩm cẩm' là từ tương đương tự nhiên trong tiếng Việt cho sự suy giảm nhận thức nhẹ nhàng — cùng giọng điệu, không gây nhầm lẫn."},
+      contextConfidence: 0
+    })
+  },
+  {
+    // "Flying off the handle" — getting suddenly angry
+    match: t => /fl(ew|ying)\s+off\s+the\s+handle|fly\s+off\s+the\s+handle/i.test(t),
+    result: (dir) => ({
+      transcript: "He flew off the handle over nothing.",
+      detectedEmotion: "neutral",
+      detectedTone: { en: "An older-generation expression for someone losing their temper suddenly and disproportionately.", vi: "Cách diễn đạt của thế hệ lớn tuổi về ai đó bùng nổ cơn giận đột ngột và không cân xứng." },
+      toneSignals: { en: ["Sudden anger idiom common among older English speakers", "Implies the anger was disproportionate or unprovoked"], vi: ["Thành ngữ về cơn giận đột ngột phổ biến ở người nói tiếng Anh lớn tuổi", "Ám chỉ cơn giận không cân xứng hoặc không có lý do"] },
+      category: "other",
+      options: [
+        { emotion:"neutral",  translation:"Anh ấy nổi giận vô cớ.", literalFlow:null, backTranslation:"He got angry for no reason.", breakdown:null, howItLands:{en:"Clear and direct — captures the sudden unreasonable anger.",vi:"Rõ ràng và trực tiếp — thể hiện cơn giận đột ngột vô lý."} },
+        { emotion:"playful",  translation:"Anh ấy nổi điên lên chẳng vì chuyện gì.", literalFlow:null, backTranslation:"He went crazy over nothing.", breakdown:null, howItLands:{en:"Vivid and expressive — 'nổi điên' captures the sudden outburst energy.",vi:"Sinh động và biểu cảm — 'nổi điên' thể hiện năng lượng bùng phát đột ngột."} },
+        { emotion:"direct",   translation:"Anh ấy bùng lên mà chẳng có lý do gì.", literalFlow:null, backTranslation:"He blew up for no reason.", breakdown:null, howItLands:{en:"Strong and clear — 'bùng lên' mirrors the sudden explosion of the idiom.",vi:"Mạnh mẽ và rõ ràng — 'bùng lên' phản chiếu sự bùng nổ đột ngột của thành ngữ."} }
+      ],
+      sourceDecoding: null,
+      culturalWarnings: [{
+        type:"idiom", term:"fly off the handle", where:"source",
+        literalMeaning:{en:"Something flew off a handle (like an axe head detaching).",vi:"Thứ gì đó bay ra khỏi tay cầm (như đầu rìu bị bật ra)."},
+        likelyMeaning:{en:"Someone suddenly lost their temper in a big, disproportionate way.",vi:"Ai đó đột ngột nổi giận dữ dội và không cân xứng."},
+        whyRisky:{en:"Translated literally, a Vietnamese reader would picture a tool handle flying through the air — completely baffling. Needs to be rewritten as 'nổi giận vô cớ' or 'nổi điên lên'.",vi:"Dịch đen nghĩa, người đọc tiếng Việt sẽ hình dung tay cầm công cụ bay trong không khí — hoàn toàn bối rối. Cần viết lại là 'nổi giận vô cớ' hoặc 'nổi điên lên'."},
+        suggestionKind:"rewrite", suggestion:"Anh ấy nổi giận vô cớ."
+      }],
+      recommendedOption:"neutral",
+      recommendationReason:{en:"'Nổi giận vô cớ' is the clearest Vietnamese equivalent — captures the sudden unreasonable anger without any confusing imagery.",vi:"'Nổi giận vô cớ' là từ tương đương rõ ràng nhất trong tiếng Việt — thể hiện cơn giận đột ngột vô lý mà không có hình ảnh gây nhầm lẫn."},
+      contextConfidence: 0
+    })
+  },
+  {
+    // "Hit the sack / hit the hay" — going to sleep
+    match: t => /hit\s+the\s+(sack|hay)\b/i.test(t),
+    result: (dir) => ({
+      transcript: "I'm going to hit the sack.",
+      detectedEmotion: "neutral",
+      detectedTone: { en: "A casual older-generation English phrase for going to sleep or bed.", vi: "Cụm từ thông thường của thế hệ lớn tuổi tiếng Anh để chỉ việc đi ngủ hoặc lên giường." },
+      toneSignals: { en: ["Sleep idiom common among older English speakers", "Casual and relaxed tone"], vi: ["Thành ngữ về giấc ngủ phổ biến ở người nói tiếng Anh lớn tuổi", "Giọng thông thường và thoải mái"] },
+      category: "other",
+      options: [
+        { emotion:"neutral",  translation:"Mình đi ngủ đây.", literalFlow:null, backTranslation:"I'm going to sleep.", breakdown:null, howItLands:{en:"Simple and natural — the most common Vietnamese way to say you're going to bed.",vi:"Đơn giản và tự nhiên — cách phổ biến nhất trong tiếng Việt để nói bạn sắp đi ngủ."} },
+        { emotion:"warm",     translation:"Mình đi nghỉ ngơi rồi nha.", literalFlow:null, backTranslation:"I'm going to rest now, okay.", breakdown:null, howItLands:{en:"Gentle and warm — 'nha' softens it into a friendly goodnight.",vi:"Nhẹ nhàng và ấm áp — 'nha' làm nhẹ nhàng thành lời chúc ngủ ngon thân thiện."} },
+        { emotion:"playful",  translation:"Mình đi vào đất mộng rồi đây.", literalFlow:null, backTranslation:"I'm going into dreamland.", breakdown:null, howItLands:{en:"Playful and poetic — a fun Vietnamese way to say you're drifting off to sleep.",vi:"Vui vẻ và thơ mộng — cách nói vui trong tiếng Việt khi chìm vào giấc ngủ."} }
+      ],
+      sourceDecoding: null,
+      culturalWarnings: [{
+        type:"idiom", term:"hit the sack / hit the hay", where:"source",
+        literalMeaning:{en:"Physically striking a bag of grain or a pile of hay.",vi:"Đánh vào một túi ngũ cốc hoặc đống rơm."},
+        likelyMeaning:{en:"Going to bed or to sleep.",vi:"Đi ngủ hoặc lên giường."},
+        whyRisky:{en:"Translated literally, a Vietnamese reader would picture someone hitting a bag or hay pile — baffling. Vietnamese has no equivalent idiom and needs a simple rewrite as 'đi ngủ'.",vi:"Dịch đen nghĩa, người đọc tiếng Việt sẽ hình dung ai đó đánh vào túi hoặc đống rơm — gây bối rối. Tiếng Việt không có thành ngữ tương đương và cần viết lại đơn giản là 'đi ngủ'."},
+        suggestionKind:"rewrite", suggestion:"Mình đi ngủ đây."
+      }],
+      recommendedOption:"neutral",
+      recommendationReason:{en:"'Mình đi ngủ đây' is the clearest, most natural Vietnamese equivalent — no confusion, universally understood.",vi:"'Mình đi ngủ đây' là từ tương đương rõ ràng, tự nhiên nhất trong tiếng Việt — không gây nhầm lẫn, ai cũng hiểu."},
+      contextConfidence: 0
+    })
+  },
+  {
+    // Vietnamese: asking salary ("Làm bao nhiêu một tháng?") — normal in Vietnam, very rude in English
+    match: t => /làm bao nhiêu (một|1)\s*tháng|lương bao nhiêu|kiếm được bao nhiêu|thu nhập bao nhiêu/i.test(t),
+    result: (dir) => ({
+      transcript: "Bạn làm bao nhiêu một tháng?",
+      detectedEmotion: "warm",
+      detectedTone: { en: "A casual question in Vietnamese culture — asking about salary is normal small talk and signals friendly interest.", vi: "Câu hỏi thông thường trong văn hóa Việt — hỏi về lương là chuyện trò bình thường và thể hiện sự quan tâm thân thiện." },
+      toneSignals: { en: ["Salary question as social bonding in Vietnamese culture", "Implies curiosity and care, not nosiness"], vi: ["Câu hỏi về lương như sợi dây gắn kết xã hội trong văn hóa Việt", "Ý nghĩa là tò mò và quan tâm, không phải tọc mạch"] },
+      category: "other",
+      options: [
+        { emotion:"warm",    translation:"How's work going for you these days?", literalFlow:null, backTranslation:"How are things at work?", breakdown:null, howItLands:{en:"Opens the door to talking about work without the invasive salary question — friendly and acceptable.",vi:"Mở cửa để nói về công việc mà không có câu hỏi về lương xâm phạm — thân thiện và được chấp nhận."} },
+        { emotion:"direct",  translation:"Are you doing well at your job?", literalFlow:null, backTranslation:"Is work going well?", breakdown:null, howItLands:{en:"Shows interest in their professional life without crossing into personal finances.",vi:"Thể hiện sự quan tâm đến cuộc sống nghề nghiệp của họ mà không đi vào tài chính cá nhân."} },
+        { emotion:"neutral", translation:"How much do you make a month?", literalFlow:null, backTranslation:"Làm bao nhiêu một tháng?", breakdown:null, howItLands:{en:"Literal — will feel shockingly invasive to most English speakers. Avoid unless you have a very close, established relationship.",vi:"Nghĩa đen — sẽ cảm thấy cực kỳ xâm phạm với hầu hết người nói tiếng Anh. Tránh dùng trừ khi bạn có mối quan hệ rất thân thiết, lâu dài."} }
+      ],
+      sourceDecoding: null,
+      culturalWarnings: [{
+        type:"other", term:"Làm bao nhiêu một tháng?", where:"source",
+        literalMeaning:{en:"How much do you earn per month?",vi:"Bạn kiếm được bao nhiêu mỗi tháng?"},
+        likelyMeaning:{en:"A friendly show of interest in someone's life and career — in Vietnamese culture, this is normal conversation, not an invasion of privacy.",vi:"Sự thể hiện thân thiện về sự quan tâm đến cuộc sống và sự nghiệp của ai đó — trong văn hóa Việt, đây là cuộc trò chuyện bình thường, không phải xâm phạm quyền riêng tư."},
+        whyRisky:{en:"In English-speaking cultures, asking someone's salary is considered one of the most personal and inappropriate questions you can ask — even among close friends. It can make the other person deeply uncomfortable or offended, regardless of your intent.",vi:"Trong văn hóa nói tiếng Anh, hỏi lương của ai đó được coi là một trong những câu hỏi cá nhân và không phù hợp nhất — ngay cả giữa bạn bè thân. Nó có thể làm người kia cảm thấy rất khó chịu hoặc bị xúc phạm, bất kể ý định của bạn."},
+        suggestionKind:"rewrite", suggestion:"How's work going for you these days?"
+      }],
+      recommendedOption:"warm",
+      recommendationReason:{en:"'How's work going?' carries the same friendly interest in someone's professional life without the cultural landmine of a direct salary question.",vi:"'How's work going?' mang cùng sự quan tâm thân thiện đến cuộc sống nghề nghiệp của ai đó mà không có bẫy văn hóa của câu hỏi lương trực tiếp."},
+      contextConfidence: 0
+    })
+  },
+  {
+    // Vietnamese: "Tội nghiệp / Khổ thân" — sympathy that sounds condescending in English
+    match: t => /tội nghiệp|khổ thân|tội quá|khổ quá vậy/i.test(t),
+    result: (dir) => ({
+      transcript: "Tội nghiệp bạn quá!",
+      detectedEmotion: "warm",
+      detectedTone: { en: "A Vietnamese expression of genuine sympathy and care — 'tội nghiệp' is heartfelt pity toward someone going through a hard time.", vi: "Cách diễn đạt sự cảm thông và quan tâm chân thành trong tiếng Việt — 'tội nghiệp' là sự thương cảm chân lòng với ai đó đang trải qua giai đoạn khó khăn." },
+      toneSignals: { en: ["Sympathy expression — genuine care for someone's hardship", "Common among older Vietnamese speakers especially"], vi: ["Biểu đạt sự cảm thông — quan tâm chân thành đến khó khăn của ai đó", "Phổ biến đặc biệt ở người Việt lớn tuổi"] },
+      category: "other",
+      options: [
+        { emotion:"warm",    translation:"I'm so sorry you're going through this 😔", literalFlow:null, backTranslation:"Tôi rất tiếc vì bạn phải trải qua điều này", breakdown:null, howItLands:{en:"Empathetic and warm — conveys the same care without the patronizing edge of 'poor thing'.",vi:"Đồng cảm và ấm áp — truyền đạt cùng sự quan tâm mà không có sắc thái bề trên của 'poor thing'."} },
+        { emotion:"direct",  translation:"That sounds really hard. I feel for you.", literalFlow:null, backTranslation:"Nghe có vẻ thực sự khó khăn. Tôi đồng cảm với bạn.", breakdown:null, howItLands:{en:"Respectful and genuine — acknowledges their difficulty as equals.",vi:"Tôn trọng và chân thành — thừa nhận khó khăn của họ như người ngang hàng."} },
+        { emotion:"neutral", translation:"You poor thing!", literalFlow:null, backTranslation:"Tội nghiệp bạn!", breakdown:null, howItLands:{en:"Literal — can sound condescending or patronizing in English, as if looking down on the person.",vi:"Nghĩa đen — có thể nghe có vẻ kẻ cả hoặc bề trên trong tiếng Anh, như thể đang nhìn xuống người kia."} }
+      ],
+      sourceDecoding: null,
+      culturalWarnings: [{
+        type:"other", term:"Tội nghiệp / Khổ thân", where:"source",
+        literalMeaning:{en:"Poor thing / what a hard life.",vi:"Tội nghiệp / Cuộc sống thật khổ."},
+        likelyMeaning:{en:"Genuine sympathy and heartfelt care for someone going through difficulty — a warm expression of solidarity in Vietnamese.",vi:"Sự cảm thông chân thành và quan tâm chân lòng với ai đó đang gặp khó khăn — cách thể hiện sự đoàn kết ấm áp trong tiếng Việt."},
+        whyRisky:{en:"In English, 'you poor thing' can sound condescending — as if you're looking down at someone rather than standing beside them. What is warm sympathy in Vietnamese can feel patronizing to an English speaker.",vi:"Trong tiếng Anh, 'you poor thing' có thể nghe có vẻ kẻ cả — như thể bạn đang nhìn xuống ai đó thay vì đứng bên cạnh họ. Điều thể hiện sự cảm thông ấm áp trong tiếng Việt có thể cảm thấy bề trên với người nói tiếng Anh."},
+        suggestionKind:"rewrite", suggestion:"I'm so sorry you're going through this 😔"
+      }],
+      recommendedOption:"warm",
+      recommendationReason:{en:"'I'm so sorry you're going through this' carries the same warmth and care as 'tội nghiệp' without the condescending edge that the literal translation risks.",vi:"'I'm so sorry you're going through this' mang cùng sự ấm áp và quan tâm như 'tội nghiệp' mà không có sắc thái bề trên mà bản dịch đen nghĩa có thể gây ra."},
       contextConfidence: 0
     })
   }
