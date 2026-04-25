@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Message Translation App</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eaecef;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #111;
+  }
+  .card {
+    width: 480px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 40px 48px 36px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+
+  /* === Logged-in dashboard === */
+  #dashCard {
+    display: none;
+    width: 480px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 40px 48px 36px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  #dashCard.show { display: block; }
+  .dash-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;
+  }
+  .dash-header h1 { font-size: 22px; font-weight: 700; margin: 0; }
+  .dash-email {
+    font-size: 13px; color: #6b7280; margin-bottom: 28px;
+    padding: 10px 14px; background: #f8fafc; border-radius: 8px;
+  }
+  .dash-email span { font-weight: 600; color: #111; }
+  .dash-placeholder {
+    background: #f1f5f9; border-radius: 10px; padding: 32px;
+    text-align: center; color: #6b7280; font-size: 14px; line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  .dash-placeholder .icon { font-size: 32px; margin-bottom: 10px; }
+  .signout {
+    width: 100%; padding: 12px 0; background: #f3f4f6; border: none;
+    border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; color: #374151;
+  }
+  .signout:hover { background: #e5e7eb; }
+  .lang { display: flex; justify-content: flex-end; margin-bottom: 18px; }
+  .lang-toggle {
+    display: inline-flex; background: #f1f3f5; border-radius: 999px; padding: 3px;
+  }
+  .lang-toggle button {
+    border: none; background: transparent;
+    font-size: 13px; font-weight: 600; color: #6b7280;
+    padding: 5px 14px; border-radius: 999px; cursor: pointer;
+  }
+  .lang-toggle button.active { background: #1a73ff; color: #fff; }
+  h1 { font-size: 26px; font-weight: 700; margin: 0 0 8px; }
+  .subtitle { color: #6b7280; font-size: 15px; margin: 0 0 24px; line-height: 1.4; }
+  .tabs {
+    display: flex; background: #f1f3f5; border-radius: 10px; padding: 4px; margin-bottom: 22px;
+  }
+  .tabs button {
+    flex: 1; border: none; background: transparent; padding: 10px 0;
+    font-size: 14px; font-weight: 600; color: #6b7280; cursor: pointer; border-radius: 8px;
+  }
+  .tabs button.active { background: #1a73ff; color: #fff; }
+  label { display: block; font-size: 13px; color: #6b7280; margin: 14px 0 6px; }
+  input {
+    width: 100%; padding: 11px 14px; border: 1px solid #e1e4e8;
+    border-radius: 8px; font-size: 14px; background: #fff; outline: none;
+  }
+  input:focus { border-color: #1a73ff; }
+  .primary {
+    width: 100%; margin-top: 22px; padding: 13px 0;
+    background: #1a73ff; color: #fff; border: none; border-radius: 10px;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+  }
+  .divider {
+    display: flex; align-items: center; color: #9ca3af; font-size: 13px; margin: 24px 0 14px;
+  }
+  .divider::before, .divider::after {
+    content: ""; flex: 1; border-top: 1px solid #e5e7eb;
+  }
+  .divider span { padding: 0 12px; }
+  .demo {
+    width: 100%; padding: 12px 0; background: #f3f4f6; border: none;
+    border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; color: #111;
+  }
+  .demo-note { text-align: center; color: #9ca3af; font-size: 12.5px; margin-top: 10px; }
+
+  /* === Modal popup styles === */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(15,23,42,0.45);
+    display: none; align-items: center; justify-content: center;
+    z-index: 50; padding: 16px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: #fff; border-radius: 14px; padding: 28px 28px 22px;
+    width: 100%; max-width: 380px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.18);
+    text-align: center;
+  }
+  .modal-icon {
+    width: 56px; height: 56px; margin: 0 auto 14px;
+    background: #fef3c7; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+  }
+  .modal h2 { font-size: 18px; font-weight: 700; margin: 0 0 8px; }
+  .modal p { font-size: 14px; color: #6b7280; margin: 0 0 20px; line-height: 1.45; }
+  .modal-actions { display: flex; flex-direction: column; gap: 10px; }
+  .modal-actions button {
+    padding: 11px 0; border-radius: 9px; border: none; font-size: 14px;
+    font-weight: 600; cursor: pointer;
+  }
+  .modal-primary { background: #1a73ff; color: #fff; }
+  .modal-secondary { background: #f3f4f6; color: #111; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="lang">
+      <div class="lang-toggle">
+        <button id="btnEN">EN</button>
+        <button id="btnVI" class="active">VI</button>
+      </div>
+    </div>
+    <h1 id="title"></h1>
+    <p class="subtitle" id="subtitle"></p>
+    <div class="tabs">
+      <button id="tabLogin" class="active"></button>
+      <button id="tabSignup"></button>
+    </div>
+    <label id="lblEmail"></label>
+    <input id="inpEmail" type="email" />
+    <label id="lblPassword"></label>
+    <input id="inpPassword" type="password" />
+    <button class="primary" id="btnSubmit"></button>
+    <div class="divider"><span id="divOr"></span></div>
+    <button class="demo" id="btnDemo"></button>
+    <p class="demo-note" id="demoNote"></p>
+  </div>
+
+  <!-- === Logged-in dashboard === -->
+  <div id="dashCard">
+    <div class="dash-header">
+      <h1 id="dashTitle"></h1>
+      <div class="lang-toggle">
+        <button id="dashBtnEN">EN</button>
+        <button id="dashBtnVI" class="active">VI</button>
+      </div>
+    </div>
+    <div class="dash-email" id="dashEmail"></div>
+    <div class="dash-placeholder">
+      <div class="icon">💬</div>
+      <div id="dashBody"></div>
+    </div>
+    <button class="signout" id="btnSignOut"></button>
+  </div>
+
+  <!-- === No-account popup === -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-icon">👤</div>
+      <h2 id="modalTitle"></h2>
+      <p id="modalBody"></p>
+      <div class="modal-actions">
+        <button class="modal-primary" id="modalCreate"></button>
+        <button class="modal-secondary" id="modalCancel"></button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // === Translation dictionary ===
+  const i18n = {
+    en: {
+      title: "Message Translation App",
+      subtitle: "Sign in to translate messages over SMS, or create a new account.",
+      login: "Log In",
+      signup: "Sign Up",
+      email: "Email",
+      password: "Password",
+      emailPh: "you@example.com",
+      passwordPh: "At least 6 characters",
+      submitLogin: "Log In →",
+      submitSignup: "Create Account →",
+      or: "or",
+      demo: "✏️  Try Demo Mode (no account needed)",
+      demoNote: "Demo returns fake translations to show off the UI.",
+      // Popup strings
+      noAccountTitle: "No account found",
+      noAccountBody: "We couldn't find an account with that email. You'll need to create one first.",
+      createAccount: "Create Account",
+      cancel: "Cancel",
+      // Dashboard strings
+      dashTitle: "Message Translation App",
+      dashSignedIn: "Signed in as",
+      dashBody: "Your translation inbox will appear here. Send an SMS to get started.",
+      signOut: "Sign Out"
+    },
+    vi: {
+      title: "Ứng dụng Dịch tin nhắn",
+      subtitle: "Đăng nhập để nhắn tin qua điện thoại, hoặc tạo tài khoản mới.",
+      login: "Đăng nhập",
+      signup: "Đăng ký",
+      email: "Email",
+      password: "Mật khẩu",
+      emailPh: "ban@example.com",
+      passwordPh: "Tối thiểu 6 ký tự",
+      submitLogin: "Đăng nhập →",
+      submitSignup: "Tạo tài khoản →",
+      or: "hoặc",
+      demo: "✏️  Thử chế độ Demo (không cần tài khoản)",
+      demoNote: "Demo trả về bản dịch giả để minh họa giao diện.",
+      // Popup strings
+      noAccountTitle: "Không tìm thấy tài khoản",
+      noAccountBody: "Chúng tôi không tìm thấy tài khoản với email này. Bạn cần tạo tài khoản trước.",
+      createAccount: "Tạo tài khoản",
+      cancel: "Hủy",
+      // Dashboard strings
+      dashTitle: "Ứng dụng Dịch tin nhắn",
+      dashSignedIn: "Đã đăng nhập với",
+      dashBody: "Hộp thư dịch của bạn sẽ hiển thị ở đây. Gửi SMS để bắt đầu.",
+      signOut: "Đăng xuất"
+    }
+  };
+
+  // Persisted user database — survives page reloads and new tabs
+  function loadUsers() {
+    try { return JSON.parse(localStorage.getItem('mta_users') || '{}'); } catch(_) { return {}; }
+  }
+  function saveUsers(u) {
+    try { localStorage.setItem('mta_users', JSON.stringify(u)); } catch(_) {}
+  }
+
+  let lang = "vi";
+  let mode = "login"; // "login" | "signup"
+
+  function t() { return i18n[lang]; }
+
+  function render() {
+    const x = t();
+    document.getElementById("title").textContent = x.title;
+    document.getElementById("subtitle").textContent = x.subtitle;
+    document.getElementById("tabLogin").textContent = x.login;
+    document.getElementById("tabSignup").textContent = x.signup;
+    document.getElementById("lblEmail").textContent = x.email;
+    document.getElementById("lblPassword").textContent = x.password;
+    document.getElementById("inpEmail").placeholder = x.emailPh;
+    document.getElementById("inpPassword").placeholder = x.passwordPh;
+    document.getElementById("btnSubmit").textContent =
+      mode === "login" ? x.submitLogin : x.submitSignup;
+    document.getElementById("divOr").textContent = x.or;
+    document.getElementById("btnDemo").textContent = x.demo;
+    document.getElementById("demoNote").textContent = x.demoNote;
+
+    document.getElementById("btnEN").classList.toggle("active", lang === "en");
+    document.getElementById("btnVI").classList.toggle("active", lang === "vi");
+    document.getElementById("tabLogin").classList.toggle("active", mode === "login");
+    document.getElementById("tabSignup").classList.toggle("active", mode === "signup");
+    document.documentElement.lang = lang;
+
+    // Modal text
+    document.getElementById("modalTitle").textContent = x.noAccountTitle;
+    document.getElementById("modalBody").textContent = x.noAccountBody;
+    document.getElementById("modalCreate").textContent = x.createAccount;
+    document.getElementById("modalCancel").textContent = x.cancel;
+
+    // Dashboard text (keep in sync even while hidden)
+    document.getElementById("dashTitle").textContent = x.dashTitle;
+    document.getElementById("dashBody").textContent = x.dashBody;
+    document.getElementById("btnSignOut").textContent = x.signOut;
+    document.getElementById("dashBtnEN").classList.toggle("active", lang === "en");
+    document.getElementById("dashBtnVI").classList.toggle("active", lang === "vi");
+  }
+
+  // === Show / hide views ===
+  function showDashboard(email) {
+    sessionStorage.setItem('mta_user_email', email);
+    window.location.href = "translation-demo-v2.html";
+  }
+  function showLoginForm() {
+    document.querySelector(".card").style.display = "";
+    document.getElementById("dashCard").classList.remove("show");
+    document.getElementById("inpEmail").value = "";
+    document.getElementById("inpPassword").value = "";
+  }
+
+  // === Modal helpers ===
+  function showNoAccountModal() {
+    document.getElementById("modalOverlay").classList.add("show");
+  }
+  function hideModal() {
+    document.getElementById("modalOverlay").classList.remove("show");
+  }
+
+  // === Submit handler ===
+  function handleSubmit() {
+    const email = document.getElementById("inpEmail").value.trim();
+    const password = document.getElementById("inpPassword").value;
+    if (!email || !password) return;
+
+    const users = loadUsers();
+    if (mode === "login") {
+      // No account with this email → show popup
+      if (!users[email]) {
+        showNoAccountModal();
+        return;
+      }
+      if (users[email] !== password) {
+        alert(lang === "vi" ? "Mật khẩu không đúng" : "Wrong password");
+        return;
+      }
+      showDashboard(email);
+    } else {
+      // Sign up: store and go straight to dashboard
+      users[email] = password;
+      saveUsers(users);
+      showDashboard(email);
+    }
+  }
+
+  // === Wire up ===
+  document.getElementById("btnEN").onclick = () => { lang = "en"; render(); };
+  document.getElementById("btnVI").onclick = () => { lang = "vi"; render(); };
+  document.getElementById("tabLogin").onclick = () => { mode = "login"; render(); };
+  document.getElementById("tabSignup").onclick = () => { mode = "signup"; render(); };
+  document.getElementById("btnSubmit").onclick = handleSubmit;
+  document.getElementById("btnDemo").onclick = () => { window.location.href = "translation-demo-v2.html"; };
+
+  // Modal buttons
+  document.getElementById("modalCreate").onclick = () => {
+    hideModal();
+    mode = "signup";
+    render();
+    document.getElementById("inpPassword").focus();
+  };
+  document.getElementById("modalCancel").onclick = hideModal;
+  document.getElementById("modalOverlay").onclick = (e) => {
+    if (e.target.id === "modalOverlay") hideModal();
+  };
+
+  // Dashboard controls
+  document.getElementById("btnSignOut").onclick = () => {
+    mode = "login";
+    render();
+    showLoginForm();
+  };
+  document.getElementById("dashBtnEN").onclick = () => { lang = "en"; render(); };
+  document.getElementById("dashBtnVI").onclick = () => { lang = "vi"; render(); };
+
+  render();
+</script>
+</body>
+</html>
